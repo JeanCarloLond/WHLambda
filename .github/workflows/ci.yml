@@ -67,6 +67,12 @@ jobs:
       - name: Build Android debug APK and desktop app
         run: ./gradlew :apps:android:assembleDebug :apps:desktop:createDistributable
 
+      # Desktop UI tests cannot catch resources missing from the Android packaging; the app would crash at launch.
+      - name: Verify Compose resources are packaged in the APK
+        run: |
+          unzip -l apps/android/build/outputs/apk/debug/*.apk | grep -q 'assets/composeResources/' \
+            || { echo "::error::Compose resources are missing from the APK"; exit 1; }
+
       - name: Upload debug APK
         uses: actions/upload-artifact@v7
         with:
