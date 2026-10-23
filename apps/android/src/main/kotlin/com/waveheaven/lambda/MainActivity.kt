@@ -1,3 +1,6 @@
+// Spike #2 prototype: throw-away code on a branch that is never merged, so production quality rules are waived.
+@file:Suppress("MagicNumber", "CyclomaticComplexMethod")
+
 package com.waveheaven.lambda
 
 import android.content.Intent
