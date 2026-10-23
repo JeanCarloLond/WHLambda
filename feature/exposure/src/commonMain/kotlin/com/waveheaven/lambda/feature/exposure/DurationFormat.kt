@@ -1,4 +1,4 @@
-package com.waveheaven.lambda.shared.exposure
+package com.waveheaven.lambda.feature.exposure
 
 import kotlin.time.Duration
 

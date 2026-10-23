@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WaveHeaven Lambda</string>
+    <string name="open_about">About WaveHeaven</string>
     <string name="dose_explorer_subtitle">How long is this listening level safe?</string>
     <string name="dose_explorer_level">Level: %1$d dB(A)</string>
     <string name="dose_explorer_niosh">Safe time per day (NIOSH)</string>
