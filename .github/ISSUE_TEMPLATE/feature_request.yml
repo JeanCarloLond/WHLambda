@@ -1,0 +1,32 @@
+name: ✨ Feature / user story
+description: New behaviour, written from the user's point of view.
+labels: ["type: feature", "status: triage"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      placeholder: As a <type of user>, I want <goal> so that <benefit>.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Verifiable conditions. "Done" means each one is demonstrated by a test or a demo.
+      placeholder: |
+        - [ ] Given …, when …, then …
+        - [ ] …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options: [core, audio, data, ui, android, desktop, web, ci, docs]
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Design ideas, risks, privacy or hearing-safety considerations, links.

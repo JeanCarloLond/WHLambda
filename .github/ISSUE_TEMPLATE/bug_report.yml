@@ -1,0 +1,46 @@
+name: 🐛 Bug report
+description: Something does not work as expected.
+labels: ["type: bug", "status: triage"]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Include what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open …
+        2. Tap …
+        3. See …
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Android
+        - Desktop (Windows)
+        - Desktop (Linux)
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device, OS version and headphones
+      placeholder: "Pixel 7, Android 16, Sony WH-1000XM5 over Bluetooth"
+  - type: input
+    id: version
+    attributes:
+      label: App version or commit
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      render: text

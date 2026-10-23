@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "⬆️ chore"
+      include: scope
+    groups:
+      kotlin-and-compose:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains.compose*"
+          - "org.jetbrains.kotlinx*"
+      android:
+        patterns:
+          - "com.android*"
+          - "androidx*"
+      quality-tools:
+        patterns:
+          - "io.gitlab.arturbosch.detekt*"
+          - "io.nlopez.compose.rules*"
+          - "com.diffplug.spotless*"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "⬆️ chore"
+      include: scope
+    groups:
+      tooling:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "⬆️ ci"
+    groups:
+      actions:
+        patterns: ["*"]
