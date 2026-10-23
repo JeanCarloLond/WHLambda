@@ -26,7 +26,9 @@ npm run format                     # Prettier for md/yml/json
 - `core:domain` is pure Kotlin: no Android, Compose, I/O or platform imports. Explicit API mode; KDoc on public API.
   New domain logic ships with unit tests in `commonTest`.
 - Compiler warnings are errors; fix the cause, do not suppress without a comment explaining why.
-- No hard-coded UI strings: add them to `shared/src/commonMain/composeResources/values/strings.xml` **and**
+- New screens follow the pattern in `docs/architecture.md` (Contract → ViewModel → Route + stateless Screen → Koin
+  module), modelled on `feature:exposure`. Features never depend on each other.
+- No hard-coded UI strings: add them to the feature's `composeResources/values/strings.xml` **and**
   `values-es/strings.xml`.
 - Versions only in `gradle/libs.versions.toml`; build configuration only in `build-logic/` convention plugins.
 - Never record, store or transmit raw audio. Persist aggregates only ([ADR-0007](docs/adr/0007-privacy-on-device-audio.md)).

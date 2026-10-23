@@ -96,7 +96,7 @@ flowchart TB
 Dependencies point inwards: `core:domain` knows nothing about Android, Compose or the network, so the rules that
 protect people's hearing are testable in milliseconds. Details in [docs/architecture.md](docs/architecture.md).
 
-**Stack:** Kotlin 2.4 · Compose Multiplatform 1.12 · Material 3 · AGP 9 · Gradle 9 (version catalog + convention
+**Stack:** Kotlin 2.4 · Compose Multiplatform 1.12 · Material 3 · Navigation 3 · Koin · AGP 9 · Gradle 9 (version catalog + convention
 plugins) · Supabase (planned) · detekt · ktlint/Spotless · Kover · Android Lint · GitHub Actions · Dependabot.
 
 ## Getting started
@@ -144,7 +144,10 @@ WHLambda/
 ├── apps/
 │   ├── android/          Android application (entry point only)
 │   └── desktop/          Compose Desktop application + installers
-├── shared/               Shared UI: App(), screens, string resources (en, es)
+├── shared/               App shell: App(), navigation, dependency injection
+├── feature/
+│   ├── exposure/         Dose explorer (reference screen implementation)
+│   └── about/            About screen
 ├── core/
 │   ├── domain/           Pure Kotlin business rules — no platform dependencies
 │   └── designsystem/     Theme, colours, reusable components

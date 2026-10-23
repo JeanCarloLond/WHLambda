@@ -99,8 +99,9 @@ Conventions worth knowing:
   into `core:domain` and keep composables thin.
 - `core:domain` uses Kotlin **explicit API mode**: every public declaration needs a visibility modifier and should
   have KDoc.
-- **No hard-coded user-facing text.** Add strings to `shared/src/commonMain/composeResources/values/strings.xml`
+- **No hard-coded user-facing text.** Add strings to the feature's `src/commonMain/composeResources/values/strings.xml`
   and the Spanish translation in `values-es/`.
+- **New screens** follow the [screen pattern](docs/architecture.md#screen-pattern-unidirectional-data-flow).
 - **Tests** use backticked sentence names: ``fun `NIOSH halves the allowed time every 3 dB`()``.
 - **Units in names** when a number has one: `levelDba`, `durationMinutes`, `exchangeRateDb`.
 
