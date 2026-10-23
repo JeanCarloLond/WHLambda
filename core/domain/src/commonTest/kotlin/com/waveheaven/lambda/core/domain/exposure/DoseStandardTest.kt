@@ -2,6 +2,7 @@ package com.waveheaven.lambda.core.domain.exposure
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration
@@ -81,6 +82,31 @@ class DoseStandardTest {
     @Test
     fun `remaining time is zero once the budget is spent`() {
         assertEquals(Duration.ZERO, DoseStandard.NIOSH.remainingDuration(Dose(1.2), 85.dBA))
+    }
+
+    @Test
+    fun `sustainable level is the inverse of the allowed duration`() {
+        assertEquals(85.0, DoseStandard.NIOSH.levelSustainableFor(8.hours).decibels, TOLERANCE)
+        assertEquals(88.0, DoseStandard.NIOSH.levelSustainableFor(4.hours).decibels, TOLERANCE)
+        assertEquals(80.0, DoseStandard.WHO_ADULT.levelSustainableFor(40.hours).decibels, TOLERANCE)
+    }
+
+    @Test
+    fun `a smaller remaining budget lowers the sustainable level`() {
+        // Half the NIOSH budget left, spent over 4 h, allows 85 dB(A) — the same as the full budget over 8 h.
+        assertEquals(85.0, DoseStandard.NIOSH.levelSustainableFor(4.hours, budget = 0.5).decibels, TOLERANCE)
+    }
+
+    @Test
+    fun `sustainable level rejects non-positive inputs`() {
+        assertFailsWith<IllegalArgumentException> { DoseStandard.NIOSH.levelSustainableFor(Duration.ZERO) }
+        assertFailsWith<IllegalArgumentException> { DoseStandard.NIOSH.levelSustainableFor(1.hours, budget = 0.0) }
+    }
+
+    @Test
+    fun `remaining share of the budget never goes negative`() {
+        assertEquals(0.25, Dose(0.75).remaining, TOLERANCE)
+        assertEquals(0.0, Dose(1.4).remaining, TOLERANCE)
     }
 
     @Test
