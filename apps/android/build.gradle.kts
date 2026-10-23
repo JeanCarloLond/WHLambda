@@ -8,6 +8,10 @@ android {
         versionName = "0.1.0"
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -20,4 +24,5 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.koin.android)
 }

@@ -5,18 +5,20 @@ plugins {
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            api(projects.core.designsystem)
-            implementation(projects.core.domain)
-            implementation(libs.compose.components.resources)
+            implementation(projects.core.designsystem)
+            implementation(projects.feature.exposure)
+            implementation(projects.feature.about)
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
+            implementation(libs.kotlinx.serialization.core)
+            api(libs.koin.core)
         }
         // UI tests render headlessly with Skia, which is only available on the desktop JVM.
         getByName("desktopTest").dependencies {
             implementation(libs.compose.ui.test)
             implementation(compose.desktop.currentOs)
+            // Provides Dispatchers.Main, which ViewModels and lifecycle-aware collection need.
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
-}
-
-compose.resources {
-    packageOfResClass = "com.waveheaven.lambda.shared.resources"
 }

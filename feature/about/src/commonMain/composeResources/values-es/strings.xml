@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WaveHeaven Lambda</string>
+    <string name="about_title">Acerca de</string>
+    <string name="navigate_back">Volver</string>
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_description">Un compañero de escucha segura: adapta el volumen de tu música al ruido que te rodea y lleva la cuenta de la dosis de exposición que tus oídos pueden soportar.</string>
+    <string name="about_privacy">Tu privacidad: el sonido se analiza en tu dispositivo y nunca se graba ni se sube. Solo se guardan niveles agregados.</string>
+    <string name="about_disclaimer">WaveHeaven no es un dispositivo médico. Si notas pitidos, audición apagada o dolor, consulta a un audiólogo.</string>
+    <string name="about_credits">Creado por Jean Carlo Londoño y Alejandro Garcés, como remasterización de WaveHeaven, un proyecto universitario de EAFIT.</string>
+    <string name="about_license">Código abierto bajo la Licencia Apache 2.0.</string>
+    <string name="about_source_code">Ver código fuente</string>
+</resources>

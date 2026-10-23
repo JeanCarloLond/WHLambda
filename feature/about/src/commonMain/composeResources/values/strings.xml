@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WaveHeaven Lambda</string>
+    <string name="about_title">About</string>
+    <string name="navigate_back">Back</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_description">A safe-listening companion: it adapts your music volume to the noise around you and keeps track of the exposure dose your ears can take.</string>
+    <string name="about_privacy">Your privacy: sound is analysed on your device and never recorded or uploaded. Only aggregated levels are stored.</string>
+    <string name="about_disclaimer">WaveHeaven is not a medical device. If you notice ringing, muffled hearing or pain, see an audiologist.</string>
+    <string name="about_credits">Created by Jean Carlo Londoño and Alejandro Garcés, remastering WaveHeaven, a university project at EAFIT.</string>
+    <string name="about_license">Open source under the Apache License 2.0.</string>
+    <string name="about_source_code">View source code</string>
+</resources>

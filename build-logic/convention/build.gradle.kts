@@ -28,6 +28,13 @@ gradlePlugin {
                     .pluginId
             implementationClass = "KmpComposeConventionPlugin"
         }
+        register("kmpFeature") {
+            id =
+                libs.plugins.whlambda.kmp.feature
+                    .get()
+                    .pluginId
+            implementationClass = "KmpFeatureConventionPlugin"
+        }
         register("androidApplication") {
             id =
                 libs.plugins.whlambda.android.application
