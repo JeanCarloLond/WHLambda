@@ -1,8 +1,10 @@
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.waveheaven.lambda.buildlogic.library
 import com.waveheaven.lambda.buildlogic.libs
 import com.waveheaven.lambda.buildlogic.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
@@ -15,6 +17,12 @@ class KmpComposeConventionPlugin : Plugin<Project> {
             pluginManager.apply(libs.pluginId("compose-compiler"))
 
             extensions.configure<KotlinMultiplatformExtension> {
+                // The AGP 9 KMP library plugin skips Android resources by default, which would leave
+                // Compose resources (strings, images) out of the APK and crash at runtime.
+                (this as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryTarget>("android") {
+                    androidResources { enable = true }
+                }
+
                 sourceSets.getByName("commonMain").dependencies {
                     implementation(libs.library("compose-runtime"))
                     implementation(libs.library("compose-foundation"))
