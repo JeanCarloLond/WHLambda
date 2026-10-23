@@ -29,12 +29,19 @@ spotless {
 dependencies {
     // Modules whose tests count towards the merged coverage report.
     kover(projects.core.domain)
+    kover(projects.core.audio)
 }
 
 kover {
     reports {
+        filters {
+            excludes {
+                // Thin adapters over Android APIs; they cannot run in JVM unit tests and are verified on a device.
+                classes("com.waveheaven.lambda.core.audio.Android*")
+            }
+        }
         verify {
-            rule("Domain logic must stay well tested") {
+            rule("Domain and audio processing must stay well tested") {
                 minBound(80)
             }
         }

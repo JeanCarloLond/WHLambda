@@ -37,6 +37,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 include(":core:domain")
 include(":core:designsystem")
+include(":core:audio")
 include(":feature:exposure")
 include(":feature:about")
 include(":shared")
