@@ -59,7 +59,7 @@ Notes:
 ## How the product uses this
 
 1. **Dose ceiling:** the adaptive-volume policy never targets a level whose sustained use would exceed the
-   remaining budget for the window ([ADR-0006](../adr/0006-adaptive-volume-policy.md)).
+   remaining budget for the window ([ADR-0006](../adr/0006-adaptive-volume-policy.md), [volume-controller.md](volume-controller.md)).
 2. **Feedback:** the app shows dose consumed (% of day/week) and time left at the current level.
 3. **Alerts:** at 50 %, 80 % and 100 % of the budget, visually and haptically — never only by sound.
 

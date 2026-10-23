@@ -17,6 +17,10 @@ public value class Dose(
     public val isExceeded: Boolean
         get() = fraction > 1.0
 
+    /** Share of the budget still available, between 0.0 and 1.0. */
+    public val remaining: Double
+        get() = (1.0 - fraction).coerceAtLeast(0.0)
+
     public operator fun plus(other: Dose): Dose = Dose(fraction + other.fraction)
 
     override fun compareTo(other: Dose): Int = fraction.compareTo(other.fraction)

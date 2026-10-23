@@ -1,6 +1,7 @@
 package com.waveheaven.lambda.core.domain.exposure
 
 import kotlin.math.log10
+import kotlin.math.log2
 import kotlin.math.pow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -41,7 +42,20 @@ public enum class DoseStandard(
     public fun remainingDuration(
         alreadyConsumed: Dose,
         level: SoundLevel,
-    ): Duration = allowedDuration(level) * (1.0 - alreadyConsumed.fraction).coerceAtLeast(0.0)
+    ): Duration = allowedDuration(level) * alreadyConsumed.remaining
+
+    /**
+     * Highest steady level that can be sustained for [duration] while consuming at most [budget]
+     * (a fraction of the full allowance, e.g. the part not yet consumed). Inverse of [allowedDuration].
+     */
+    public fun levelSustainableFor(
+        duration: Duration,
+        budget: Double = 1.0,
+    ): SoundLevel {
+        require(duration.isPositive() && duration.isFinite()) { "Duration must be finite and positive, was $duration" }
+        require(budget > 0.0 && budget.isFinite()) { "Budget must be finite and positive, was $budget" }
+        return SoundLevel(criterionLevel.decibels + exchangeRateDb * log2(referencePeriod * budget / duration))
+    }
 }
 
 /** Exchange rate that keeps acoustic energy constant: doubling the energy adds 10·log10(2) ≈ 3.01 dB. */
