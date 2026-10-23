@@ -1,0 +1,67 @@
+[versions]
+# Toolchain
+jdk = "21"
+jvmTarget = "17"
+kotlin = "2.4.21"
+agp = "9.4.1"
+compose-multiplatform = "1.12.2"
+compose-material3 = "1.9.0"
+
+# Android SDK levels
+android-compileSdk = "37"
+android-targetSdk = "37"
+android-minSdk = "29"
+
+# Libraries
+androidx-activity = "1.13.0"
+kotlinx-coroutines = "1.11.0"
+
+# Quality
+detekt = "1.23.8"
+detekt-kotlin = "2.0.21"
+compose-rules = "0.6.8"
+ktlint = "1.8.0"
+kover = "0.9.11"
+spotless = "8.10.4"
+
+[libraries]
+# Compose Multiplatform
+compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
+compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
+compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
+compose-ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "compose-multiplatform" }
+compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
+compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-material3" }
+compose-ui-test = { module = "org.jetbrains.compose.ui:ui-test", version.ref = "compose-multiplatform" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+
+# Detekt rule sets
+detekt-compose-rules = { module = "io.nlopez.compose.rules:detekt", version.ref = "compose-rules" }
+
+# Gradle plugins consumed by build-logic convention plugins
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
+compose-compiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+
+# Convention plugins (defined in build-logic/)
+whlambda-kmp-library = { id = "whlambda.kmp.library" }
+whlambda-kmp-compose = { id = "whlambda.kmp.compose" }
+whlambda-android-application = { id = "whlambda.android.application" }
+whlambda-desktop-application = { id = "whlambda.desktop.application" }
+whlambda-detekt = { id = "whlambda.detekt" }

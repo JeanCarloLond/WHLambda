@@ -1,0 +1,28 @@
+name: 🔬 Technical spike
+description: Time-boxed investigation that answers a feasibility question before we commit to a requirement.
+labels: ["type: spike", "status: triage"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question to answer
+      placeholder: Can a foreground service read the microphone and change STREAM_MUSIC volume while Spotify plays?
+    validations:
+      required: true
+  - type: input
+    id: timebox
+    attributes:
+      label: Time box
+      placeholder: 1 day
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: What evidence closes the spike (prototype, measurements, ADR)?
+      value: |
+        - [ ] Findings written in `docs/spikes/` (or a comment on this issue)
+        - [ ] Decision recorded as an ADR if it changes architecture
+    validations:
+      required: true

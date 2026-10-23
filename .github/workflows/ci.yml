@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  conventions:
+    name: Conventions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint commit messages
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from "${{ github.event.pull_request.base.sha }}" --to "${{ github.event.pull_request.head.sha }}" --verbose
+
+      - name: Lint PR title (it becomes the squash-merge commit)
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | npx commitlint --verbose
+
+      - name: Check formatting of docs and config (Prettier)
+        run: npm run format:check
+
+  kotlin:
+    name: Lint, test & build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # Also validates the Gradle wrapper checksum.
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Static analysis, unit tests and Android Lint
+        run: ./gradlew check --continue
+
+      - name: Coverage (domain ≥ 80 %)
+        run: ./gradlew koverXmlReport koverVerify
+
+      - name: Build Android debug APK and desktop app
+        run: ./gradlew :apps:android:assembleDebug :apps:desktop:createDistributable
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: whlambda-debug-apk
+          path: apps/android/build/outputs/apk/debug/*.apk
+          retention-days: 14
+
+      - name: Upload reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          retention-days: 14

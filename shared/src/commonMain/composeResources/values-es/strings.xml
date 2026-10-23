@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WaveHeaven Lambda</string>
+    <string name="dose_explorer_subtitle">¿Cuánto tiempo es seguro este nivel de escucha?</string>
+    <string name="dose_explorer_level">Nivel: %1$d dB(A)</string>
+    <string name="dose_explorer_niosh">Tiempo seguro por día (NIOSH)</string>
+    <string name="dose_explorer_who">Tiempo seguro por semana (OMS)</string>
+    <string name="medical_disclaimer">WaveHeaven no es un dispositivo médico. Si notas pitidos o audición apagada, consulta a un audiólogo.</string>
+</resources>

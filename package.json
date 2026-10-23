@@ -1,0 +1,22 @@
+{
+  "name": "whlambda-tooling",
+  "private": true,
+  "description": "Repository tooling only: git hooks, commit linting and docs formatting. The apps are built with Gradle.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "prepare": "lefthook install",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "commitlint": "commitlint --edit"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "lefthook": "2.2.2",
+    "prettier": "3.9.10"
+  }
+}
