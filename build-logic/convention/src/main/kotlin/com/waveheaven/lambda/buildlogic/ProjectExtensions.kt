@@ -1,0 +1,27 @@
+package com.waveheaven.lambda.buildlogic
+
+import org.gradle.api.Project
+import org.gradle.api.artifacts.MinimalExternalModuleDependency
+import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.getByType
+
+internal val Project.libs: VersionCatalog
+    get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+internal fun VersionCatalog.version(alias: String): String = findVersion(alias).get().requiredVersion
+
+internal fun VersionCatalog.library(alias: String): Provider<MinimalExternalModuleDependency> = findLibrary(alias).get()
+
+internal fun VersionCatalog.pluginId(alias: String): String = findPlugin(alias).get().get().pluginId
+
+/** Root package shared by every module, e.g. `:core:domain` → `com.waveheaven.lambda.core.domain`. */
+internal const val BASE_PACKAGE = "com.waveheaven.lambda"
+
+internal val Project.namespaceFromPath: String
+    get() =
+        BASE_PACKAGE +
+            path.split(':').filter(String::isNotEmpty).joinToString(separator = "") { segment ->
+                "." + segment.replace('-', '_')
+            }

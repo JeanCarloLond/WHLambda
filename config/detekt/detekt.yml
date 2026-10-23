@@ -1,0 +1,38 @@
+# Builds on detekt's default config (buildUponDefaultConfig = true); only deviations are listed.
+
+naming:
+  FunctionNaming:
+    # Composables are PascalCase by convention.
+    ignoreAnnotated: ["Composable"]
+    # Tests use backticked sentence names. detekt's defaults miss our custom KMP target names.
+    excludes: ["**/test/**", "**/commonTest/**", "**/desktopTest/**", "**/androidHostTest/**"]
+  TopLevelPropertyNaming:
+    constantPattern: "[A-Z][A-Za-z0-9_]*"
+
+complexity:
+  LongParameterList:
+    # Composables legitimately take many optional parameters.
+    ignoreAnnotated: ["Composable"]
+  TooManyFunctions:
+    excludes: ["**/test/**", "**/commonTest/**", "**/desktopTest/**", "**/androidHostTest/**"]
+
+style:
+  MagicNumber:
+    excludes: ["**/test/**", "**/commonTest/**", "**/desktopTest/**", "**/androidHostTest/**", "**/theme/**"]
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreNamedArgument: true
+    # Enum entries such as DoseStandard declare their defining constants inline.
+    ignoreEnums: true
+  MaxLineLength:
+    # Keep in sync with max_line_length in .editorconfig (ktlint).
+    maxLineLength: 140
+  UnusedPrivateMember:
+    # @Preview functions are only referenced by tooling.
+    ignoreAnnotated: ["Preview"]
+
+Compose:
+  ModifierMissing:
+    active: true
+  ViewModelForwarding:
+    active: true
