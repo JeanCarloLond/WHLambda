@@ -25,6 +25,8 @@ flowchart TB
     desktop --> shared
     shared --> exposure
     shared --> about
+    shared --> audio[":core:audio"]
+    audio --> domain
     exposure --> designsystem
     exposure --> domain
     about --> designsystem
@@ -34,6 +36,7 @@ flowchart TB
 | -------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------- | --------------------- |
 | `:core:domain`       | KMP library, pure Kotlin | Business rules: exposure dose, Leq, volume controller, profiles. Defines _ports_ (interfaces) for the outside world. | Kotlin stdlib only    |
 | `:core:designsystem` | KMP + Compose            | Theme, colour tokens, icons, reusable components                                                                     | Compose               |
+| `:core:audio`        | KMP library              | A-weighting, level metering and calibration (common); Android adapters for the microphone and media-volume ports     | `core:domain`         |
 | `:feature:*`         | KMP + Compose            | One user-facing capability: navigation key, screens, ViewModels, DI module, strings                                  | `core:*`              |
 | `:shared`            | KMP + Compose            | App shell: `App()`, navigation graph, Koin setup                                                                     | `core:*`, `feature:*` |
 | `:apps:android`      | Android application      | `Application`, activity, manifest, foreground service, platform wiring                                               | `shared`              |
@@ -43,19 +46,18 @@ flowchart TB
 
 Modules are created when they have code, never empty. Expected next:
 
-| Module        | Phase | Responsibility                                                                                                                                                           |
-| ------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `:core:audio` | 1     | Adapters for the domain ports: microphone metering (Android `AudioRecord`, desktop `javax.sound`), media volume (Android `AudioManager`, Windows WASAPI, Linux PipeWire) |
-| `:core:data`  | 1     | Local persistence of aggregated exposure (SQLDelight), repositories                                                                                                      |
-| `:core:sync`  | 3     | Supabase client (auth, sync of aggregates)                                                                                                                               |
-| `:feature:*`  | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`…                                                                                                                  |
+| Module       | Phase | Responsibility                                                      |
+| ------------ | ----- | ------------------------------------------------------------------- |
+| `:core:data` | 1     | Local persistence of aggregated exposure (SQLDelight), repositories |
+| `:core:sync` | 3     | Supabase client (auth, sync of aggregates)                          |
+| `:feature:*` | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`…             |
 
 ## Dependency rules
 
 1. **Dependencies point inwards.** `apps → shared → feature → core`. Nothing in `core` depends on anything above it.
 2. **Features never depend on each other.** They communicate through navigation callbacks wired in `:shared`
    (e.g. `DoseExplorerRoute(onOpenAbout = { backStack.add(AboutKey) })`).
-3. **`core:domain` is pure.** No Android, no Compose, no I/O, no coroutines dispatchers. It describes _what_ must
+3. **`core:domain` is pure.** No Android, no Compose, no I/O, no coroutine dispatchers (ports may expose `Flow` types). It describes _what_ must
    happen; adapters in other modules decide _how_. This is what makes hearing-safety rules fast and exhaustive
    to test.
 4. **Platform APIs live behind ports.** The domain declares an interface (e.g. reading and setting the media volume);
