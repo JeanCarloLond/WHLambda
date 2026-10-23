@@ -1,0 +1,24 @@
+# Git hooks, installed automatically by `npm install` (see package.json "prepare").
+# They mirror the CI checks so problems surface before a push, not after.
+
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --no -- commitlint --edit {1}
+
+pre-commit:
+  parallel: true
+  commands:
+    prettier:
+      glob: "*.{md,yml,yaml,json}"
+      run: npx --no -- prettier --write --ignore-unknown {staged_files}
+      stage_fixed: true
+    ktlint:
+      glob: "*.{kt,kts}"
+      run: ./gradlew spotlessApply --quiet
+      stage_fixed: true
+
+pre-push:
+  commands:
+    gradle-check:
+      run: ./gradlew detekt desktopTest --quiet
