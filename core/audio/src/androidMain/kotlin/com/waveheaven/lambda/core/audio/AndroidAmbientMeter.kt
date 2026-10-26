@@ -28,11 +28,11 @@ import kotlinx.coroutines.flow.flowOn
  * Samples live only in a reusable buffer and are reduced to levels by [LevelMeter] (ADR-0007). To keep metering with
  * the screen off, collect from a `microphone` foreground service.
  *
- * @param calibration overrides the nominal calibration of the chosen source (user calibration, WH-004).
+ * @param adjustmentDb the user's correction to the nominal calibration (WH-004), read whenever metering starts.
  */
 class AndroidAmbientMeter(
     private val context: Context,
-    private val calibration: MicrophoneCalibration? = null,
+    private val adjustmentDb: suspend () -> Double = { 0.0 },
 ) : AmbientMeter {
     private val audio: AudioManager = context.getSystemService(AudioManager::class.java)
 
@@ -52,7 +52,7 @@ class AndroidAmbientMeter(
                     } else {
                         MicrophoneCalibration.ANDROID_VOICE_RECOGNITION_NOMINAL
                     }
-                val meter = LevelMeter(SAMPLE_RATE, calibration ?: nominal)
+                val meter = LevelMeter(SAMPLE_RATE, MicrophoneCalibration(nominal.offsetDb + adjustmentDb()))
                 val buffer = FloatArray(CHUNK_SAMPLES)
                 while (true) {
                     currentCoroutineContext().ensureActive()

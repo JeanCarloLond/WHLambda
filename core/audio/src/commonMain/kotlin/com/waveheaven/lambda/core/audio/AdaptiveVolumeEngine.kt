@@ -106,30 +106,37 @@ class AdaptiveVolumeEngine(
         suspend fun run(onStatus: suspend (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem {
             doses = tracker.report(clock.now(), settings.value.weeklyStandard)
             while (true) {
-                if (!settings.value.consent.allowsMetering()) return AdaptiveVolumeProblem.NO_CONSENT
-                if (volume.isMusicActive()) {
-                    // The failure is reported as a problem the UI explains; its message adds nothing for the user.
-                    @Suppress("SwallowedException")
-                    try {
-                        meterWhilePlaying(onStatus)
-                    } catch (e: MicrophoneUnavailableException) {
-                        return AdaptiveVolumeProblem.MICROPHONE_UNAVAILABLE
+                val problem =
+                    when {
+                        !settings.value.consent.allowsMetering() -> AdaptiveVolumeProblem.NO_CONSENT
+                        volume.needsSetup() -> AdaptiveVolumeProblem.NO_MEDIA_APP
+                        volume.isMusicActive() -> meterWhilePlaying(onStatus)
+                        else -> waitForMusic(onStatus)
                     }
-                } else {
-                    flush()
-                    onStatus(status(AdaptiveVolumeState.WAITING_FOR_MUSIC))
-                    delay(IDLE_POLL_INTERVAL)
-                }
+                if (problem != null) return problem
             }
         }
 
-        /** Leaving this function cancels the meter flow, which releases the microphone. */
-        private suspend fun meterWhilePlaying(onStatus: suspend (AdaptiveVolumeStatus) -> Unit) {
-            meter
-                .levels()
-                .takeWhile { volume.isMusicActive() && settings.value.consent.allowsMetering() }
-                .collect { ambient -> onStatus(tick(ambient.coerceAtLeast(QUIETEST_MEASURABLE))) }
+        private suspend fun waitForMusic(onStatus: suspend (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem? {
+            flush()
+            onStatus(status(AdaptiveVolumeState.WAITING_FOR_MUSIC))
+            delay(IDLE_POLL_INTERVAL)
+            return null
         }
+
+        /** Leaving this function cancels the meter flow, which releases the microphone. */
+        private suspend fun meterWhilePlaying(onStatus: suspend (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem? =
+            // The failure is reported as a problem the UI explains; its message adds nothing for the user.
+            @Suppress("SwallowedException")
+            try {
+                meter
+                    .levels()
+                    .takeWhile { volume.isMusicActive() && settings.value.consent.allowsMetering() }
+                    .collect { ambient -> onStatus(tick(ambient.coerceAtLeast(QUIETEST_MEASURABLE))) }
+                null
+            } catch (e: MicrophoneUnavailableException) {
+                AdaptiveVolumeProblem.MICROPHONE_UNAVAILABLE
+            }
 
         private suspend fun tick(ambient: SoundLevel): AdaptiveVolumeStatus {
             val current = settings.value
