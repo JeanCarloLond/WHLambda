@@ -32,6 +32,7 @@ import com.waveheaven.lambda.feature.dashboard.resources.app_name
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_explore
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_level
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_no_listening
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_profile
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_close
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_on_track
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_reached
@@ -43,6 +44,10 @@ import com.waveheaven.lambda.feature.dashboard.resources.dashboard_week_who_sens
 import com.waveheaven.lambda.feature.dashboard.resources.medical_disclaimer
 import com.waveheaven.lambda.feature.dashboard.resources.open_about
 import com.waveheaven.lambda.feature.dashboard.resources.open_settings
+import com.waveheaven.lambda.feature.dashboard.resources.profile_commute
+import com.waveheaven.lambda.feature.dashboard.resources.profile_gym
+import com.waveheaven.lambda.feature.dashboard.resources.profile_home
+import com.waveheaven.lambda.feature.dashboard.resources.profile_office
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -50,6 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun DashboardRoute(
     onOpenExplorer: () -> Unit,
+    onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
     modifier: Modifier = Modifier,
@@ -59,6 +65,7 @@ fun DashboardRoute(
     DashboardScreen(
         state = state,
         onOpenExplorer = onOpenExplorer,
+        onOpenProfiles = onOpenProfiles,
         onOpenSettings = onOpenSettings,
         onOpenAbout = onOpenAbout,
         modifier = modifier,
@@ -74,6 +81,7 @@ fun DashboardRoute(
 fun DashboardScreen(
     state: DashboardUiState,
     onOpenExplorer: () -> Unit,
+    onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
     modifier: Modifier = Modifier,
@@ -103,6 +111,11 @@ fun DashboardScreen(
                     .widthIn(max = 560.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            state.profile?.let { profile ->
+                OutlinedButton(onClick = onOpenProfiles) {
+                    Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
+                }
+            }
             state.daily?.let { BudgetCard(title = stringResource(Res.string.dashboard_today), budget = it, level = state.latestLevel) }
             state.weekly?.let { BudgetCard(title = weeklyTitle(it.standard), budget = it, level = state.latestLevel) }
             if (!state.isLoading && state.latestLevel == null) {
@@ -114,6 +127,17 @@ fun DashboardScreen(
         }
     }
 }
+
+/** Built-in profiles are shown in the user's language; the user's own keep the name they typed. */
+@Composable
+private fun profileName(profile: ActiveProfileUi): String =
+    when (profile.id.takeIf { profile.isBuiltIn }) {
+        "commute" -> stringResource(Res.string.profile_commute)
+        "gym" -> stringResource(Res.string.profile_gym)
+        "office" -> stringResource(Res.string.profile_office)
+        "home" -> stringResource(Res.string.profile_home)
+        else -> profile.name
+    }
 
 @Composable
 private fun weeklyTitle(standard: DoseStandard): String =

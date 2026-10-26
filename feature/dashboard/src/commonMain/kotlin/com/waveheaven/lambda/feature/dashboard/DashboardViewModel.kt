@@ -7,6 +7,7 @@ import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
 import com.waveheaven.lambda.core.domain.exposure.ExposureLog
 import com.waveheaven.lambda.core.domain.exposure.WindowDose
+import com.waveheaven.lambda.core.domain.profile.ListeningProfile
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,22 +31,22 @@ import kotlin.time.Duration.Companion.minutes
 class DashboardViewModel(
     private val tracker: DoseTracker,
     log: ExposureLog,
-    private val clock: Clock = Clock.System,
-    private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() },
     weeklyStandard: Flow<DoseStandard> = flowOf(DoseStandard.WHO_ADULT),
-    ticks: Flow<Unit> = everyMinute(),
+    activeProfile: Flow<ListeningProfile> = flowOf(ListeningProfile.DEFAULT),
+    private val time: DashboardClock = DashboardClock(),
 ) : ViewModel() {
     val state: StateFlow<DashboardUiState> =
-        combine(log.changes(), ticks, weeklyStandard) { _, _, standard -> standard }
-            .map { standard -> load(standard) }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardUiState())
+        combine(log.changes(), time.ticks, weeklyStandard, activeProfile) { _, _, standard, profile -> standard to profile }
+            .map { (standard, profile) ->
+                load(standard).copy(profile = ActiveProfileUi(profile.id, profile.name, profile.isBuiltIn))
+            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardUiState())
 
     private suspend fun load(weeklyStandard: DoseStandard): DashboardUiState {
-        val now = clock.now()
+        val now = time.clock.now()
         val report = tracker.report(now, weeklyStandard)
         val latest = report.latest
         val history = tracker.dailyHistory(now, HISTORY_DAYS, DoseStandard.NIOSH)
-        val zone = timeZone()
+        val zone = time.timeZone()
         return DashboardUiState(
             isLoading = false,
             daily = report.daily.toBudget(latest?.output?.let { report.daily.timeLeftAt(it) }),
@@ -82,7 +83,19 @@ class DashboardViewModel(
         const val HISTORY_DAYS = 7
         const val CLOSE_TO_LIMIT = 0.8
         const val STOP_TIMEOUT_MILLIS = 5_000L
+    }
+}
 
+/**
+ * Where the dashboard gets the time: the current instant, the user's time zone (read on every reload, so travelling
+ * users get local days) and a tick to reload on, once a minute by default so day boundaries roll over.
+ */
+class DashboardClock(
+    val clock: Clock = Clock.System,
+    val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() },
+    val ticks: Flow<Unit> = everyMinute(),
+) {
+    private companion object {
         fun everyMinute(): Flow<Unit> =
             flow {
                 while (true) {

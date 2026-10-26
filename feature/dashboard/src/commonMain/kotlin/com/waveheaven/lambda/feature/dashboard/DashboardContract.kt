@@ -20,6 +20,15 @@ data class DashboardUiState(
     val latestLevel: LevelUi? = null,
     /** Daily NIOSH dose of the last 7 local days, oldest first. */
     val history: List<HistoryDayUi> = emptyList(),
+    /** The listening profile in use. */
+    val profile: ActiveProfileUi? = null,
+)
+
+data class ActiveProfileUi(
+    val id: String,
+    /** The user's name for their own profiles; built-in ones are named by the screen in the user's language. */
+    val name: String,
+    val isBuiltIn: Boolean,
 )
 
 /** How much of one standard's budget is used. */

@@ -17,6 +17,11 @@
     <string name="dashboard_history_day">%1$s: %2$s</string>
     <string name="dashboard_explore">Explore listening levels</string>
     <string name="medical_disclaimer">WaveHeaven is not a medical device. If you notice ringing or muffled hearing, see an audiologist.</string>
+    <string name="dashboard_profile">Profile: %1$s</string>
+    <string name="profile_commute">Commute</string>
+    <string name="profile_gym">Gym</string>
+    <string name="profile_office">Office</string>
+    <string name="profile_home">Home</string>
     <string name="day_1">Mon</string>
     <string name="day_2">Tue</string>
     <string name="day_3">Wed</string>

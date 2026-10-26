@@ -27,6 +27,7 @@ class DashboardScreenTest {
             weekly = BudgetUi(DoseStandard.WHO_ADULT, 85, BudgetStatus.CLOSE_TO_LIMIT, 2.hours),
             latestLevel = LevelUi(94, 6),
             history = (1..7).map { HistoryDayUi(isoDayOfWeek = it, percent = it * 20, isToday = it == 7) },
+            profile = ActiveProfileUi("gym", "Gym", isBuiltIn = true),
         )
 
     @BeforeTest
@@ -85,6 +86,7 @@ class DashboardScreenTest {
                 DashboardScreen(
                     state = state,
                     onOpenExplorer = { opened += "explorer" },
+                    onOpenProfiles = { opened += "profiles" },
                     onOpenSettings = { opened += "settings" },
                     onOpenAbout = { opened += "about" },
                 )
@@ -92,9 +94,10 @@ class DashboardScreenTest {
 
             onNodeWithContentDescription("Settings").performClick()
             onNodeWithContentDescription("About WaveHeaven").performClick()
+            onNodeWithText("Profile: Gym").performClick()
             onNodeWithText("Explore listening levels").performScrollTo().performClick()
 
-            assertEquals(listOf("settings", "about", "explorer"), opened)
+            assertEquals(listOf("settings", "about", "profiles", "explorer"), opened)
         }
 
     @Test
@@ -105,9 +108,10 @@ class DashboardScreenTest {
 
             onNodeWithText("Hoy (NIOSH)").assertIsDisplayed()
             onNodeWithText("Te quedan 30 min a 94 ± 6 dB(A)").assertIsDisplayed()
+            onNodeWithText("Perfil: Gimnasio").assertIsDisplayed()
         }
 
     @androidx.compose.runtime.Composable
     private fun Dashboard(state: DashboardUiState) =
-        DashboardScreen(state = state, onOpenExplorer = {}, onOpenSettings = {}, onOpenAbout = {})
+        DashboardScreen(state = state, onOpenExplorer = {}, onOpenProfiles = {}, onOpenSettings = {}, onOpenAbout = {})
 }

@@ -7,6 +7,7 @@ import com.waveheaven.lambda.core.domain.exposure.ExposureMinute
 import com.waveheaven.lambda.core.domain.exposure.InMemoryExposureLog
 import com.waveheaven.lambda.core.domain.exposure.SoundLevel
 import com.waveheaven.lambda.core.domain.exposure.dBA
+import com.waveheaven.lambda.core.domain.profile.ListeningProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -112,13 +113,27 @@ class DashboardViewModelTest {
         }
 
     @Test
+    fun `shows the active listening profile as it changes`() =
+        runTest {
+            val state = observe(viewModel())
+            assertEquals(ActiveProfileUi("commute", "Commute", isBuiltIn = true), state.value.profile)
+
+            activeProfile.value =
+                ListeningProfile("study", "Study", isBuiltIn = false, targetSnrDb = 4.0, minVolume = 0.05, maxVolume = 0.4)
+
+            assertEquals(ActiveProfileUi("study", "Study", isBuiltIn = false), state.value.profile)
+        }
+
+    @Test
     fun `percentages are written out, capped for display`() {
         assertEquals("42 %", formatPercent(42))
         assertEquals("> 999 %", formatPercent(1500))
     }
 
+    private val activeProfile = MutableStateFlow(ListeningProfile.DEFAULT)
+
     private fun viewModel(weeklyStandard: MutableStateFlow<DoseStandard> = MutableStateFlow(DoseStandard.WHO_ADULT)) =
-        DashboardViewModel(tracker, log, clock, { bogota }, weeklyStandard, ticks = flowOf(Unit))
+        DashboardViewModel(tracker, log, weeklyStandard, activeProfile, DashboardClock(clock, { bogota }, ticks = flowOf(Unit)))
 
     private fun TestScope.observe(viewModel: DashboardViewModel) =
         viewModel.state.also { state -> backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { state.collect {} } }

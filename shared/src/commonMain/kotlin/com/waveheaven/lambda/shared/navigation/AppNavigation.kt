@@ -15,6 +15,8 @@ import com.waveheaven.lambda.feature.dashboard.DashboardKey
 import com.waveheaven.lambda.feature.dashboard.DashboardRoute
 import com.waveheaven.lambda.feature.exposure.DoseExplorerKey
 import com.waveheaven.lambda.feature.exposure.DoseExplorerRoute
+import com.waveheaven.lambda.feature.profiles.ProfilesKey
+import com.waveheaven.lambda.feature.profiles.ProfilesRoute
 import com.waveheaven.lambda.feature.settings.SettingsKey
 import com.waveheaven.lambda.feature.settings.SettingsRoute
 import kotlinx.serialization.modules.SerializersModule
@@ -47,12 +49,16 @@ internal fun AppNavigation(
                 entry<DashboardKey> {
                     DashboardRoute(
                         onOpenExplorer = { backStack.add(DoseExplorerKey) },
+                        onOpenProfiles = { backStack.add(ProfilesKey) },
                         onOpenSettings = { backStack.add(SettingsKey) },
                         onOpenAbout = { backStack.add(AboutKey) },
                     )
                 }
                 entry<DoseExplorerKey> {
                     DoseExplorerRoute(onBack = { backStack.removeLastOrNull() })
+                }
+                entry<ProfilesKey> {
+                    ProfilesRoute(onBack = { backStack.removeLastOrNull() })
                 }
                 entry<SettingsKey> {
                     SettingsRoute(onBack = { backStack.removeLastOrNull() })
@@ -77,6 +83,7 @@ private val NavigationConfig =
                     subclass(DoseExplorerKey::class, DoseExplorerKey.serializer())
                     subclass(AboutKey::class, AboutKey.serializer())
                     subclass(SettingsKey::class, SettingsKey.serializer())
+                    subclass(ProfilesKey::class, ProfilesKey.serializer())
                 }
             }
     }

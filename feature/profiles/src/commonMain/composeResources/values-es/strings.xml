@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profiles_title">Perfiles de escucha</string>
+    <string name="navigate_back">Volver</string>
+    <string name="profiles_intro">Un perfil define cuánto por encima del ruido va tu música y cuánto puede mover el volumen la app. Tu límite de escucha segura siempre se aplica, sea cual sea el perfil.</string>
+    <string name="profiles_summary">+%1$d dB sobre el ruido · volumen %2$d–%3$d&#160;%</string>
+    <string name="profiles_add">Nuevo perfil</string>
+    <string name="profiles_edit">Editar %1$s</string>
+    <string name="profiles_delete">Borrar %1$s</string>
+    <string name="profiles_editor_new">Nuevo perfil</string>
+    <string name="profiles_editor_edit">Editar perfil</string>
+    <string name="profiles_editor_name">Nombre</string>
+    <string name="profiles_editor_margin">Margen sobre el ruido: +%1$d dB</string>
+    <string name="profiles_editor_range">Rango de volumen: %1$d–%2$d&#160;%</string>
+    <string name="profiles_save">Guardar</string>
+    <string name="profiles_cancel">Cancelar</string>
+    <string name="profile_commute">Transporte</string>
+    <string name="profile_gym">Gimnasio</string>
+    <string name="profile_office">Oficina</string>
+    <string name="profile_home">Casa</string>
+</resources>

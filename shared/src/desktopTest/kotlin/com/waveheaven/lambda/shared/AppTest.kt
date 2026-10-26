@@ -53,6 +53,7 @@ class AppTest {
         runComposeUiTest {
             Locale.setDefault(Locale.ENGLISH)
             setContent { App(appVersion = "test") }
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
 
             onNodeWithText("Explore listening levels").performScrollTo().performClick()
             onNodeWithText("Level: 85 dB(A)").assertIsDisplayed()
@@ -60,6 +61,20 @@ class AppTest {
 
             onNodeWithContentDescription("Back").performClick()
             waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+        }
+
+    @Test
+    fun `picks a listening profile from the dashboard`() =
+        runComposeUiTest {
+            Locale.setDefault(Locale.ENGLISH)
+            setContent { App(appVersion = "test") }
+
+            waitUntilExactlyOneExists(hasText("Profile: Commute"))
+            onNodeWithText("Profile: Commute").performClick()
+            onNodeWithText("Gym").performClick()
+            onNodeWithContentDescription("Back").performClick()
+
+            waitUntilExactlyOneExists(hasText("Profile: Gym"))
         }
 
     @Test
