@@ -137,6 +137,35 @@ ViewModel store, released when the entry leaves the stack.
   storage, excluded from backups) or `createDesktopDriver()` (per-user data directory). Tests use an in-memory
   JDBC driver.
 
+## The adaptive-volume loop
+
+```mermaid
+flowchart LR
+    UI["Dashboard<br/><sub>Start · Pause · Stop</sub>"] -- AdaptiveVolume port --> Platform
+    subgraph Platform["platform binding"]
+        FGS["Android: AdaptiveVolumeService<br/><sub>microphone foreground service</sub>"]
+    end
+    Platform --> Session["AdaptiveVolumeSession<br/><sub>core:audio</sub>"]
+    Session --> Engine["AdaptiveVolumeEngine<br/><sub>core:audio</sub>"]
+    Engine --> Meter["AmbientMeter"] & Volume["MediaVolume"] & Models["OutputLevelModels"]
+    Engine --> Controller["VolumeController<br/><sub>core:domain</sub>"]
+    Engine --> Tracker["DoseTracker → ExposureLog"]
+```
+
+- **`AdaptiveVolumeEngine`** (common code) runs one loop: once per second it reads the ambient level, asks the
+  `VolumeController` for a decision with the live profile, standard and dose, applies it to the system volume and
+  folds the estimated level at the ear into per-minute aggregates. The microphone is open **only while music
+  plays**: when playback stops the meter flow is cancelled, which releases it, and the engine polls the playback state
+  once per second (spike #2, D5). The run ends on its own when consent is withdrawn or the microphone fails.
+- **`AdaptiveVolumeSession`** starts, pauses, resumes and stops runs. It lives as long as the process (a Koin
+  singleton) so the dashboard and the Android service see the same status.
+- **On Android**, `AndroidAdaptiveVolume` starts `AdaptiveVolumeService`, a `microphone` foreground service, only from a
+  visible tap (Android 14 rule). The service shows a persistent notification with the ambient level, today's dose and
+  Pause/Stop, stops itself when the session stops, is not sticky and has no boot receiver (WH-024). It holds no wake
+  lock: while capturing, the audio server keeps the CPU awake, and while waiting for music the playback that will wake
+  the loop holds one.
+- Starting asks for the microphone, then notifications, right before starting, never ahead.
+
 ## Source sets inside a KMP module
 
 ```
