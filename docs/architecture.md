@@ -16,19 +16,25 @@ flowchart TB
     shared[":shared<br/><sub>App(), navigation, DI</sub>"]
     subgraph features
         exposure[":feature:exposure"]
+        settings[":feature:settings"]
         about[":feature:about"]
     end
     designsystem[":core:designsystem"]
     domain[":core:domain"]
+    data[":core:data"]
 
     android --> shared
     desktop --> shared
     shared --> exposure
+    shared --> settings
     shared --> about
+    shared --> data
     shared --> audio[":core:audio"]
     audio --> domain
+    data --> domain
     exposure --> designsystem
     exposure --> domain
+    settings --> domain
     about --> designsystem
 ```
 
@@ -37,20 +43,20 @@ flowchart TB
 | `:core:domain`       | KMP library, pure Kotlin | Business rules: exposure dose, Leq, volume controller, profiles. Defines _ports_ (interfaces) for the outside world. | Kotlin stdlib only    |
 | `:core:designsystem` | KMP + Compose            | Theme, colour tokens, icons, reusable components                                                                     | Compose               |
 | `:core:audio`        | KMP library              | A-weighting, level metering and calibration (common); Android adapters for the microphone and media-volume ports     | `core:domain`         |
+| `:core:data`         | KMP library              | Local persistence (SQLDelight): implements storage ports such as `ExposureLog`; platform database drivers            | `core:domain`         |
 | `:feature:*`         | KMP + Compose            | One user-facing capability: navigation key, screens, ViewModels, DI module, strings                                  | `core:*`              |
 | `:shared`            | KMP + Compose            | App shell: `App()`, navigation graph, Koin setup                                                                     | `core:*`, `feature:*` |
-| `:apps:android`      | Android application      | `Application`, activity, manifest, foreground service, platform wiring                                               | `shared`              |
-| `:apps:desktop`      | JVM application          | `main`, window, tray, installers, platform wiring                                                                    | `shared`              |
+| `:apps:android`      | Android application      | `Application`, activity, manifest, foreground service, platform wiring                                               | `shared`, `core:*`    |
+| `:apps:desktop`      | JVM application          | `main`, window, tray, installers, platform wiring                                                                    | `shared`, `core:*`    |
 
 ### Planned modules
 
 Modules are created when they have code, never empty. Expected next:
 
-| Module       | Phase | Responsibility                                                      |
-| ------------ | ----- | ------------------------------------------------------------------- |
-| `:core:data` | 1     | Local persistence of aggregated exposure (SQLDelight), repositories |
-| `:core:sync` | 3     | Supabase client (auth, sync of aggregates)                          |
-| `:feature:*` | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`…             |
+| Module       | Phase | Responsibility                                          |
+| ------------ | ----- | ------------------------------------------------------- |
+| `:core:sync` | 3     | Supabase client (auth, sync of aggregates)              |
+| `:feature:*` | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`… |
 
 ## Dependency rules
 
@@ -106,6 +112,21 @@ ViewModel store, released when the entry leaves the stack.
 4. In `:shared`: add the module dependency, register the DI module in `appModules`, add an `entry<XKey>` to the
    navigation graph **and** register the key in `NavigationConfig`.
 5. Tests: ViewModel in `commonTest`, Screen in `desktopTest`; extend `AppTest` if navigation changes.
+
+## Persistence
+
+`:core:data` keeps everything the app stores in one SQLite database (`waveheaven.db`), through SQLDelight:
+
+- **Ports first.** The domain declares what it needs (`ExposureLog`); `:core:data` implements it (`SqlExposureLog`).
+  Features and services depend on the port, so they test with in-memory fakes (`InMemoryExposureLog`).
+- **Aggregates only.** Exposure is stored as one row per minute (`ExposureMinute`), never audio
+  ([ADR-0007](adr/0007-privacy-on-device-audio.md)). Rows older than 30 days are deleted when new ones are recorded.
+- **Migrations are the schema.** Each change is a new numbered file (`1.sqm`, `2.sqm`, …) next to the queries in
+  `core/data/src/commonMain/sqldelight/`; SQLDelight derives the schema and the version from them. Never edit a
+  migration that is on `main`.
+- **Drivers per platform.** Each app binds a `SqlDriver` in Koin: `createAndroidDriver(context)` (app-private
+  storage, excluded from backups) or `createDesktopDriver()` (per-user data directory). Tests use an in-memory
+  JDBC driver.
 
 ## Source sets inside a KMP module
 

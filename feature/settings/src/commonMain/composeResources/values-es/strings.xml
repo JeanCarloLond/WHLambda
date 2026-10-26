@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Ajustes</string>
+    <string name="navigate_back">Volver</string>
+    <string name="settings_data_title">Tus datos de escucha</string>
+    <string name="settings_data_description">WaveHeaven guarda un resumen por cada minuto de escucha: qué tan fuerte sonaban tu música y tu entorno. Nunca audio. Se queda en este dispositivo y no se incluye en las copias de seguridad. Los resúmenes de más de 30 días se borran solos.</string>
+    <string name="settings_delete_data">Borrar mis datos de escucha</string>
+    <string name="settings_delete_confirm_title">¿Borrar todos los datos de escucha?</string>
+    <string name="settings_delete_confirm_text">Tu dosis diaria y semanal volverá a empezar desde cero. No se puede deshacer.</string>
+    <string name="settings_delete_confirm">Borrar</string>
+    <string name="settings_cancel">Cancelar</string>
+    <string name="settings_data_deleted">Datos de escucha borrados</string>
+</resources>
