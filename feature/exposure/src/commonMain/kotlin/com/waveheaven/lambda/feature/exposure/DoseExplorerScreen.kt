@@ -32,6 +32,7 @@ import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_subtitle
 import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_who
 import com.waveheaven.lambda.feature.exposure.resources.medical_disclaimer
 import com.waveheaven.lambda.feature.exposure.resources.open_about
+import com.waveheaven.lambda.feature.exposure.resources.open_settings
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
@@ -40,11 +41,18 @@ import kotlin.math.roundToInt
 @Composable
 fun DoseExplorerRoute(
     onOpenAbout: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DoseExplorerViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    DoseExplorerScreen(state = state, onAction = viewModel::onAction, onOpenAbout = onOpenAbout, modifier = modifier)
+    DoseExplorerScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onOpenAbout = onOpenAbout,
+        onOpenSettings = onOpenSettings,
+        modifier = modifier,
+    )
 }
 
 /**
@@ -57,6 +65,7 @@ fun DoseExplorerScreen(
     state: DoseExplorerUiState,
     onAction: (DoseExplorerAction) -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val levelLabel = stringResource(Res.string.dose_explorer_level, state.level.decibels.roundToInt())
@@ -67,6 +76,9 @@ fun DoseExplorerScreen(
             TopAppBar(
                 title = { Text(stringResource(Res.string.app_name)) },
                 actions = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(WhIcons.Settings, contentDescription = stringResource(Res.string.open_settings))
+                    }
                     IconButton(onClick = onOpenAbout) {
                         Icon(WhIcons.Info, contentDescription = stringResource(Res.string.open_about))
                     }

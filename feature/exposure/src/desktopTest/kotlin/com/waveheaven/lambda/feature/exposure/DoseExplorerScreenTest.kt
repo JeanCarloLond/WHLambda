@@ -30,17 +30,42 @@ class DoseExplorerScreenTest {
     @Test
     fun `renders the safe times of the given state`() =
         runComposeUiTest {
-            setContent { DoseExplorerScreen(state = DoseExplorerUiState.at(94f), onAction = {}, onOpenAbout = {}) }
+            setContent { DoseExplorerScreen(state = DoseExplorerUiState.at(94f), onAction = {}, onOpenAbout = {}, onOpenSettings = {}) }
 
             onNodeWithText("Level: 94 dB(A)").assertIsDisplayed()
             onNodeWithText("1 h").assertIsDisplayed() // NIOSH: 94 dB(A) is allowed 1 h per day
         }
 
     @Test
+    fun `the settings button reports the intent`() =
+        runComposeUiTest {
+            var opened = 0
+            setContent {
+                DoseExplorerScreen(
+                    state = DoseExplorerUiState.at(85f),
+                    onAction = {},
+                    onOpenAbout = {},
+                    onOpenSettings = { opened++ },
+                )
+            }
+
+            onNodeWithContentDescription("Settings").performClick()
+
+            assertEquals(1, opened)
+        }
+
+    @Test
     fun `the about button reports the intent`() =
         runComposeUiTest {
             var opened = 0
-            setContent { DoseExplorerScreen(state = DoseExplorerUiState.at(85f), onAction = {}, onOpenAbout = { opened++ }) }
+            setContent {
+                DoseExplorerScreen(
+                    state = DoseExplorerUiState.at(85f),
+                    onAction = {},
+                    onOpenAbout = { opened++ },
+                    onOpenSettings = {},
+                )
+            }
 
             onNodeWithContentDescription("About WaveHeaven").performClick()
 

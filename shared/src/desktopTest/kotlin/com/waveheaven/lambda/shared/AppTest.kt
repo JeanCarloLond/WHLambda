@@ -6,7 +6,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.v2.runComposeUiTest
+import app.cash.sqldelight.db.SqlDriver
+import com.waveheaven.lambda.core.data.createInMemoryDriver
 import org.koin.core.context.stopKoin
+import org.koin.dsl.module
 import java.util.Locale
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -19,7 +22,9 @@ class AppTest {
     @BeforeTest
     fun setUp() {
         systemLocale = Locale.getDefault()
-        initKoin()
+        initKoin {
+            modules(module { single<SqlDriver> { createInMemoryDriver() } })
+        }
     }
 
     @AfterTest
@@ -46,6 +51,19 @@ class AppTest {
 
             onNodeWithContentDescription("About WaveHeaven").performClick()
             onNodeWithText("Version test").assertIsDisplayed()
+
+            onNodeWithContentDescription("Back").performClick()
+            onNodeWithText("Level: 85 dB(A)").assertIsDisplayed()
+        }
+
+    @Test
+    fun `navigates to settings and back`() =
+        runComposeUiTest {
+            Locale.setDefault(Locale.ENGLISH)
+            setContent { App(appVersion = "test") }
+
+            onNodeWithContentDescription("Settings").performClick()
+            onNodeWithText("Delete my listening data").assertIsDisplayed()
 
             onNodeWithContentDescription("Back").performClick()
             onNodeWithText("Level: 85 dB(A)").assertIsDisplayed()

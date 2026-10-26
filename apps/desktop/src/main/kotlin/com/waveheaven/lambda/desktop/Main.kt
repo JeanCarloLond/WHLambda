@@ -4,14 +4,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import app.cash.sqldelight.db.SqlDriver
+import com.waveheaven.lambda.core.data.createDesktopDriver
 import com.waveheaven.lambda.shared.App
 import com.waveheaven.lambda.shared.initKoin
+import org.koin.dsl.module
 
 /** Set by the jpackage launcher of installed builds; absent when running from Gradle. */
 private val appVersion: String = System.getProperty("jpackage.app-version") ?: "dev"
 
 fun main() {
-    initKoin()
+    initKoin {
+        modules(module { single<SqlDriver> { createDesktopDriver() } })
+    }
     application {
         Window(
             onCloseRequest = ::exitApplication,

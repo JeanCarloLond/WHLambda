@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Settings</string>
+    <string name="navigate_back">Back</string>
+    <string name="settings_data_title">Your listening data</string>
+    <string name="settings_data_description">WaveHeaven keeps one summary per minute of listening: how loud your music and your surroundings were. Never audio. It stays on this device and is not included in backups. Summaries older than 30 days are deleted automatically.</string>
+    <string name="settings_delete_data">Delete my listening data</string>
+    <string name="settings_delete_confirm_title">Delete all listening data?</string>
+    <string name="settings_delete_confirm_text">Your daily and weekly dose will start again from zero. This cannot be undone.</string>
+    <string name="settings_delete_confirm">Delete</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_data_deleted">Listening data deleted</string>
+</resources>

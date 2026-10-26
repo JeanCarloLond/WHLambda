@@ -13,6 +13,8 @@ import com.waveheaven.lambda.feature.about.AboutKey
 import com.waveheaven.lambda.feature.about.AboutScreen
 import com.waveheaven.lambda.feature.exposure.DoseExplorerKey
 import com.waveheaven.lambda.feature.exposure.DoseExplorerRoute
+import com.waveheaven.lambda.feature.settings.SettingsKey
+import com.waveheaven.lambda.feature.settings.SettingsRoute
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -41,7 +43,13 @@ internal fun AppNavigation(
         entryProvider =
             entryProvider {
                 entry<DoseExplorerKey> {
-                    DoseExplorerRoute(onOpenAbout = { backStack.add(AboutKey) })
+                    DoseExplorerRoute(
+                        onOpenAbout = { backStack.add(AboutKey) },
+                        onOpenSettings = { backStack.add(SettingsKey) },
+                    )
+                }
+                entry<SettingsKey> {
+                    SettingsRoute(onBack = { backStack.removeLastOrNull() })
                 }
                 entry<AboutKey> {
                     AboutScreen(appVersion = appVersion, onBack = { backStack.removeLastOrNull() })
@@ -61,6 +69,7 @@ private val NavigationConfig =
                 polymorphic(NavKey::class) {
                     subclass(DoseExplorerKey::class, DoseExplorerKey.serializer())
                     subclass(AboutKey::class, AboutKey.serializer())
+                    subclass(SettingsKey::class, SettingsKey.serializer())
                 }
             }
     }
