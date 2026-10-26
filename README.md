@@ -58,6 +58,7 @@ that can.
 | Adaptive volume for any music app (target SNR, capped by remaining dose)  | 🔜 Phase 1 |
 | Listening profiles per environment (commute, gym, office…)                | ✅ Done    |
 | Dashboard: today (NIOSH), last 7 days (WHO), time left, 7-day history     | ✅ Done    |
+| Onboarding with versioned, revocable consent (Ley 1581)                   | ✅ Done    |
 | Dose alerts at 50, 80 and 100 %                                           | 🔜 Phase 1 |
 | Desktop: per-app volume (Windows WASAPI, Linux PipeWire)                  | 🗓️ Phase 2 |
 | Account & sync of aggregated stats (Supabase)                             | 🗓️ Phase 3 |
@@ -151,8 +152,9 @@ WHLambda/
 ├── feature/
 │   ├── dashboard/        Home: dose used today and this week, history
 │   ├── exposure/         Dose explorer (reference screen implementation)
+│   ├── onboarding/       What is measured, consent, weekly standard, microphone
 │   ├── profiles/         Listening profiles: built-in and your own
-│   ├── settings/         Settings: your data
+│   ├── settings/         Settings: weekly standard, consent, your data
 │   └── about/            About screen
 ├── core/
 │   ├── domain/           Pure Kotlin business rules — no platform dependencies
@@ -184,6 +186,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 | [docs/adr/](docs/adr/)                                         | Architecture Decision Records — the _why_ behind choices |
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
 | [docs/roadmap.md](docs/roadmap.md)                             | Phases and milestones                                    |
+| [docs/privacy.md](docs/privacy.md)                             | What is processed, consent and its versions, user rights |
 | [docs/legacy.md](docs/legacy.md)                               | What we learned from the original WaveHeaven             |
 
 ## Contributing

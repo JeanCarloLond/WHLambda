@@ -17,6 +17,7 @@ flowchart TB
     subgraph features
         dashboard[":feature:dashboard"]
         exposure[":feature:exposure"]
+        onboarding[":feature:onboarding"]
         profiles[":feature:profiles"]
         settings[":feature:settings"]
         about[":feature:about"]
@@ -29,6 +30,7 @@ flowchart TB
     desktop --> shared
     shared --> dashboard
     shared --> exposure
+    shared --> onboarding
     shared --> profiles
     shared --> settings
     shared --> about
@@ -39,6 +41,7 @@ flowchart TB
     exposure --> designsystem
     exposure --> domain
     dashboard --> domain
+    onboarding --> domain
     profiles --> domain
     settings --> domain
     about --> designsystem
@@ -62,7 +65,7 @@ Modules are created when they have code, never empty. Expected next:
 | Module       | Phase | Responsibility                             |
 | ------------ | ----- | ------------------------------------------ |
 | `:core:sync` | 3     | Supabase client (auth, sync of aggregates) |
-| `:feature:*` | 1+    | `onboarding`, `hearing-check`…             |
+| `:feature:*` | 1+    | `hearing-check`…                           |
 
 ## Dependency rules
 
@@ -164,13 +167,13 @@ src/
 
 ## Cross-cutting decisions
 
-| Concern          | Decision                                                                                                                                  |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Hearing safety   | WHO/ITU-T H.870 and NIOSH dose model — see [hearing-safety.md](domain/hearing-safety.md)                                                  |
-| Volume behaviour | Target SNR capped by remaining dose — [ADR-0006](adr/0006-adaptive-volume-policy.md), [volume-controller.md](domain/volume-controller.md) |
-| Desktop audio    | Per-app volume via WASAPI (JNA) and `pactl` — [ADR-0009](adr/0009-desktop-per-app-volume.md)                                              |
-| Privacy          | On-device processing, only aggregates stored — [ADR-0007](adr/0007-privacy-on-device-audio.md)                                            |
-| UI architecture  | Navigation 3, Koin, unidirectional data flow — [ADR-0008](adr/0008-navigation-di-and-screen-pattern.md)                                   |
-| Backend          | Supabase — [ADR-0004](adr/0004-supabase-backend.md)                                                                                       |
-| i18n             | Compose resources, English default + Spanish, from day one                                                                                |
-| Accessibility    | WCAG 2.2 AA contrast, semantics on interactive elements, alerts never sound-only                                                          |
+| Concern          | Decision                                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hearing safety   | WHO/ITU-T H.870 and NIOSH dose model — see [hearing-safety.md](domain/hearing-safety.md)                                                    |
+| Volume behaviour | Target SNR capped by remaining dose — [ADR-0006](adr/0006-adaptive-volume-policy.md), [volume-controller.md](domain/volume-controller.md)   |
+| Desktop audio    | Per-app volume via WASAPI (JNA) and `pactl` — [ADR-0009](adr/0009-desktop-per-app-volume.md)                                                |
+| Privacy          | On-device processing, only aggregates stored, versioned consent — [ADR-0007](adr/0007-privacy-on-device-audio.md), [privacy.md](privacy.md) |
+| UI architecture  | Navigation 3, Koin, unidirectional data flow — [ADR-0008](adr/0008-navigation-di-and-screen-pattern.md)                                     |
+| Backend          | Supabase — [ADR-0004](adr/0004-supabase-backend.md)                                                                                         |
+| i18n             | Compose resources, English default + Spanish, from day one                                                                                  |
+| Accessibility    | WCAG 2.2 AA contrast, semantics on interactive elements, alerts never sound-only                                                            |
