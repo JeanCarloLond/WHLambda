@@ -53,6 +53,7 @@ that can.
 | Exposure-dose model (WHO adult/sensitive, NIOSH), Leq                    | ✅ Done    |
 | Shared UI, theming (WCAG AA), English/Spanish                            | ✅ Done    |
 | Ambient-noise metering on-device (no audio recorded)                     | 🔜 Phase 1 |
+| Per-minute listening history on the device, deletable, kept 30 days      | ✅ Done    |
 | Adaptive volume for any music app (target SNR, capped by remaining dose) | 🔜 Phase 1 |
 | Listening profiles per environment (commute, gym, office…)               | 🔜 Phase 1 |
 | Daily/weekly dose dashboard and notifications                            | 🔜 Phase 1 |
@@ -147,9 +148,12 @@ WHLambda/
 ├── shared/               App shell: App(), navigation, dependency injection
 ├── feature/
 │   ├── exposure/         Dose explorer (reference screen implementation)
+│   ├── settings/         Settings: your data
 │   └── about/            About screen
 ├── core/
 │   ├── domain/           Pure Kotlin business rules — no platform dependencies
+│   ├── audio/            Level metering, A-weighting, Android audio adapters
+│   ├── data/             Local database (SQLDelight): per-minute exposure aggregates
 │   └── designsystem/     Theme, colours, reusable components
 ├── build-logic/          Gradle convention plugins (one place for build config)
 ├── config/detekt/        Static-analysis rules
