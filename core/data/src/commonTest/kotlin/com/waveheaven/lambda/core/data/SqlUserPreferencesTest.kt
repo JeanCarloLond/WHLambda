@@ -54,6 +54,22 @@ class SqlUserPreferencesTest {
         }
 
     @Test
+    fun `stores the microphone adjustment and the media app`() =
+        test {
+            assertEquals(0.0, preferences.microphoneAdjustmentDb.first())
+            assertNull(preferences.mediaApp.first())
+
+            preferences.setMicrophoneAdjustmentDb(-12.5)
+            preferences.setMediaApp("Spotify")
+            assertEquals(-12.5, preferences.microphoneAdjustmentDb.first())
+            assertEquals("Spotify", preferences.mediaApp.first())
+
+            preferences.setMediaApp(null)
+            assertNull(preferences.mediaApp.first())
+            assertFailsWith<IllegalArgumentException> { preferences.setMicrophoneAdjustmentDb(60.0) }
+        }
+
+    @Test
     fun `only weekly standards can be chosen`() =
         test {
             assertFailsWith<IllegalArgumentException> { preferences.setWeeklyStandard(DoseStandard.NIOSH) }
