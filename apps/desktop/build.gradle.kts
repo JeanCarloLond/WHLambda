@@ -8,6 +8,18 @@ dependencies {
     implementation(projects.shared)
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.coroutines.swing)
+    // Spike #4 prototype only.
+    implementation(projects.core.audio)
+    implementation(libs.jna.platform)
+    implementation(libs.kotlinx.serialization.json)
+}
+
+tasks.register<JavaExec>("runSpike") {
+    group = "spike"
+    description = "Spike #4: list app audio sessions, change one app's volume and meter the microphone."
+    mainClass.set("com.waveheaven.lambda.desktop.spike.AppVolumeSpikeKt")
+    classpath = sourceSets["main"].runtimeClasspath
+    javaLauncher.set(javaToolchains.launcherFor { languageVersion.set(JavaLanguageVersion.of(21)) })
 }
 
 compose.desktop {
