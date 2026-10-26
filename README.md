@@ -59,7 +59,7 @@ that can.
 | Listening profiles per environment (commute, gym, office…)                | ✅ Done           |
 | Dashboard: today (NIOSH), last 7 days (WHO), time left, 7-day history     | ✅ Done           |
 | Onboarding with versioned, revocable consent (Ley 1581)                   | ✅ Done           |
-| Dose alerts at 50, 80 and 100 %                                           | 🔜 Phase 1        |
+| Dose alerts at 50, 80 and 100 %                                           | ✅ Done           |
 | Desktop: per-app volume (Windows WASAPI, Linux PipeWire)                  | 🗓️ Phase 2        |
 | Account & sync of aggregated stats (Supabase)                             | 🗓️ Phase 3        |
 | Hearing check (not a diagnosis) feeding a personal EQ curve               | 🗓️ Phase 3        |
