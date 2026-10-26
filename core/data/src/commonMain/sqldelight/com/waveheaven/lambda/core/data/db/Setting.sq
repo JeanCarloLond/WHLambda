@@ -1,0 +1,8 @@
+selectValue:
+SELECT value FROM setting WHERE key = ?;
+
+put:
+INSERT OR REPLACE INTO setting(key, value) VALUES (?, ?);
+
+remove:
+DELETE FROM setting WHERE key = ?;

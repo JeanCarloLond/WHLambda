@@ -1,0 +1,16 @@
+-- User-defined listening profiles (the built-in ones live in code) and simple key-value settings.
+CREATE TABLE listening_profile (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    target_snr_db REAL NOT NULL,
+    min_volume REAL NOT NULL,
+    max_volume REAL NOT NULL,
+    -- "frequencyHz:gainDb" pairs separated by ";", or NULL without an EQ curve.
+    eq_points TEXT,
+    created_at_ms INTEGER NOT NULL
+);
+
+CREATE TABLE setting (
+    key TEXT NOT NULL PRIMARY KEY,
+    value TEXT NOT NULL
+);
