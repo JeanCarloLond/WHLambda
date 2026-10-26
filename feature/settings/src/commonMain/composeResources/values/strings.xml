@@ -28,4 +28,8 @@
     <string name="settings_withdraw_confirm">Withdraw</string>
     <string name="settings_consent_withdrawn">Consent withdrawn</string>
     <string name="settings_consent_withdrawn_deleted">Consent withdrawn and listening data deleted</string>
+    <string name="settings_alerts_title">Dose alerts</string>
+    <string name="settings_alerts_description">A notification, with vibration and no sound, when you reach a share of your weekly budget, with a tip on what to do.</string>
+    <string name="settings_alerts_mute">Mute all alerts</string>
+    <string name="settings_alerts_threshold">At %1$d&#160;%</string>
 </resources>

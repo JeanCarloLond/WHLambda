@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.v2.runComposeUiTest
+import com.waveheaven.lambda.core.domain.alert.DoseThreshold
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import java.util.Locale
@@ -40,6 +41,26 @@ class SettingsScreenTest {
             onNodeWithText("WHO sensitive").performClick()
 
             assertEquals(listOf<SettingsAction>(SettingsAction.StandardSelected(DoseStandard.WHO_SENSITIVE)), actions)
+        }
+
+    @Test
+    fun `alert switches report their intents`() =
+        runComposeUiTest {
+            val actions = mutableListOf<SettingsAction>()
+            setContent { Screen(given.copy(alerts = setOf(DoseThreshold.HIGH)), actions::add) }
+
+            onNodeWithText("At 50\u00A0%").performScrollTo().performClick()
+            onNodeWithText("At 80\u00A0%").performScrollTo().performClick()
+            onNodeWithText("Mute all alerts").performScrollTo().performClick()
+
+            assertEquals(
+                listOf(
+                    SettingsAction.AlertToggled(DoseThreshold.HALF, enabled = true),
+                    SettingsAction.AlertToggled(DoseThreshold.HIGH, enabled = false),
+                    SettingsAction.AllAlertsMuted(true),
+                ),
+                actions,
+            )
         }
 
     @Test

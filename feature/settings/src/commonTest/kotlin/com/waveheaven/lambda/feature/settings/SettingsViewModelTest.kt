@@ -1,5 +1,7 @@
 package com.waveheaven.lambda.feature.settings
 
+import com.waveheaven.lambda.core.domain.alert.DoseThreshold
+import com.waveheaven.lambda.core.domain.alert.InMemoryDoseAlertStore
 import com.waveheaven.lambda.core.domain.consent.Consent
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.consent.InMemoryUserPreferences
@@ -31,12 +33,13 @@ class SettingsViewModelTest {
     private val log = InMemoryExposureLog()
     private val consentAt = Instant.parse("2026-10-27T03:00:00Z") // 26 October, 22:00 in Bogotá
     private val preferences = InMemoryUserPreferences(consent = Consent(1, consentAt))
+    private val alerts = InMemoryDoseAlertStore()
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = SettingsViewModel(log, preferences) { TimeZone.of("America/Bogota") }
+        viewModel = SettingsViewModel(log, preferences, alerts) { TimeZone.of("America/Bogota") }
     }
 
     @AfterTest
@@ -59,6 +62,26 @@ class SettingsViewModelTest {
 
             assertEquals(DoseStandard.WHO_SENSITIVE, preferences.weeklyStandard.first())
             assertEquals(DoseStandard.WHO_SENSITIVE, viewModel.state.value.weeklyStandard)
+        }
+
+    @Test
+    fun `alerts can be turned off one by one, muted and turned back on`() =
+        runTest {
+            assertEquals(DoseThreshold.entries.toSet(), viewModel.state.value.alerts)
+
+            viewModel.onAction(SettingsAction.AlertToggled(DoseThreshold.HALF, enabled = false))
+            assertEquals(setOf(DoseThreshold.HIGH, DoseThreshold.FULL), alerts.settings.first().enabled)
+
+            viewModel.onAction(SettingsAction.AllAlertsMuted(true))
+            assertTrue(alerts.settings.first().isMuted)
+            assertTrue(
+                viewModel.state.value.alerts
+                    .isEmpty(),
+            )
+
+            viewModel.onAction(SettingsAction.AllAlertsMuted(false))
+            viewModel.onAction(SettingsAction.AlertToggled(DoseThreshold.FULL, enabled = false))
+            assertEquals(setOf(DoseThreshold.HALF, DoseThreshold.HIGH), viewModel.state.value.alerts)
         }
 
     @Test

@@ -129,6 +129,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             StandardSection(selected = state.weeklyStandard, onSelect = { onAction(SettingsAction.StandardSelected(it)) })
+            AlertsSection(enabled = state.alerts, onAction = onAction)
             ConsentSection(
                 state = state,
                 onWithdraw = { onAction(SettingsAction.WithdrawConsentClicked) },

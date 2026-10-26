@@ -1,6 +1,7 @@
 package com.waveheaven.lambda.feature.settings
 
 import androidx.navigation3.runtime.NavKey
+import com.waveheaven.lambda.core.domain.alert.DoseThreshold
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import kotlinx.serialization.Serializable
@@ -12,6 +13,8 @@ data object SettingsKey : NavKey
 /** Everything the settings screen renders. Immutable; produced only by [SettingsViewModel]. */
 data class SettingsUiState(
     val weeklyStandard: DoseStandard = DoseStandard.WHO_ADULT,
+    /** Dose alert thresholds the user wants (WH-083); none means muted. */
+    val alerts: Set<DoseThreshold> = DoseThreshold.entries.toSet(),
     val consentStatus: ConsentStatus = ConsentStatus.MISSING,
     /** Local date consent was given, as `yyyy-mm-dd`, when it was. */
     val consentDate: String? = null,
@@ -37,6 +40,15 @@ enum class SettingsNotice {
 sealed interface SettingsAction {
     data class StandardSelected(
         val standard: DoseStandard,
+    ) : SettingsAction
+
+    data class AlertToggled(
+        val threshold: DoseThreshold,
+        val enabled: Boolean,
+    ) : SettingsAction
+
+    data class AllAlertsMuted(
+        val muted: Boolean,
     ) : SettingsAction
 
     data object WithdrawConsentClicked : SettingsAction

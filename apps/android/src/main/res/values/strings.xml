@@ -11,4 +11,11 @@
     <string name="adaptive_pause">Pause</string>
     <string name="adaptive_resume">Resume</string>
     <string name="adaptive_stop">Stop</string>
+    <string name="alert_channel">Dose alerts</string>
+    <string name="alert_channel_description">When you reach 50, 80 and 100 % of your weekly listening budget. Vibrates, never makes a sound.</string>
+    <string name="alert_title">You have used %1$d %% of your weekly listening budget</string>
+    <string name="alert_title_full">You have used your whole weekly listening budget</string>
+    <string name="alert_advice_lower_volume">Lowering the volume a step or two makes the rest of your budget last much longer.</string>
+    <string name="alert_advice_break">Give your ears a break: a few quiet hours help them recover.</string>
+    <string name="alert_advice_noise_cancelling">It is noisy around you. Noise-cancelling headphones let you hear the music at a lower volume.</string>
 </resources>

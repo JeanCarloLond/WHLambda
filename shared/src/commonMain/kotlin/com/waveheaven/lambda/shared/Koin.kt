@@ -2,12 +2,15 @@ package com.waveheaven.lambda.shared
 
 import com.waveheaven.lambda.core.audio.AdaptiveVolumeEngine
 import com.waveheaven.lambda.core.audio.AdaptiveVolumeSession
+import com.waveheaven.lambda.core.audio.DoseAlertMonitor
 import com.waveheaven.lambda.core.audio.LoopInputs
+import com.waveheaven.lambda.core.data.SqlDoseAlertStore
 import com.waveheaven.lambda.core.data.SqlExposureLog
 import com.waveheaven.lambda.core.data.SqlListeningProfileStore
 import com.waveheaven.lambda.core.data.SqlUserPreferences
 import com.waveheaven.lambda.core.data.SystemDayBoundaries
 import com.waveheaven.lambda.core.data.createDatabase
+import com.waveheaven.lambda.core.domain.alert.DoseAlertStore
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
@@ -38,18 +41,20 @@ val dataModule =
         single { DoseTracker(get(), get()) }
         single<ListeningProfileStore> { SqlListeningProfileStore(get()) }
         single<UserPreferences> { SqlUserPreferences(get()) }
+        single<DoseAlertStore> { SqlDoseAlertStore(get()) }
     }
 
 /**
- * The adaptive-volume loop, shared by every platform. Needs platform bindings for `AmbientMeter`, `MediaVolume` and
- * `OutputLevelModels`; it is only created on platforms whose `AdaptiveVolume` binding uses it.
+ * The adaptive-volume loop, shared by every platform. Needs platform bindings for `AmbientMeter`, `MediaVolume`,
+ * `OutputLevelModels` and `DoseAlertNotifier`; it is only created on platforms whose `AdaptiveVolume` binding uses it.
  */
 val adaptiveVolumeModule =
     module {
         single { LoopInputs(get<UserPreferences>(), get<ListeningProfileStore>()) }
         single { AdaptiveVolumeEngine(meter = get(), volume = get(), models = get(), tracker = get(), inputs = get()) }
         // Lives as long as the process, so the loop outlives screens and is shared with the Android service.
-        single { AdaptiveVolumeSession(get(), CoroutineScope(SupervisorJob() + Dispatchers.Default)) }
+        single { DoseAlertMonitor(store = get(), notifier = get(), weeklyStandard = get<UserPreferences>().weeklyStandard) }
+        single { AdaptiveVolumeSession(get(), CoroutineScope(SupervisorJob() + Dispatchers.Default), alerts = get()) }
     }
 
 /** Bindings of every feature. Platform-specific bindings are added by each app through [initKoin]'s config. */

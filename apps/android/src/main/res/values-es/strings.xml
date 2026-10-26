@@ -10,4 +10,11 @@
     <string name="adaptive_pause">Pausar</string>
     <string name="adaptive_resume">Reanudar</string>
     <string name="adaptive_stop">Detener</string>
+    <string name="alert_channel">Alertas de dosis</string>
+    <string name="alert_channel_description">Cuando llegas al 50, 80 y 100 % de tu presupuesto semanal de escucha. Vibra, nunca suena.</string>
+    <string name="alert_title">Has usado el %1$d %% de tu presupuesto semanal de escucha</string>
+    <string name="alert_title_full">Has usado todo tu presupuesto semanal de escucha</string>
+    <string name="alert_advice_lower_volume">Bajar el volumen uno o dos pasos hace que el resto de tu presupuesto dure mucho más.</string>
+    <string name="alert_advice_break">Dale un descanso a tus oídos: unas horas de silencio les ayudan a recuperarse.</string>
+    <string name="alert_advice_noise_cancelling">Hay mucho ruido a tu alrededor. Unos audífonos con cancelación de ruido te dejan oír la música a menor volumen.</string>
 </resources>

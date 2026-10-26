@@ -2,6 +2,9 @@ package com.waveheaven.lambda.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.waveheaven.lambda.core.domain.alert.DoseAlertSettings
+import com.waveheaven.lambda.core.domain.alert.DoseAlertStore
+import com.waveheaven.lambda.core.domain.alert.DoseThreshold
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.core.domain.consent.status
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
@@ -17,21 +20,23 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 /**
- * Settings: the weekly standard (WH-075), consent and its withdrawal (WH-073), and erasing every stored aggregate
- * (WH-043).
+ * Settings: the weekly standard (WH-075), dose alerts (WH-083), consent and its withdrawal (WH-073), and erasing
+ * every stored aggregate (WH-043).
  */
 class SettingsViewModel(
     private val exposureLog: ExposureLog,
     private val preferences: UserPreferences,
+    private val alerts: DoseAlertStore,
     private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() },
 ) : ViewModel() {
     /** What only this screen knows: open dialogs, progress, notices. */
     private val local = MutableStateFlow(SettingsUiState())
 
     val state: StateFlow<SettingsUiState> =
-        combine(local, preferences.weeklyStandard, preferences.consent) { screen, standard, consent ->
+        combine(local, preferences.weeklyStandard, preferences.consent, alerts.settings) { screen, standard, consent, alertSettings ->
             screen.copy(
                 weeklyStandard = standard,
+                alerts = alertSettings.enabled,
                 consentStatus = consent.status(),
                 consentDate =
                     consent
@@ -45,20 +50,59 @@ class SettingsViewModel(
 
     fun onAction(action: SettingsAction) {
         when (action) {
-            is SettingsAction.StandardSelected -> selectStandard(action.standard)
-            SettingsAction.WithdrawConsentClicked -> local.update { it.copy(isConfirmingWithdrawal = true, deleteDataOnWithdrawal = false) }
-            is SettingsAction.DeleteDataOnWithdrawalChanged -> local.update { it.copy(deleteDataOnWithdrawal = action.delete) }
-            SettingsAction.WithdrawConsentConfirmed -> withdrawConsent()
-            SettingsAction.WithdrawConsentDismissed -> local.update { it.copy(isConfirmingWithdrawal = false) }
-            SettingsAction.DeleteDataClicked -> local.update { it.copy(isConfirmingDeletion = true) }
-            SettingsAction.DeleteDataDismissed -> local.update { it.copy(isConfirmingDeletion = false) }
-            SettingsAction.DeleteDataConfirmed -> deleteData()
-            SettingsAction.NoticeShown -> local.update { it.copy(notice = null) }
+            is SettingsAction.StandardSelected -> {
+                selectStandard(action.standard)
+            }
+
+            is SettingsAction.AlertToggled -> {
+                val current = state.value.alerts
+                setAlerts(if (action.enabled) current + action.threshold else current - action.threshold)
+            }
+
+            is SettingsAction.AllAlertsMuted -> {
+                setAlerts(if (action.muted) emptySet() else DoseThreshold.entries.toSet())
+            }
+
+            SettingsAction.WithdrawConsentClicked -> {
+                local.update { it.copy(isConfirmingWithdrawal = true, deleteDataOnWithdrawal = false) }
+            }
+
+            is SettingsAction.DeleteDataOnWithdrawalChanged -> {
+                local.update { it.copy(deleteDataOnWithdrawal = action.delete) }
+            }
+
+            SettingsAction.WithdrawConsentConfirmed -> {
+                withdrawConsent()
+            }
+
+            SettingsAction.WithdrawConsentDismissed -> {
+                local.update { it.copy(isConfirmingWithdrawal = false) }
+            }
+
+            SettingsAction.DeleteDataClicked -> {
+                local.update { it.copy(isConfirmingDeletion = true) }
+            }
+
+            SettingsAction.DeleteDataDismissed -> {
+                local.update { it.copy(isConfirmingDeletion = false) }
+            }
+
+            SettingsAction.DeleteDataConfirmed -> {
+                deleteData()
+            }
+
+            SettingsAction.NoticeShown -> {
+                local.update { it.copy(notice = null) }
+            }
         }
     }
 
     private fun selectStandard(standard: DoseStandard) {
         viewModelScope.launch { preferences.setWeeklyStandard(standard) }
+    }
+
+    private fun setAlerts(enabled: Set<DoseThreshold>) {
+        viewModelScope.launch { alerts.setSettings(DoseAlertSettings(enabled)) }
     }
 
     private fun withdrawConsent() {

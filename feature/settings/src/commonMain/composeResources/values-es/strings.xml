@@ -28,4 +28,8 @@
     <string name="settings_withdraw_confirm">Retirar</string>
     <string name="settings_consent_withdrawn">Consentimiento retirado</string>
     <string name="settings_consent_withdrawn_deleted">Consentimiento retirado y datos de escucha borrados</string>
+    <string name="settings_alerts_title">Alertas de dosis</string>
+    <string name="settings_alerts_description">Una notificación, con vibración y sin sonido, cuando llegas a una parte de tu presupuesto semanal, con un consejo de qué hacer.</string>
+    <string name="settings_alerts_mute">Silenciar todas las alertas</string>
+    <string name="settings_alerts_threshold">Al %1$d&#160;%</string>
 </resources>

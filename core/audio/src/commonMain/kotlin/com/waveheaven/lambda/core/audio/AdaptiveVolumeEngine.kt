@@ -72,7 +72,7 @@ class AdaptiveVolumeEngine(
      *
      * @return why the run ended on its own.
      */
-    suspend fun run(onStatus: (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem =
+    suspend fun run(onStatus: suspend (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem =
         coroutineScope {
             val settings = combine(inputs.consent, inputs.weeklyStandard, inputs.profile, ::Settings).stateIn(this)
             val loop = Loop(settings)
@@ -103,7 +103,7 @@ class AdaptiveVolumeEngine(
         private val accumulator = ExposureAccumulator()
         private lateinit var doses: DoseReport
 
-        suspend fun run(onStatus: (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem {
+        suspend fun run(onStatus: suspend (AdaptiveVolumeStatus) -> Unit): AdaptiveVolumeProblem {
             doses = tracker.report(clock.now(), settings.value.weeklyStandard)
             while (true) {
                 if (!settings.value.consent.allowsMetering()) return AdaptiveVolumeProblem.NO_CONSENT
@@ -124,7 +124,7 @@ class AdaptiveVolumeEngine(
         }
 
         /** Leaving this function cancels the meter flow, which releases the microphone. */
-        private suspend fun meterWhilePlaying(onStatus: (AdaptiveVolumeStatus) -> Unit) {
+        private suspend fun meterWhilePlaying(onStatus: suspend (AdaptiveVolumeStatus) -> Unit) {
             meter
                 .levels()
                 .takeWhile { volume.isMusicActive() && settings.value.consent.allowsMetering() }
