@@ -1,8 +1,5 @@
 package com.waveheaven.lambda.core.domain.exposure
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import kotlin.math.roundToInt
 import kotlin.test.Test
@@ -15,7 +12,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 class DoseTrackerTest {
-    private val log = FakeExposureLog()
+    private val log = InMemoryExposureLog()
 
     // Local days start at 05:00 UTC (UTC−5, Colombia).
     private val calendar = DayBoundaries { instant -> Instant.fromEpochSeconds(((instant.epochSeconds - OFFSET) / DAY) * DAY + OFFSET) }
@@ -108,31 +105,6 @@ class DoseTrackerTest {
         while (t < from + duration) {
             tracker.record(ExposureMinute(t, ExposureMinute.MINUTE, level, 6.0, null))
             t += ExposureMinute.MINUTE
-        }
-    }
-
-    private class FakeExposureLog : ExposureLog {
-        private val minutes = MutableStateFlow(sortedMapOf<Instant, ExposureMinute>())
-
-        override suspend fun record(minute: ExposureMinute) {
-            val existing = minutes.value[minute.start]
-            minutes.value =
-                sortedMapOf<Instant, ExposureMinute>().apply {
-                    putAll(minutes.value)
-                    put(minute.start, existing?.mergedWith(minute) ?: minute)
-                }
-        }
-
-        override suspend fun minutesSince(start: Instant) = minutes.value.values.filter { it.start >= start }
-
-        override fun changes(): Flow<Unit> = minutes.map { }
-
-        override suspend fun deleteBefore(cutoff: Instant) {
-            minutes.value = minutes.value.filterKeys { it >= cutoff }.toSortedMap()
-        }
-
-        override suspend fun deleteAll() {
-            minutes.value = sortedMapOf()
         }
     }
 
