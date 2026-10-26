@@ -129,7 +129,9 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             StandardSection(selected = state.weeklyStandard, onSelect = { onAction(SettingsAction.StandardSelected(it)) })
+            state.runningApps?.let { apps -> MediaAppSection(selected = state.mediaApp, running = apps, onAction = onAction) }
             AlertsSection(enabled = state.alerts, onAction = onAction)
+            CalibrationSection(adjustmentDb = state.microphoneAdjustmentDb, onAction = onAction)
             ConsentSection(
                 state = state,
                 onWithdraw = { onAction(SettingsAction.WithdrawConsentClicked) },

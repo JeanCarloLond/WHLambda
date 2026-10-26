@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeProblem
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.feature.dashboard.resources.Res
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_choose_app
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_above_limit
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_limited
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_manual
@@ -28,6 +29,7 @@ import com.waveheaven.lambda.feature.dashboard.resources.adaptive_off
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_open_settings
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_pause
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_paused
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_problem_media_app
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_problem_microphone
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_resume
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_running
@@ -49,6 +51,7 @@ internal fun AdaptiveVolumeCard(
     canStart: Boolean,
     onAction: (DashboardAction) -> Unit,
     onOpenMicrophoneSettings: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
@@ -71,6 +74,10 @@ internal fun AdaptiveVolumeCard(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 OutlinedButton(onClick = onOpenMicrophoneSettings) { Text(stringResource(Res.string.adaptive_open_settings)) }
+            }
+            if (adaptive.problem == AdaptiveVolumeProblem.NO_MEDIA_APP) {
+                Text(stringResource(Res.string.adaptive_problem_media_app), style = MaterialTheme.typography.bodyMedium)
+                OutlinedButton(onClick = onOpenSettings) { Text(stringResource(Res.string.adaptive_choose_app)) }
             }
             Controls(adaptive.state, canStart, onAction)
         }

@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.v2.runComposeUiTest
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeProblem
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import java.util.Locale
 import kotlin.test.AfterTest
@@ -209,6 +210,28 @@ class DashboardScreenTest {
             onNodeWithText("Open system settings").performClick()
 
             assertEquals(1, opened)
+        }
+
+    @Test
+    fun `on desktop without a music app it leads to settings`() =
+        runComposeUiTest {
+            val opened = mutableListOf<String>()
+            setContent {
+                DashboardScreen(
+                    state = state.copy(adaptive = AdaptiveUi(AdaptiveVolumeState.STOPPED, problem = AdaptiveVolumeProblem.NO_MEDIA_APP)),
+                    onAction = {},
+                    onOpenMicrophoneSettings = {},
+                    onOpenExplorer = {},
+                    onOpenProfiles = {},
+                    onOpenSettings = { opened += "settings" },
+                    onOpenAbout = {},
+                    onReviewConsent = {},
+                )
+            }
+
+            onNodeWithText("Choose music app").performClick()
+
+            assertEquals(listOf("settings"), opened)
         }
 
     @Test
