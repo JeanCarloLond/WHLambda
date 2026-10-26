@@ -11,6 +11,8 @@ import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.waveheaven.lambda.feature.about.AboutKey
 import com.waveheaven.lambda.feature.about.AboutScreen
+import com.waveheaven.lambda.feature.dashboard.DashboardKey
+import com.waveheaven.lambda.feature.dashboard.DashboardRoute
 import com.waveheaven.lambda.feature.exposure.DoseExplorerKey
 import com.waveheaven.lambda.feature.exposure.DoseExplorerRoute
 import com.waveheaven.lambda.feature.settings.SettingsKey
@@ -29,7 +31,7 @@ internal fun AppNavigation(
     appVersion: String,
     modifier: Modifier = Modifier,
 ) {
-    val backStack = rememberNavBackStack(NavigationConfig, DoseExplorerKey)
+    val backStack = rememberNavBackStack(NavigationConfig, DashboardKey)
 
     NavDisplay(
         backStack = backStack,
@@ -42,11 +44,15 @@ internal fun AppNavigation(
             ),
         entryProvider =
             entryProvider {
-                entry<DoseExplorerKey> {
-                    DoseExplorerRoute(
-                        onOpenAbout = { backStack.add(AboutKey) },
+                entry<DashboardKey> {
+                    DashboardRoute(
+                        onOpenExplorer = { backStack.add(DoseExplorerKey) },
                         onOpenSettings = { backStack.add(SettingsKey) },
+                        onOpenAbout = { backStack.add(AboutKey) },
                     )
+                }
+                entry<DoseExplorerKey> {
+                    DoseExplorerRoute(onBack = { backStack.removeLastOrNull() })
                 }
                 entry<SettingsKey> {
                     SettingsRoute(onBack = { backStack.removeLastOrNull() })
@@ -67,6 +73,7 @@ private val NavigationConfig =
         serializersModule =
             SerializersModule {
                 polymorphic(NavKey::class) {
+                    subclass(DashboardKey::class, DashboardKey.serializer())
                     subclass(DoseExplorerKey::class, DoseExplorerKey.serializer())
                     subclass(AboutKey::class, AboutKey.serializer())
                     subclass(SettingsKey::class, SettingsKey.serializer())

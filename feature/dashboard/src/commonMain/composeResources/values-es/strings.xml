@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WaveHeaven Lambda</string>
+    <string name="open_about">Acerca de WaveHeaven</string>
+    <string name="open_settings">Ajustes</string>
+    <string name="dashboard_today">Hoy (NIOSH)</string>
+    <string name="dashboard_week_who_adult">Últimos 7 días (OMS)</string>
+    <string name="dashboard_week_who_sensitive">Últimos 7 días (OMS, sensible)</string>
+    <string name="dashboard_used">de tu presupuesto de escucha segura usado</string>
+    <string name="dashboard_status_on_track">Dentro de tu presupuesto</string>
+    <string name="dashboard_status_close">Cerca del límite</string>
+    <string name="dashboard_status_reached">Presupuesto agotado: descansa o baja el volumen</string>
+    <string name="dashboard_time_left">Te quedan %1$s a %2$s</string>
+    <string name="dashboard_level">%1$d ± %2$d dB(A)</string>
+    <string name="dashboard_no_listening">Todavía no hay escucha registrada.</string>
+    <string name="dashboard_history_title">Dosis diaria, últimos 7 días (NIOSH)</string>
+    <string name="dashboard_history_day">%1$s: %2$s</string>
+    <string name="dashboard_explore">Explorar niveles de escucha</string>
+    <string name="medical_disclaimer">WaveHeaven no es un dispositivo médico. Si notas pitidos o audición apagada, consulta a un audiólogo.</string>
+    <string name="day_1">lun</string>
+    <string name="day_2">mar</string>
+    <string name="day_3">mié</string>
+    <string name="day_4">jue</string>
+    <string name="day_5">vie</string>
+    <string name="day_6">sáb</string>
+    <string name="day_7">dom</string>
+    <string name="day_today">Hoy</string>
+</resources>

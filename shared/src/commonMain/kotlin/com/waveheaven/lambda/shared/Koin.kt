@@ -6,6 +6,7 @@ import com.waveheaven.lambda.core.data.createDatabase
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
 import com.waveheaven.lambda.core.domain.exposure.ExposureLog
+import com.waveheaven.lambda.feature.dashboard.dashboardModule
 import com.waveheaven.lambda.feature.exposure.exposureModule
 import com.waveheaven.lambda.feature.settings.settingsModule
 import org.koin.core.KoinApplication
@@ -26,7 +27,7 @@ val dataModule =
     }
 
 /** Bindings of every feature. Platform-specific bindings are added by each app through [initKoin]'s config. */
-val appModules = listOf(dataModule, exposureModule, settingsModule)
+val appModules = listOf(dataModule, dashboardModule, exposureModule, settingsModule)
 
 /**
  * Starts dependency injection once per process: from `Application.onCreate` on Android and from `main` on
