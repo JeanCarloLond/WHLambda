@@ -50,4 +50,6 @@
     <string name="adaptive_pause">Pause</string>
     <string name="adaptive_resume">Resume</string>
     <string name="adaptive_stop">Stop</string>
+    <string name="adaptive_problem_media_app">Choose the app you listen to music with, so WaveHeaven knows whose volume to adapt.</string>
+    <string name="adaptive_choose_app">Choose music app</string>
 </resources>

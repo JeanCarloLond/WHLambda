@@ -64,12 +64,45 @@ class SettingsScreenTest {
         }
 
     @Test
+    fun `the music app can be chosen on desktop, the chosen one listed even when silent`() =
+        runComposeUiTest {
+            val actions = mutableListOf<SettingsAction>()
+            setContent { Screen(given.copy(mediaApp = "Spotify", runningApps = listOf("Firefox")), actions::add) }
+
+            onNodeWithText("Spotify").assertIsDisplayed()
+            onNodeWithText("Firefox").performClick()
+            onNodeWithText("Refresh list").performScrollTo().performClick()
+
+            assertEquals(listOf(SettingsAction.MediaAppSelected("Firefox"), SettingsAction.RefreshRunningApps), actions)
+        }
+
+    @Test
+    fun `the music app section only exists on desktop`() =
+        runComposeUiTest {
+            setContent { Screen(given) }
+
+            onNodeWithText("Music app").assertDoesNotExist()
+        }
+
+    @Test
+    fun `the microphone correction shows its sign and can be reset`() =
+        runComposeUiTest {
+            val actions = mutableListOf<SettingsAction>()
+            setContent { Screen(given.copy(microphoneAdjustmentDb = 6), actions::add) }
+
+            onNodeWithText("Correction: +6 dB").performScrollTo().assertIsDisplayed()
+            onNodeWithText("Reset to default").performScrollTo().performClick()
+
+            assertEquals(listOf<SettingsAction>(SettingsAction.MicrophoneAdjustmentReset), actions)
+        }
+
+    @Test
     fun `given consent shows its date and can be withdrawn, with the data if wanted`() =
         runComposeUiTest {
             val actions = mutableListOf<SettingsAction>()
             setContent { Screen(given.copy(isConfirmingWithdrawal = true), actions::add) }
 
-            onNodeWithText("You gave consent on 2026-10-26 (version 1)", substring = true).assertIsDisplayed()
+            onNodeWithText("You gave consent on 2026-10-26 (version 1)", substring = true).performScrollTo().assertIsDisplayed()
             onNodeWithText("Also delete my listening data").performClick()
             onNodeWithText("Withdraw").performClick()
 

@@ -147,6 +147,17 @@ class AdaptiveVolumeEngineTest {
         }
 
     @Test
+    fun `a volume that needs setup ends the run before the microphone opens`() =
+        runTest {
+            phone.setupNeeded = true
+
+            val problem = engine().run { statuses += it }
+
+            assertEquals(AdaptiveVolumeProblem.NO_MEDIA_APP, problem)
+            assertEquals(0, meter.opened)
+        }
+
+    @Test
     fun `an unavailable microphone ends the run`() =
         runTest {
             meter.fails = true
@@ -206,6 +217,7 @@ class AdaptiveVolumeEngineTest {
         var level: Int,
     ) : MediaVolume {
         var playing = true
+        var setupNeeded = false
         override val indices = 0..15
 
         override fun currentRoute() = OutputRoute("speaker")
@@ -217,6 +229,8 @@ class AdaptiveVolumeEngineTest {
         }
 
         override fun isMusicActive() = playing
+
+        override fun needsSetup() = setupNeeded
     }
 
     private class FakeMeter : AmbientMeter {

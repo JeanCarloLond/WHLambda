@@ -85,6 +85,41 @@ class SettingsViewModelTest {
         }
 
     @Test
+    fun `the microphone correction is saved in whole decibels, clamped, and can be reset`() =
+        runTest {
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentChanged(-12.4f))
+            assertEquals(-12.0, preferences.microphoneAdjustmentDb.first())
+            assertEquals(-12, viewModel.state.value.microphoneAdjustmentDb)
+
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentChanged(55f))
+            assertEquals(40.0, preferences.microphoneAdjustmentDb.first())
+
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentReset)
+            assertEquals(0.0, preferences.microphoneAdjustmentDb.first())
+        }
+
+    @Test
+    fun `without a desktop app list the music app section is hidden`() {
+        assertNull(viewModel.state.value.runningApps)
+    }
+
+    @Test
+    fun `on desktop lists running apps and saves the chosen one`() =
+        runTest {
+            var apps = listOf("Firefox", "Spotify")
+            val desktop = SettingsViewModel(log, preferences, alerts, runningApps = { apps }) { TimeZone.of("America/Bogota") }
+            assertEquals(listOf("Firefox", "Spotify"), desktop.state.value.runningApps)
+
+            desktop.onAction(SettingsAction.MediaAppSelected("Spotify"))
+            assertEquals("Spotify", preferences.mediaApp.first())
+            assertEquals("Spotify", desktop.state.value.mediaApp)
+
+            apps = listOf("Spotify", "VLC")
+            desktop.onAction(SettingsAction.RefreshRunningApps)
+            assertEquals(listOf("Spotify", "VLC"), desktop.state.value.runningApps)
+        }
+
+    @Test
     fun `withdrawing consent keeps the data unless asked`() =
         runTest {
             record()

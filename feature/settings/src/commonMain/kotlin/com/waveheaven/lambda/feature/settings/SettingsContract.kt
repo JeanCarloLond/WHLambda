@@ -13,6 +13,11 @@ data object SettingsKey : NavKey
 /** Everything the settings screen renders. Immutable; produced only by [SettingsViewModel]. */
 data class SettingsUiState(
     val weeklyStandard: DoseStandard = DoseStandard.WHO_ADULT,
+    /** The user's correction to the microphone calibration, in whole dB (WH-004). */
+    val microphoneAdjustmentDb: Int = 0,
+    /** Desktop only: the app whose volume is adapted, and the apps playing now. `null` lists hide the section. */
+    val mediaApp: String? = null,
+    val runningApps: List<String>? = null,
     /** Dose alert thresholds the user wants (WH-083); none means muted. */
     val alerts: Set<DoseThreshold> = DoseThreshold.entries.toSet(),
     val consentStatus: ConsentStatus = ConsentStatus.MISSING,
@@ -50,6 +55,18 @@ sealed interface SettingsAction {
     data class AllAlertsMuted(
         val muted: Boolean,
     ) : SettingsAction
+
+    data class MicrophoneAdjustmentChanged(
+        val adjustmentDb: Float,
+    ) : SettingsAction
+
+    data object MicrophoneAdjustmentReset : SettingsAction
+
+    data class MediaAppSelected(
+        val app: String,
+    ) : SettingsAction
+
+    data object RefreshRunningApps : SettingsAction
 
     data object WithdrawConsentClicked : SettingsAction
 

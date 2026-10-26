@@ -32,4 +32,12 @@
     <string name="settings_alerts_description">A notification, with vibration and no sound, when you reach a share of your weekly budget, with a tip on what to do.</string>
     <string name="settings_alerts_mute">Mute all alerts</string>
     <string name="settings_alerts_threshold">At %1$d&#160;%</string>
+    <string name="settings_media_app_title">Music app</string>
+    <string name="settings_media_app_description">WaveHeaven adapts the volume of one app on this computer. Choose the one you listen to music with; start it playing if it is not listed.</string>
+    <string name="settings_media_app_none">No app is playing audio right now.</string>
+    <string name="settings_media_app_refresh">Refresh list</string>
+    <string name="settings_calibration_title">Microphone calibration</string>
+    <string name="settings_calibration_description">Microphones differ. If you have a sound-level meter (or a calibrated meter app on another phone), put it next to this device in a steady noise, compare its reading with the noise level WaveHeaven shows while adaptive volume runs, and correct the difference here. This only changes how loud WaveHeaven thinks it is around you, never your safe-listening limit.</string>
+    <string name="settings_calibration_value">Correction: %1$s dB</string>
+    <string name="settings_calibration_reset">Reset to default</string>
 </resources>

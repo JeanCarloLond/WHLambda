@@ -62,6 +62,9 @@ public enum class AdaptiveVolumeProblem {
 
     /** The microphone permission is missing, or the microphone could not be opened. */
     MICROPHONE_UNAVAILABLE,
+
+    /** On desktop, no music app has been chosen yet. */
+    NO_MEDIA_APP,
 }
 
 /**
