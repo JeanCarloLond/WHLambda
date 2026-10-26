@@ -144,6 +144,7 @@ flowchart LR
     UI["Dashboard<br/><sub>Start · Pause · Stop</sub>"] -- AdaptiveVolume port --> Platform
     subgraph Platform["platform binding"]
         FGS["Android: AdaptiveVolumeService<br/><sub>microphone foreground service</sub>"]
+        Tray["Desktop: the session itself<br/><sub>tray icon while it runs</sub>"]
     end
     Platform --> Session["AdaptiveVolumeSession<br/><sub>core:audio</sub>"]
     Session --> Engine["AdaptiveVolumeEngine<br/><sub>core:audio</sub>"]
@@ -165,6 +166,11 @@ flowchart LR
   lock: while capturing, the audio server keeps the CPU awake, and while waiting for music the playback that will wake
   the loop holds one.
 - Starting asks for the microphone, then notifications, right before starting, never ahead.
+- **On desktop** ([ADR-0009](adr/0009-desktop-per-app-volume.md)), `DesktopMediaVolume` adapts the one app the user
+  picks in Settings, in 2 dB steps of its own volume, through `pactl` (Linux) or WASAPI sessions (Windows);
+  `DesktopOutputLevelModels` adds the device volume; `DesktopAmbientMeter` captures from a non-Bluetooth, non-headset
+  input. The session runs inside the app; a tray icon shows its state and today's dose with pause, resume and stop,
+  and closing the window keeps it running in the tray. Without a system tray (some Linux desktops) closing quits.
 
 ## Source sets inside a KMP module
 

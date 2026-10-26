@@ -22,4 +22,5 @@ public interface AmbientMeter {
 /** The microphone could not be opened: permission not granted, or the device refused the capture. */
 public class MicrophoneUnavailableException(
     message: String,
-) : IllegalStateException(message)
+    cause: Throwable? = null,
+) : IllegalStateException(message, cause)

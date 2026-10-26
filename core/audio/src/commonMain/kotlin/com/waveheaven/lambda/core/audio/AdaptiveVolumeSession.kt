@@ -13,13 +13,15 @@ import kotlin.concurrent.Volatile
 
 /**
  * Start, pause, resume and stop around [AdaptiveVolumeEngine] runs, in [scope]. Pausing cancels the run, which
- * releases the microphone; resuming starts a new run with the same settings (WH-023).
+ * releases the microphone; resuming starts a new run with the same settings (WH-023). Every update is also checked for
+ * dose [alerts].
  *
  * Methods may be called from any thread. Status updates from a run that has been paused or stopped are ignored.
  */
 class AdaptiveVolumeSession(
     private val engine: AdaptiveVolumeEngine,
     private val scope: CoroutineScope,
+    private val alerts: DoseAlertMonitor? = null,
 ) : AdaptiveVolume {
     private val mutableStatus = MutableStateFlow(AdaptiveVolumeStatus(AdaptiveVolumeState.STOPPED))
     private var job: Job? = null
@@ -58,7 +60,13 @@ class AdaptiveVolumeSession(
         mutableStatus.value = AdaptiveVolumeStatus(AdaptiveVolumeState.WAITING_FOR_MUSIC)
         job =
             scope.launch {
-                val problem = engine.run { status -> if (run == generation) mutableStatus.value = status }
+                val problem =
+                    engine.run { status ->
+                        if (run == generation) {
+                            mutableStatus.value = status
+                            alerts?.check(status)
+                        }
+                    }
                 if (run == generation) mutableStatus.value = AdaptiveVolumeStatus(AdaptiveVolumeState.STOPPED, problem = problem)
             }
     }

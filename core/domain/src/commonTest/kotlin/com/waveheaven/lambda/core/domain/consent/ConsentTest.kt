@@ -67,6 +67,11 @@ class ConsentTest {
 
             preferences.withdrawConsent()
             assertNull(preferences.consent.first())
+            preferences.setMicrophoneAdjustmentDb(5.0)
+            preferences.setMediaApp("Spotify")
+            assertEquals(5.0, preferences.microphoneAdjustmentDb.first())
+            assertEquals("Spotify", preferences.mediaApp.first())
+            assertFailsWith<IllegalArgumentException> { preferences.setMicrophoneAdjustmentDb(-41.0) }
             assertFailsWith<IllegalArgumentException> { preferences.setWeeklyStandard(DoseStandard.NIOSH) }
         }
 }

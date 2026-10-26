@@ -149,6 +149,7 @@ fun DashboardScreen(
                     canStart = state.consentStatus == ConsentStatus.GIVEN,
                     onAction = onAction,
                     onOpenMicrophoneSettings = onOpenMicrophoneSettings,
+                    onOpenSettings = onOpenSettings,
                 )
             }
             state.profile?.let { profile ->

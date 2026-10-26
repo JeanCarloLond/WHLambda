@@ -1,5 +1,7 @@
 package com.waveheaven.lambda.feature.settings
 
+import com.waveheaven.lambda.core.domain.alert.DoseThreshold
+import com.waveheaven.lambda.core.domain.alert.InMemoryDoseAlertStore
 import com.waveheaven.lambda.core.domain.consent.Consent
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.consent.InMemoryUserPreferences
@@ -31,12 +33,13 @@ class SettingsViewModelTest {
     private val log = InMemoryExposureLog()
     private val consentAt = Instant.parse("2026-10-27T03:00:00Z") // 26 October, 22:00 in Bogotá
     private val preferences = InMemoryUserPreferences(consent = Consent(1, consentAt))
+    private val alerts = InMemoryDoseAlertStore()
     private lateinit var viewModel: SettingsViewModel
 
     @BeforeTest
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = SettingsViewModel(log, preferences) { TimeZone.of("America/Bogota") }
+        viewModel = SettingsViewModel(log, preferences, alerts) { TimeZone.of("America/Bogota") }
     }
 
     @AfterTest
@@ -59,6 +62,61 @@ class SettingsViewModelTest {
 
             assertEquals(DoseStandard.WHO_SENSITIVE, preferences.weeklyStandard.first())
             assertEquals(DoseStandard.WHO_SENSITIVE, viewModel.state.value.weeklyStandard)
+        }
+
+    @Test
+    fun `alerts can be turned off one by one, muted and turned back on`() =
+        runTest {
+            assertEquals(DoseThreshold.entries.toSet(), viewModel.state.value.alerts)
+
+            viewModel.onAction(SettingsAction.AlertToggled(DoseThreshold.HALF, enabled = false))
+            assertEquals(setOf(DoseThreshold.HIGH, DoseThreshold.FULL), alerts.settings.first().enabled)
+
+            viewModel.onAction(SettingsAction.AllAlertsMuted(true))
+            assertTrue(alerts.settings.first().isMuted)
+            assertTrue(
+                viewModel.state.value.alerts
+                    .isEmpty(),
+            )
+
+            viewModel.onAction(SettingsAction.AllAlertsMuted(false))
+            viewModel.onAction(SettingsAction.AlertToggled(DoseThreshold.FULL, enabled = false))
+            assertEquals(setOf(DoseThreshold.HALF, DoseThreshold.HIGH), viewModel.state.value.alerts)
+        }
+
+    @Test
+    fun `the microphone correction is saved in whole decibels, clamped, and can be reset`() =
+        runTest {
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentChanged(-12.4f))
+            assertEquals(-12.0, preferences.microphoneAdjustmentDb.first())
+            assertEquals(-12, viewModel.state.value.microphoneAdjustmentDb)
+
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentChanged(55f))
+            assertEquals(40.0, preferences.microphoneAdjustmentDb.first())
+
+            viewModel.onAction(SettingsAction.MicrophoneAdjustmentReset)
+            assertEquals(0.0, preferences.microphoneAdjustmentDb.first())
+        }
+
+    @Test
+    fun `without a desktop app list the music app section is hidden`() {
+        assertNull(viewModel.state.value.runningApps)
+    }
+
+    @Test
+    fun `on desktop lists running apps and saves the chosen one`() =
+        runTest {
+            var apps = listOf("Firefox", "Spotify")
+            val desktop = SettingsViewModel(log, preferences, alerts, runningApps = { apps }) { TimeZone.of("America/Bogota") }
+            assertEquals(listOf("Firefox", "Spotify"), desktop.state.value.runningApps)
+
+            desktop.onAction(SettingsAction.MediaAppSelected("Spotify"))
+            assertEquals("Spotify", preferences.mediaApp.first())
+            assertEquals("Spotify", desktop.state.value.mediaApp)
+
+            apps = listOf("Spotify", "VLC")
+            desktop.onAction(SettingsAction.RefreshRunningApps)
+            assertEquals(listOf("Spotify", "VLC"), desktop.state.value.runningApps)
         }
 
     @Test

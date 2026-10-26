@@ -18,4 +18,7 @@ public interface MediaVolume {
 
     /** Whether any app is playing media right now. */
     public fun isMusicActive(): Boolean
+
+    /** Whether the user must set something up first, e.g. choose the music app on desktop (#17). */
+    public fun needsSetup(): Boolean = false
 }
