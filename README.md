@@ -56,7 +56,8 @@ that can.
 | Per-minute listening history on the device, deletable, kept 30 days      | ✅ Done    |
 | Adaptive volume for any music app (target SNR, capped by remaining dose) | 🔜 Phase 1 |
 | Listening profiles per environment (commute, gym, office…)               | 🔜 Phase 1 |
-| Daily/weekly dose dashboard and notifications                            | 🔜 Phase 1 |
+| Dashboard: today (NIOSH), last 7 days (WHO), time left, 7-day history    | ✅ Done    |
+| Dose alerts at 50, 80 and 100 %                                          | 🔜 Phase 1 |
 | Desktop: per-app volume (Windows WASAPI, Linux PipeWire)                 | 🗓️ Phase 2 |
 | Account & sync of aggregated stats (Supabase)                            | 🗓️ Phase 3 |
 | Hearing check (not a diagnosis) feeding a personal EQ curve              | 🗓️ Phase 3 |
@@ -147,6 +148,7 @@ WHLambda/
 │   └── desktop/          Compose Desktop application + installers
 ├── shared/               App shell: App(), navigation, dependency injection
 ├── feature/
+│   ├── dashboard/        Home: dose used today and this week, history
 │   ├── exposure/         Dose explorer (reference screen implementation)
 │   ├── settings/         Settings: your data
 │   └── about/            About screen

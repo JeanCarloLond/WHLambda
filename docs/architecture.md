@@ -15,6 +15,7 @@ flowchart TB
     end
     shared[":shared<br/><sub>App(), navigation, DI</sub>"]
     subgraph features
+        dashboard[":feature:dashboard"]
         exposure[":feature:exposure"]
         settings[":feature:settings"]
         about[":feature:about"]
@@ -25,6 +26,7 @@ flowchart TB
 
     android --> shared
     desktop --> shared
+    shared --> dashboard
     shared --> exposure
     shared --> settings
     shared --> about
@@ -34,6 +36,7 @@ flowchart TB
     data --> domain
     exposure --> designsystem
     exposure --> domain
+    dashboard --> domain
     settings --> domain
     about --> designsystem
 ```
@@ -53,10 +56,10 @@ flowchart TB
 
 Modules are created when they have code, never empty. Expected next:
 
-| Module       | Phase | Responsibility                                          |
-| ------------ | ----- | ------------------------------------------------------- |
-| `:core:sync` | 3     | Supabase client (auth, sync of aggregates)              |
-| `:feature:*` | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`… |
+| Module       | Phase | Responsibility                             |
+| ------------ | ----- | ------------------------------------------ |
+| `:core:sync` | 3     | Supabase client (auth, sync of aggregates) |
+| `:feature:*` | 1+    | `profiles`, `onboarding`, `hearing-check`… |
 
 ## Dependency rules
 
