@@ -1,7 +1,10 @@
 package com.waveheaven.lambda.feature.dashboard
 
 import androidx.navigation3.runtime.NavKey
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeProblem
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 
@@ -22,7 +25,48 @@ data class DashboardUiState(
     val history: List<HistoryDayUi> = emptyList(),
     /** The listening profile in use. */
     val profile: ActiveProfileUi? = null,
+    /** Without consent for the current text the app does not measure; the dashboard explains why (WH-074). */
+    val consentStatus: ConsentStatus = ConsentStatus.GIVEN,
+    val adaptive: AdaptiveUi = AdaptiveUi(AdaptiveVolumeState.UNAVAILABLE),
 )
+
+/** The adaptive-volume loop as the dashboard shows it. */
+data class AdaptiveUi(
+    val state: AdaptiveVolumeState,
+    val ambientDb: Int? = null,
+    /** Estimated level at the ear right now, with its margin (WH-032). */
+    val output: LevelUi? = null,
+    val hint: AdaptiveHint? = null,
+    val problem: AdaptiveVolumeProblem? = null,
+    /** The user refused the microphone when starting. */
+    val microphoneDenied: Boolean = false,
+)
+
+/** Why the volume is where it is, when the user should know (WH-014). */
+enum class AdaptiveHint {
+    /** The remaining dose keeps the volume below what the noise calls for. */
+    LIMITED_BY_DOSE,
+
+    /** The user changed the volume; the app leaves it alone for a while. */
+    MANUAL_OVERRIDE,
+
+    /** The user set the volume above the safe limit; the app does not fight it but says so. */
+    ABOVE_LIMIT_BY_USER,
+}
+
+/** User intents (and permission answers) the dashboard understands. */
+sealed interface DashboardAction {
+    data object Start : DashboardAction
+
+    data object Pause : DashboardAction
+
+    data object Resume : DashboardAction
+
+    data object Stop : DashboardAction
+
+    /** The microphone permission was refused when starting. */
+    data object MicrophoneDenied : DashboardAction
+}
 
 data class ActiveProfileUi(
     val id: String,

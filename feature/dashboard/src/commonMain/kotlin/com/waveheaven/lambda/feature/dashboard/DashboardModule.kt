@@ -8,6 +8,12 @@ import org.koin.dsl.module
 val dashboardModule =
     module {
         viewModel {
-            DashboardViewModel(tracker = get(), log = get(), activeProfile = get<ListeningProfileStore>().activeProfile())
+            DashboardViewModel(
+                tracker = get(),
+                log = get(),
+                preferences = get(),
+                activeProfile = get<ListeningProfileStore>().activeProfile(),
+                adaptiveVolume = get(),
+            )
         }
     }

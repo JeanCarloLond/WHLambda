@@ -262,7 +262,21 @@ class VolumeControllerTest {
     fun `rejects a profile maximum outside the model or below the minimum`() {
         assertFailsWith<IllegalArgumentException> { VolumeController(MODEL, VolumeControllerConfig(maxIndex = 16)) }
         assertFailsWith<IllegalArgumentException> { VolumeControllerConfig(minIndex = 5, maxIndex = 4) }
-        assertFailsWith<IllegalArgumentException> { VolumeController(MODEL).reconfigure(VolumeControllerConfig(minIndex = 20)) }
+        val reconfigured = Phone(index = 5).apply { controller.reconfigure(VolumeControllerConfig(minIndex = 20)) }
+        assertFailsWith<IllegalArgumentException> { reconfigured.tick(ambient = 70.dBA) }
+    }
+
+    @Test
+    fun `each route can have its own output model`() {
+        val quietHeadphones = LinearOutputLevelModel(maxIndex = 15, levelAtMax = 80.dBA, decibelsPerStep = 2.0)
+        val controller = VolumeController(OutputLevelModels { if (it == HEADPHONES) quietHeadphones else MODEL })
+
+        // At index 14, the speaker model plays 98 dB(A), above the 96 dB(A) ceiling; the headphones only 78 dB(A).
+        val speaker = controller.update(VolumeTick(1.seconds, SPEAKER, 70.dBA, 14, true, Dose.NONE))
+        val headphones = controller.update(VolumeTick(2.seconds, HEADPHONES, 70.dBA, 14, true, Dose.NONE))
+
+        assertEquals(LOWER_TO_DOSE_CEILING, speaker.reason)
+        assertEquals(WARMING_UP, headphones.reason)
     }
 
     /** Simulated phone: feeds ticks to the controller and applies its decisions like the OS would. */
