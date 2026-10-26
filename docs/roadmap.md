@@ -1,6 +1,7 @@
 # Roadmap
 
-Each phase is a GitHub milestone; each item is an issue. A phase is done when its acceptance criteria are
+Each phase is a GitHub milestone; each item is an issue. What each phase promises, with stable IDs and
+acceptance criteria, is in [requirements.md](requirements.md). A phase is done when its acceptance criteria are
 demonstrated (tests or demo), not when the code exists.
 
 ## Phase 0 — Foundations ✅ in progress
