@@ -20,8 +20,10 @@ Once per second the platform layer sends a `VolumeTick`:
 It gets back a `VolumeDecision`: `newIndex` (or `null` to leave it), a `reason`, and the ambient Leq, target and
 ceiling so the UI can explain what is happening.
 
-An `OutputLevelModel` translates indices into estimated dB(A) at the ear. Until headphone profiles exist (#11),
-`LinearOutputLevelModel` assumes a constant number of dB per step.
+An `OutputLevelModel` translates indices into estimated dB(A) at the ear, with a margin of error. On Android it is a
+`CurveOutputLevelModel`: the output's headphone profile plus the platform's volume curve (see
+[output level at the ear](hearing-safety.md#output-level-at-the-ear)). `LinearOutputLevelModel`, a constant number
+of dB per step, serves tests and evenly stepped platforms.
 
 ## Rules, in priority order
 

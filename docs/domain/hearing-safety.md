@@ -56,6 +56,48 @@ Notes:
 | --------------- | -------- | --- | --- | --- | ------ | ------ | ------- |
 | Allowed per day | 8 h      | 4 h | 2 h | 1 h | 30 min | 15 min | 7.5 min |
 
+## Output level at the ear
+
+The dose must track what the headphones play, not the street (WH-030). No phone can measure that, so the app
+estimates it from three things
+([`CurveOutputLevelModel`](../../core/domain/src/commonMain/kotlin/com/waveheaven/lambda/core/domain/volume/CurveOutputLevelModel.kt),
+[`HeadphoneProfile`](../../core/domain/src/commonMain/kotlin/com/waveheaven/lambda/core/domain/volume/HeadphoneProfile.kt)):
+
+```
+L_ear(index) = L_max(profile) + G(index)        G(max) = 0 dB, G(mute) = −96 dB
+```
+
+- **`L_max`**, the profile's maximum output: the A-weighted level at the ear at full volume with typical music. We use
+  the level of EN 50332-1's programme-simulation noise, about 10 dB below a full-scale sine, because music is not
+  played at full scale.
+- **`G(index)`**, the attenuation at each volume index. On Android it comes from
+  `AudioManager.getStreamVolumeDb(STREAM_MUSIC, index, device)`, which follows the device's own curve for the current
+  output. Curves are far from linear: on the reference curve below, the top steps are 2 to 4 dB apart and the bottom
+  ones more than 5 dB.
+- **The margin of error**, shown next to every estimate (WH-032): the profile's margin plus the curve's.
+
+### Profiles
+
+| Profile                      | `L_max`                        | Margin | Why                                                                                                                                                 |
+| ---------------------------- | ------------------------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unknown headphones (default) | 105 dB(A)                      | ± 8 dB | Above the 100 dB(A) cap EN 50332 sets in Europe, because devices elsewhere often exceed it. Overestimating only makes the ceiling stricter (WH-031) |
+| Phone speaker                | 85 dB(A)                       | ± 6 dB | Phone speakers rarely exceed 80 dB(A) at 30 cm; holding the phone closer adds a few decibels                                                        |
+| From a datasheet (wired)     | `S + 10·log10(1000·V²/Z) − 10` | ± 4 dB | `S` in dB SPL/mW, `Z` in Ω, `V` the source's full-scale RMS voltage (≈ 1 V for phones and laptops)                                                  |
+| From a datasheet (per volt)  | `S_V + 20·log10(V) − 10`       | ± 4 dB | For datasheets that give sensitivity in dB SPL/V                                                                                                    |
+
+Example: 100 dB SPL/mW, 32 Ω headphones on a 1 V source receive 31.25 mW at full scale, so
+`L_max = 100 + 14.95 − 10 ≈ 105 dB(A)`.
+
+### When the platform curve cannot be used
+
+With **Bluetooth absolute volume** the phone does not attenuate at all (the headphones do), so Android reports a
+flat curve. Then the app uses Android's reference media curve (AOSP `DEFAULT_MEDIA_VOLUME_CURVE`: −58 dB at 1 % of
+the range, −40 dB at 20 %, −17 dB at 60 %, 0 dB at 100 %, linear in decibels in between) and adds **± 3 dB** to the
+margin. A curve is considered unusable when it does not increase strictly with the index or spans less than 20 dB.
+
+With unknown headphones on Bluetooth the estimate is therefore `105 dB(A) + G(index) ± 11 dB`. That is wide, and the
+UI says so; letting users pick their headphones or enter a datasheet will narrow it.
+
 ## How the product uses this
 
 1. **Dose ceiling:** the adaptive-volume policy never targets a level whose sustained use would exceed the
