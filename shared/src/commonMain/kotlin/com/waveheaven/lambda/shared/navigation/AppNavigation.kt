@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
+import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.feature.about.AboutKey
 import com.waveheaven.lambda.feature.about.AboutScreen
@@ -42,6 +43,7 @@ import org.koin.compose.koinInject
 internal fun AppNavigation(
     appVersion: String,
     microphoneAccess: MicrophoneAccess,
+    notificationAccess: NotificationAccess,
     modifier: Modifier = Modifier,
 ) {
     // The first screen depends on a stored preference, so nothing is shown until it has been read (a few ms).
@@ -49,7 +51,7 @@ internal fun AppNavigation(
     val onboardingCompleted by produceState<Boolean?>(initialValue = null) { value = preferences.onboardingCompleted.first() }
     when (onboardingCompleted) {
         null -> Box(modifier.fillMaxSize())
-        else -> AppNavDisplay(appVersion, microphoneAccess, startAtOnboarding = onboardingCompleted == false, modifier)
+        else -> AppNavDisplay(appVersion, microphoneAccess, notificationAccess, startAtOnboarding = onboardingCompleted == false, modifier)
     }
 }
 
@@ -57,6 +59,7 @@ internal fun AppNavigation(
 private fun AppNavDisplay(
     appVersion: String,
     microphoneAccess: MicrophoneAccess,
+    notificationAccess: NotificationAccess,
     startAtOnboarding: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -90,6 +93,8 @@ private fun AppNavDisplay(
                 }
                 entry<DashboardKey> {
                     DashboardRoute(
+                        microphoneAccess = microphoneAccess,
+                        notificationAccess = notificationAccess,
                         onOpenExplorer = { backStack.add(DoseExplorerKey) },
                         onOpenProfiles = { backStack.add(ProfilesKey) },
                         onOpenSettings = { backStack.add(SettingsKey) },

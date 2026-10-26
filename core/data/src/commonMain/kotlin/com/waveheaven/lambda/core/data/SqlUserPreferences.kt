@@ -36,6 +36,20 @@ class SqlUserPreferences(
             if (version == null || at == null) null else Consent(version.toInt(), Instant.fromEpochMilliseconds(at.toLong()))
         }.distinctUntilChanged()
 
+    override val microphoneAdjustmentDb: Flow<Double> =
+        settings.observe(MICROPHONE_ADJUSTMENT).map { it?.toDoubleOrNull() ?: 0.0 }.distinctUntilChanged()
+
+    override val mediaApp: Flow<String?> = settings.observe(MEDIA_APP).distinctUntilChanged()
+
+    override suspend fun setMicrophoneAdjustmentDb(adjustmentDb: Double) {
+        require(adjustmentDb in UserPreferences.MICROPHONE_ADJUSTMENT_RANGE_DB) { "Adjustment out of range: $adjustmentDb" }
+        settings.put(MICROPHONE_ADJUSTMENT, adjustmentDb.toString())
+    }
+
+    override suspend fun setMediaApp(app: String?) {
+        if (app == null) settings.remove(MEDIA_APP) else settings.put(MEDIA_APP, app)
+    }
+
     override suspend fun completeOnboarding() = settings.put(ONBOARDING_COMPLETED, TRUE)
 
     override suspend fun setWeeklyStandard(standard: DoseStandard) {
@@ -70,6 +84,8 @@ class SqlUserPreferences(
         const val WEEKLY_STANDARD = "weekly_standard"
         const val CONSENT_VERSION = "consent_version"
         const val CONSENT_AT_MS = "consent_at_ms"
+        const val MICROPHONE_ADJUSTMENT = "microphone_adjustment_db"
+        const val MEDIA_APP = "media_app"
         const val TRUE = "true"
 
         val WEEKLY_STANDARDS = DoseStandard.entries.filter { it.window == DoseWindow.WEEKLY }

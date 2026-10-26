@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tray_running">Adaptando · ruido %1$d dB(A)</string>
+    <string name="tray_waiting">Esperando música</string>
+    <string name="tray_paused">En pausa</string>
+    <string name="tray_stopped">Volumen adaptativo apagado</string>
+    <string name="tray_today">hoy %1$d %</string>
+    <string name="tray_start">Iniciar volumen adaptativo</string>
+    <string name="tray_pause">Pausar</string>
+    <string name="tray_resume">Reanudar</string>
+    <string name="tray_stop">Detener</string>
+    <string name="tray_open">Abrir WaveHeaven</string>
+    <string name="tray_quit">Salir</string>
+    <string name="alert_title">Has usado el %1$d % de tu presupuesto semanal de escucha</string>
+    <string name="alert_title_full">Has usado todo tu presupuesto semanal de escucha</string>
+    <string name="alert_advice_lower_volume">Bajar el volumen uno o dos pasos hace que el resto de tu presupuesto dure mucho más.</string>
+    <string name="alert_advice_break">Dale un descanso a tus oídos: unas horas de silencio les ayudan a recuperarse.</string>
+    <string name="alert_advice_noise_cancelling">Hay mucho ruido a tu alrededor. Unos audífonos con cancelación de ruido te dejan oír la música a menor volumen.</string>
+</resources>

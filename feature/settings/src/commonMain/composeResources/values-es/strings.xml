@@ -28,4 +28,16 @@
     <string name="settings_withdraw_confirm">Retirar</string>
     <string name="settings_consent_withdrawn">Consentimiento retirado</string>
     <string name="settings_consent_withdrawn_deleted">Consentimiento retirado y datos de escucha borrados</string>
+    <string name="settings_alerts_title">Alertas de dosis</string>
+    <string name="settings_alerts_description">Una notificación, con vibración y sin sonido, cuando llegas a una parte de tu presupuesto semanal, con un consejo de qué hacer.</string>
+    <string name="settings_alerts_mute">Silenciar todas las alertas</string>
+    <string name="settings_alerts_threshold">Al %1$d&#160;%</string>
+    <string name="settings_media_app_title">App de música</string>
+    <string name="settings_media_app_description">WaveHeaven adapta el volumen de una app en este computador. Elige con la que escuchas música; ponla a sonar si no aparece.</string>
+    <string name="settings_media_app_none">Ninguna app está reproduciendo audio ahora.</string>
+    <string name="settings_media_app_refresh">Actualizar lista</string>
+    <string name="settings_calibration_title">Calibración del micrófono</string>
+    <string name="settings_calibration_description">Los micrófonos varían. Si tienes un sonómetro (o una app de medición calibrada en otro teléfono), ponlo junto a este dispositivo en un ruido estable, compara su lectura con el nivel de ruido que muestra WaveHeaven mientras el volumen adaptativo está activo y corrige aquí la diferencia. Esto solo cambia qué tan fuerte cree WaveHeaven que suena a tu alrededor, nunca tu límite de escucha segura.</string>
+    <string name="settings_calibration_value">Corrección: %1$s dB</string>
+    <string name="settings_calibration_reset">Volver al valor por defecto</string>
 </resources>

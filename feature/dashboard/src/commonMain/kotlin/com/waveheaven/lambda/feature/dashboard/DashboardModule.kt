@@ -13,6 +13,7 @@ val dashboardModule =
                 log = get(),
                 preferences = get(),
                 activeProfile = get<ListeningProfileStore>().activeProfile(),
+                adaptiveVolume = get(),
             )
         }
     }

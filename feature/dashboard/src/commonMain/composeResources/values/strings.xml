@@ -34,4 +34,22 @@
     <string name="day_6">Sat</string>
     <string name="day_7">Sun</string>
     <string name="day_today">Today</string>
+    <string name="adaptive_title">Adaptive volume</string>
+    <string name="adaptive_off">Off. Turn it on to keep your music audible over the noise, within your safe limit.</string>
+    <string name="adaptive_waiting">On, waiting for music. The microphone stays off until something plays.</string>
+    <string name="adaptive_running">Noise %1$d dB(A) · music %2$s</string>
+    <string name="adaptive_running_no_output">Noise %1$d dB(A)</string>
+    <string name="adaptive_paused">Paused. The microphone is off.</string>
+    <string name="adaptive_hint_limited">Your safe-listening limit is holding the volume down. Noise-cancelling headphones or a quieter spot will help.</string>
+    <string name="adaptive_hint_manual">You changed the volume, so WaveHeaven leaves it alone for 10 minutes.</string>
+    <string name="adaptive_hint_above_limit">You set the volume above your safe limit. WaveHeaven will not fight you, but your dose is rising faster.</string>
+    <string name="adaptive_microphone_denied">WaveHeaven needs the microphone to adapt the volume. You can allow it in the system settings.</string>
+    <string name="adaptive_problem_microphone">The microphone could not be used, so adaptive volume stopped. Check that WaveHeaven may use it.</string>
+    <string name="adaptive_open_settings">Open system settings</string>
+    <string name="adaptive_start">Start</string>
+    <string name="adaptive_pause">Pause</string>
+    <string name="adaptive_resume">Resume</string>
+    <string name="adaptive_stop">Stop</string>
+    <string name="adaptive_problem_media_app">Choose the app you listen to music with, so WaveHeaven knows whose volume to adapt.</string>
+    <string name="adaptive_choose_app">Choose music app</string>
 </resources>

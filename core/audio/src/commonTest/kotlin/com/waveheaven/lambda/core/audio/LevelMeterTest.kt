@@ -74,6 +74,11 @@ class LevelMeterTest {
     }
 
     @Test
+    fun `nominal Android calibration for the unprocessed source follows the CDD`() {
+        assertEquals(129.99, MicrophoneCalibration.ANDROID_UNPROCESSED_NOMINAL.offsetDb, 0.01)
+    }
+
+    @Test
     fun `rejects invalid arguments`() {
         assertFailsWith<IllegalArgumentException> { LevelMeter(rate, MicrophoneCalibration(0.0), windowSamples = 0) }
         assertFailsWith<IllegalArgumentException> { LevelMeter(rate, MicrophoneCalibration(0.0)).process(FloatArray(1), size = 2) {} }

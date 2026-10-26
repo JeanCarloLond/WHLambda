@@ -6,5 +6,5 @@ import org.koin.dsl.module
 /** Dependency-injection bindings of the settings feature. */
 val settingsModule =
     module {
-        viewModel { SettingsViewModel(exposureLog = get(), preferences = get()) }
+        viewModel { SettingsViewModel(exposureLog = get(), preferences = get(), alerts = get(), runningApps = getOrNull()) }
     }

@@ -11,6 +11,11 @@ import com.waveheaven.lambda.core.domain.exposure.InMemoryExposureLog
 import com.waveheaven.lambda.core.domain.exposure.SoundLevel
 import com.waveheaven.lambda.core.domain.exposure.dBA
 import com.waveheaven.lambda.core.domain.profile.ListeningProfile
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeStatus
+import com.waveheaven.lambda.core.domain.volume.VolumeDecision
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +33,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -138,6 +144,67 @@ class DashboardViewModelTest {
         }
 
     @Test
+    fun `commands go to the adaptive-volume loop`() =
+        runTest {
+            val viewModel = viewModel()
+
+            listOf(DashboardAction.Start, DashboardAction.Pause, DashboardAction.Resume, DashboardAction.Stop).forEach(viewModel::onAction)
+
+            assertEquals(listOf("start", "pause", "resume", "stop"), adaptive.commands)
+        }
+
+    @Test
+    fun `shows the live loop with the output margin and explains why the volume is held`() =
+        runTest {
+            val state = observe(viewModel())
+
+            adaptive.status.value =
+                AdaptiveVolumeStatus(
+                    state = AdaptiveVolumeState.RUNNING,
+                    ambient = 78.4.dBA,
+                    output = 86.2.dBA,
+                    outputUncertaintyDb = 8.0,
+                    decision = decision(VolumeDecisionReason.AT_DOSE_CEILING, capped = true),
+                )
+
+            assertEquals(
+                AdaptiveUi(AdaptiveVolumeState.RUNNING, ambientDb = 78, output = LevelUi(86, 8), hint = AdaptiveHint.LIMITED_BY_DOSE),
+                state.value.adaptive,
+            )
+        }
+
+    @Test
+    fun `explains manual changes, above the limit or not`() =
+        runTest {
+            val state = observe(viewModel())
+
+            adaptive.status.value =
+                AdaptiveVolumeStatus(AdaptiveVolumeState.RUNNING, decision = decision(VolumeDecisionReason.MANUAL_OVERRIDE))
+            assertEquals(AdaptiveHint.MANUAL_OVERRIDE, state.value.adaptive.hint)
+
+            adaptive.status.value =
+                AdaptiveVolumeStatus(AdaptiveVolumeState.RUNNING, decision = decision(VolumeDecisionReason.MANUAL_OVERRIDE, above = true))
+            assertEquals(AdaptiveHint.ABOVE_LIMIT_BY_USER, state.value.adaptive.hint)
+
+            adaptive.status.value =
+                AdaptiveVolumeStatus(AdaptiveVolumeState.RUNNING, decision = decision(VolumeDecisionReason.WITHIN_DEAD_BAND))
+            assertNull(state.value.adaptive.hint)
+        }
+
+    @Test
+    fun `a refused microphone is shown until the next start`() =
+        runTest {
+            val viewModel = viewModel()
+            val state = observe(viewModel)
+
+            viewModel.onAction(DashboardAction.MicrophoneDenied)
+            assertTrue(state.value.adaptive.microphoneDenied)
+
+            viewModel.onAction(DashboardAction.Start)
+            assertFalse(state.value.adaptive.microphoneDenied)
+        }
+
+    @Test
     fun `percentages are written out, capped for display`() {
         assertEquals("42 %", formatPercent(42))
         assertEquals("> 999 %", formatPercent(1500))
@@ -147,15 +214,16 @@ class DashboardViewModelTest {
 
     private val preferences = InMemoryUserPreferences(consent = Consent(Consent.CURRENT_VERSION, now))
 
+    private val adaptive = FakeAdaptiveVolume()
+
     private fun viewModel() =
         DashboardViewModel(
-            tracker,
-            log,
-            preferences,
-            activeProfile,
-            DashboardClock(clock, {
-                bogota
-            }, ticks = flowOf(Unit)),
+            tracker = tracker,
+            log = log,
+            preferences = preferences,
+            activeProfile = activeProfile,
+            adaptiveVolume = adaptive,
+            time = DashboardClock(clock, { bogota }, ticks = flowOf(Unit)),
         )
 
     private fun TestScope.observe(viewModel: DashboardViewModel) =
@@ -170,6 +238,33 @@ class DashboardViewModelTest {
         while (t < from + duration) {
             tracker.record(ExposureMinute(t, ExposureMinute.MINUTE, level, 6.0, null))
             t += ExposureMinute.MINUTE
+        }
+    }
+
+    private fun decision(
+        reason: VolumeDecisionReason,
+        capped: Boolean = false,
+        above: Boolean = false,
+    ) = VolumeDecision(null, reason, null, null, 96.dBA, isTargetCappedByDose = capped, isAboveDoseCeiling = above)
+
+    private class FakeAdaptiveVolume : AdaptiveVolume {
+        override val status = MutableStateFlow(AdaptiveVolumeStatus(AdaptiveVolumeState.STOPPED))
+        val commands = mutableListOf<String>()
+
+        override fun start() {
+            commands += "start"
+        }
+
+        override fun pause() {
+            commands += "pause"
+        }
+
+        override fun resume() {
+            commands += "resume"
+        }
+
+        override fun stop() {
+            commands += "stop"
         }
     }
 
