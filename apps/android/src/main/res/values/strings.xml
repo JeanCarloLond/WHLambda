@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">WaveHeaven Lambda</string>
+    <string name="adaptive_channel">Adaptive volume</string>
+    <string name="adaptive_running_title">Adapting your volume</string>
+    <string name="adaptive_waiting_title">Waiting for music</string>
+    <string name="adaptive_paused_title">Adaptive volume paused</string>
+    <string name="adaptive_noise">Noise %1$d dB(A)</string>
+    <string name="adaptive_today">today %1$d %%</string>
+    <string name="adaptive_microphone_off">microphone off</string>
+    <string name="adaptive_pause">Pause</string>
+    <string name="adaptive_resume">Resume</string>
+    <string name="adaptive_stop">Stop</string>
 </resources>

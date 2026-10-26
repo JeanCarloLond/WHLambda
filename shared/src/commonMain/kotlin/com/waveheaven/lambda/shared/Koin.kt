@@ -1,5 +1,8 @@
 package com.waveheaven.lambda.shared
 
+import com.waveheaven.lambda.core.audio.AdaptiveVolumeEngine
+import com.waveheaven.lambda.core.audio.AdaptiveVolumeSession
+import com.waveheaven.lambda.core.audio.LoopInputs
 import com.waveheaven.lambda.core.data.SqlExposureLog
 import com.waveheaven.lambda.core.data.SqlListeningProfileStore
 import com.waveheaven.lambda.core.data.SqlUserPreferences
@@ -15,6 +18,9 @@ import com.waveheaven.lambda.feature.exposure.exposureModule
 import com.waveheaven.lambda.feature.onboarding.onboardingModule
 import com.waveheaven.lambda.feature.profiles.profilesModule
 import com.waveheaven.lambda.feature.settings.settingsModule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
@@ -34,8 +40,20 @@ val dataModule =
         single<UserPreferences> { SqlUserPreferences(get()) }
     }
 
+/**
+ * The adaptive-volume loop, shared by every platform. Needs platform bindings for `AmbientMeter`, `MediaVolume` and
+ * `OutputLevelModels`; it is only created on platforms whose `AdaptiveVolume` binding uses it.
+ */
+val adaptiveVolumeModule =
+    module {
+        single { LoopInputs(get<UserPreferences>(), get<ListeningProfileStore>()) }
+        single { AdaptiveVolumeEngine(meter = get(), volume = get(), models = get(), tracker = get(), inputs = get()) }
+        // Lives as long as the process, so the loop outlives screens and is shared with the Android service.
+        single { AdaptiveVolumeSession(get(), CoroutineScope(SupervisorJob() + Dispatchers.Default)) }
+    }
+
 /** Bindings of every feature. Platform-specific bindings are added by each app through [initKoin]'s config. */
-val appModules = listOf(dataModule, dashboardModule, exposureModule, onboardingModule, profilesModule, settingsModule)
+val appModules = listOf(dataModule, adaptiveVolumeModule, dashboardModule, exposureModule, onboardingModule, profilesModule, settingsModule)
 
 /**
  * Starts dependency injection once per process: from `Application.onCreate` on Android and from `main` on

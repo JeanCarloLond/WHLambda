@@ -7,6 +7,8 @@ import androidx.compose.ui.window.rememberWindowState
 import app.cash.sqldelight.db.SqlDriver
 import com.waveheaven.lambda.core.data.createDesktopDriver
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
+import com.waveheaven.lambda.core.domain.consent.NotificationAccess
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.shared.App
 import com.waveheaven.lambda.shared.initKoin
 import org.koin.dsl.module
@@ -16,7 +18,13 @@ private val appVersion: String = System.getProperty("jpackage.app-version") ?: "
 
 fun main() {
     initKoin {
-        modules(module { single<SqlDriver> { createDesktopDriver() } })
+        modules(
+            module {
+                single<SqlDriver> { createDesktopDriver() }
+                // Per-application volume on desktop arrives with #17.
+                single<AdaptiveVolume> { AdaptiveVolume.Unavailable }
+            },
+        )
     }
     application {
         Window(
@@ -24,7 +32,7 @@ fun main() {
             title = "WaveHeaven Lambda",
             state = rememberWindowState(width = 480.dp, height = 720.dp),
         ) {
-            App(appVersion = appVersion, microphoneAccess = DesktopMicrophoneAccess)
+            App(appVersion = appVersion, microphoneAccess = DesktopMicrophoneAccess, notificationAccess = DesktopNotificationAccess)
         }
     }
 }
@@ -36,4 +44,11 @@ private object DesktopMicrophoneAccess : MicrophoneAccess {
     override fun request(onResult: (granted: Boolean) -> Unit) = onResult(true)
 
     override fun openSystemSettings() = Unit
+}
+
+/** Desktop notifications need no permission from Java applications. */
+private object DesktopNotificationAccess : NotificationAccess {
+    override fun isGranted(): Boolean = true
+
+    override fun request(onResult: (granted: Boolean) -> Unit) = onResult(true)
 }

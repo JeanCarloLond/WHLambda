@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="adaptive_channel">Volumen adaptativo</string>
+    <string name="adaptive_running_title">Adaptando tu volumen</string>
+    <string name="adaptive_waiting_title">Esperando música</string>
+    <string name="adaptive_paused_title">Volumen adaptativo en pausa</string>
+    <string name="adaptive_noise">Ruido %1$d dB(A)</string>
+    <string name="adaptive_today">hoy %1$d %%</string>
+    <string name="adaptive_microphone_off">micrófono apagado</string>
+    <string name="adaptive_pause">Pausar</string>
+    <string name="adaptive_resume">Reanudar</string>
+    <string name="adaptive_stop">Detener</string>
+</resources>

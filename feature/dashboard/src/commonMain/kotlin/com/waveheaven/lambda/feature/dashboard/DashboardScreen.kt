@@ -28,7 +28,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
+import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
+import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.feature.dashboard.resources.Res
 import com.waveheaven.lambda.feature.dashboard.resources.app_name
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_missing
@@ -60,6 +63,8 @@ import org.koin.compose.viewmodel.koinViewModel
 /** Stateful entry point: connects [DashboardViewModel] to the stateless [DashboardScreen]. */
 @Composable
 fun DashboardRoute(
+    microphoneAccess: MicrophoneAccess,
+    notificationAccess: NotificationAccess,
     onOpenExplorer: () -> Unit,
     onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -69,8 +74,23 @@ fun DashboardRoute(
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // Starting needs the microphone (and, to show the notification, notifications): ask right before, never ahead.
+    val onAction: (DashboardAction) -> Unit = { action ->
+        if (action == DashboardAction.Start) {
+            val start = { notificationAccess.request { viewModel.onAction(DashboardAction.Start) } }
+            if (microphoneAccess.isGranted()) {
+                start()
+            } else {
+                microphoneAccess.request { granted -> if (granted) start() else viewModel.onAction(DashboardAction.MicrophoneDenied) }
+            }
+        } else {
+            viewModel.onAction(action)
+        }
+    }
     DashboardScreen(
         state = state,
+        onAction = onAction,
+        onOpenMicrophoneSettings = microphoneAccess::openSystemSettings,
         onOpenExplorer = onOpenExplorer,
         onOpenProfiles = onOpenProfiles,
         onOpenSettings = onOpenSettings,
@@ -88,6 +108,8 @@ fun DashboardRoute(
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
+    onAction: (DashboardAction) -> Unit,
+    onOpenMicrophoneSettings: () -> Unit,
     onOpenExplorer: () -> Unit,
     onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -121,6 +143,14 @@ fun DashboardScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (state.consentStatus != ConsentStatus.GIVEN) ConsentCard(status = state.consentStatus, onReview = onReviewConsent)
+            if (state.adaptive.state != AdaptiveVolumeState.UNAVAILABLE) {
+                AdaptiveVolumeCard(
+                    adaptive = state.adaptive,
+                    canStart = state.consentStatus == ConsentStatus.GIVEN,
+                    onAction = onAction,
+                    onOpenMicrophoneSettings = onOpenMicrophoneSettings,
+                )
+            }
             state.profile?.let { profile ->
                 OutlinedButton(onClick = onOpenProfiles) {
                     Text(stringResource(Res.string.dashboard_profile, profileName(profile)))

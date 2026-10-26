@@ -34,4 +34,20 @@
     <string name="day_6">sáb</string>
     <string name="day_7">dom</string>
     <string name="day_today">Hoy</string>
+    <string name="adaptive_title">Volumen adaptativo</string>
+    <string name="adaptive_off">Apagado. Actívalo para que tu música se oiga sobre el ruido, dentro de tu límite seguro.</string>
+    <string name="adaptive_waiting">Activo, esperando música. El micrófono sigue apagado hasta que algo suene.</string>
+    <string name="adaptive_running">Ruido %1$d dB(A) · música %2$s</string>
+    <string name="adaptive_running_no_output">Ruido %1$d dB(A)</string>
+    <string name="adaptive_paused">En pausa. El micrófono está apagado.</string>
+    <string name="adaptive_hint_limited">Tu límite de escucha segura está frenando el volumen. Unos audífonos con cancelación de ruido o un lugar más tranquilo te ayudarán.</string>
+    <string name="adaptive_hint_manual">Cambiaste el volumen, así que WaveHeaven no lo toca durante 10 minutos.</string>
+    <string name="adaptive_hint_above_limit">Pusiste el volumen por encima de tu límite seguro. WaveHeaven no va a pelear contigo, pero tu dosis sube más rápido.</string>
+    <string name="adaptive_microphone_denied">WaveHeaven necesita el micrófono para adaptar el volumen. Puedes permitirlo en los ajustes del sistema.</string>
+    <string name="adaptive_problem_microphone">No se pudo usar el micrófono, así que el volumen adaptativo se detuvo. Revisa que WaveHeaven tenga permiso.</string>
+    <string name="adaptive_open_settings">Abrir ajustes del sistema</string>
+    <string name="adaptive_start">Iniciar</string>
+    <string name="adaptive_pause">Pausar</string>
+    <string name="adaptive_resume">Reanudar</string>
+    <string name="adaptive_stop">Detener</string>
 </resources>
