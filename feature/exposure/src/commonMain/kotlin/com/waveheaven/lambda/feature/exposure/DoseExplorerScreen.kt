@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.feature.exposure.resources.Res
 import com.waveheaven.lambda.feature.exposure.resources.app_name
