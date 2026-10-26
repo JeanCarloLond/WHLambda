@@ -171,6 +171,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 
 | Document                                                       | Contents                                                 |
 | -------------------------------------------------------------- | -------------------------------------------------------- |
+| [docs/requirements.md](docs/requirements.md)                   | Personas, requirements with stable IDs, traceability     |
 | [docs/architecture.md](docs/architecture.md)                   | Modules, dependency rules, where new code goes           |
 | [docs/adr/](docs/adr/)                                         | Architecture Decision Records — the _why_ behind choices |
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
