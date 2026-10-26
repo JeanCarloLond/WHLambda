@@ -43,20 +43,7 @@ public class ExposureAccumulator {
 
     /** Returns the minute in progress, if any, and starts afresh. Call it when listening stops. */
     public fun flush(): ExposureMinute? {
-        val start = minute ?: return null
-        val result =
-            ExposureMinute(
-                start = start,
-                listening = minOf(listening, ExposureMinute.MINUTE),
-                output = SoundLevel.fromMeanSquarePressure(outputEnergy / listening.inWholeMilliseconds),
-                outputUncertaintyDb = uncertaintyDb,
-                ambient =
-                    if (ambientTime.isPositive()) {
-                        SoundLevel.fromMeanSquarePressure(ambientEnergy / ambientTime.inWholeMilliseconds)
-                    } else {
-                        null
-                    },
-            )
+        val result = peek()
         minute = null
         listening = Duration.ZERO
         outputEnergy = 0.0
@@ -64,5 +51,22 @@ public class ExposureAccumulator {
         ambientTime = Duration.ZERO
         uncertaintyDb = 0.0
         return result
+    }
+
+    /** The minute in progress so far, without resetting it: lets a live dose include the current minute. */
+    public fun peek(): ExposureMinute? {
+        val start = minute ?: return null
+        return ExposureMinute(
+            start = start,
+            listening = minOf(listening, ExposureMinute.MINUTE),
+            output = SoundLevel.fromMeanSquarePressure(outputEnergy / listening.inWholeMilliseconds),
+            outputUncertaintyDb = uncertaintyDb,
+            ambient =
+                if (ambientTime.isPositive()) {
+                    SoundLevel.fromMeanSquarePressure(ambientEnergy / ambientTime.inWholeMilliseconds)
+                } else {
+                    null
+                },
+        )
     }
 }
