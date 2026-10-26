@@ -1,0 +1,18 @@
+selectAt:
+SELECT * FROM exposure_minute WHERE start_epoch_minute = ?;
+
+selectSince:
+SELECT * FROM exposure_minute WHERE start_epoch_minute >= ? ORDER BY start_epoch_minute;
+
+countAll:
+SELECT count(*) FROM exposure_minute;
+
+upsert:
+INSERT OR REPLACE INTO exposure_minute(start_epoch_minute, listening_ms, output_leq_dba, output_uncertainty_db, ambient_leq_dba)
+VALUES (?, ?, ?, ?, ?);
+
+deleteBefore:
+DELETE FROM exposure_minute WHERE start_epoch_minute < ?;
+
+deleteAll:
+DELETE FROM exposure_minute;

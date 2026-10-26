@@ -1,0 +1,8 @@
+-- Per-minute listening aggregates (ADR-0007). Never audio.
+CREATE TABLE exposure_minute (
+    start_epoch_minute INTEGER NOT NULL PRIMARY KEY,
+    listening_ms INTEGER NOT NULL,
+    output_leq_dba REAL NOT NULL,
+    output_uncertainty_db REAL NOT NULL,
+    ambient_leq_dba REAL
+);
