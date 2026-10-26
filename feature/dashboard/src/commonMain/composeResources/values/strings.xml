@@ -22,6 +22,10 @@
     <string name="profile_gym">Gym</string>
     <string name="profile_office">Office</string>
     <string name="profile_home">Home</string>
+    <string name="dashboard_consent_title">Adaptive volume is off</string>
+    <string name="dashboard_consent_missing">WaveHeaven needs your consent before it measures the noise around you. Until then you can see your dose and explore safe listening times.</string>
+    <string name="dashboard_consent_outdated">We updated how WaveHeaven handles your data. Review the changes to turn adaptive volume back on.</string>
+    <string name="dashboard_consent_review">Review and give consent</string>
     <string name="day_1">Mon</string>
     <string name="day_2">Tue</string>
     <string name="day_3">Wed</string>

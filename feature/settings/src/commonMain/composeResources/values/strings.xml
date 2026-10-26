@@ -10,4 +10,22 @@
     <string name="settings_delete_confirm">Delete</string>
     <string name="settings_cancel">Cancel</string>
     <string name="settings_data_deleted">Listening data deleted</string>
+    <string name="settings_standard_title">Weekly limit</string>
+    <string name="settings_standard_adult">WHO standard</string>
+    <string name="settings_standard_adult_description">40 hours a week at 80 dB(A). Recommended for adults.</string>
+    <string name="settings_standard_sensitive">WHO sensitive</string>
+    <string name="settings_standard_sensitive_description">40 hours a week at 75 dB(A). For children, teenagers or anyone who wants a stricter limit.</string>
+    <string name="settings_consent_title">Consent</string>
+    <string name="settings_consent_given">You gave consent on %1$s (version %2$d). WaveHeaven may measure while adaptive volume is on.</string>
+    <string name="settings_consent_missing">You have not given consent, so WaveHeaven does not measure anything. You can still see your dose and explore safe listening times.</string>
+    <string name="settings_consent_outdated">We updated how WaveHeaven handles your data. Review it and give consent again before adaptive volume can resume.</string>
+    <string name="settings_consent_withdraw">Withdraw consent</string>
+    <string name="settings_consent_give">Review and give consent</string>
+    <string name="settings_consent_review">Review the changes</string>
+    <string name="settings_withdraw_title">Withdraw consent?</string>
+    <string name="settings_withdraw_text">WaveHeaven will stop measuring at once. Your listening data stays on this device unless you delete it.</string>
+    <string name="settings_withdraw_also_delete">Also delete my listening data</string>
+    <string name="settings_withdraw_confirm">Withdraw</string>
+    <string name="settings_consent_withdrawn">Consent withdrawn</string>
+    <string name="settings_consent_withdrawn_deleted">Consent withdrawn and listening data deleted</string>
 </resources>

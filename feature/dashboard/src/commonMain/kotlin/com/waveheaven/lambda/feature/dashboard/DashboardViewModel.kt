@@ -2,6 +2,9 @@ package com.waveheaven.lambda.feature.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
+import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.consent.status
 import com.waveheaven.lambda.core.domain.exposure.Dose
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
@@ -31,15 +34,25 @@ import kotlin.time.Duration.Companion.minutes
 class DashboardViewModel(
     private val tracker: DoseTracker,
     log: ExposureLog,
-    weeklyStandard: Flow<DoseStandard> = flowOf(DoseStandard.WHO_ADULT),
+    preferences: UserPreferences,
     activeProfile: Flow<ListeningProfile> = flowOf(ListeningProfile.DEFAULT),
     private val time: DashboardClock = DashboardClock(),
 ) : ViewModel() {
     val state: StateFlow<DashboardUiState> =
-        combine(log.changes(), time.ticks, weeklyStandard, activeProfile) { _, _, standard, profile -> standard to profile }
-            .map { (standard, profile) ->
-                load(standard).copy(profile = ActiveProfileUi(profile.id, profile.name, profile.isBuiltIn))
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardUiState())
+        combine(
+            log.changes(),
+            time.ticks,
+            preferences.weeklyStandard,
+            activeProfile,
+            preferences.consent,
+        ) { _, _, standard, profile, consent ->
+            Inputs(standard, profile, consent.status())
+        }.map { inputs ->
+            load(inputs.weeklyStandard).copy(
+                profile = ActiveProfileUi(inputs.profile.id, inputs.profile.name, inputs.profile.isBuiltIn),
+                consentStatus = inputs.consentStatus,
+            )
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), DashboardUiState())
 
     private suspend fun load(weeklyStandard: DoseStandard): DashboardUiState {
         val now = time.clock.now()
@@ -78,6 +91,12 @@ class DashboardViewModel(
     }
 
     private fun Dose.roundedPercent(): Int = percent.roundToInt()
+
+    private data class Inputs(
+        val weeklyStandard: DoseStandard,
+        val profile: ListeningProfile,
+        val consentStatus: ConsentStatus,
+    )
 
     private companion object {
         const val HISTORY_DAYS = 7

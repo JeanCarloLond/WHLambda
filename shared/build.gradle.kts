@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.designsystem)
             implementation(projects.feature.exposure)
+            implementation(projects.feature.onboarding)
             implementation(projects.feature.profiles)
             implementation(projects.feature.dashboard)
             implementation(projects.feature.about)
@@ -16,6 +17,7 @@ kotlin {
             implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
             implementation(libs.kotlinx.serialization.core)
             api(libs.koin.core)
+            implementation(libs.koin.compose)
         }
         // UI tests render headlessly with Skia, which is only available on the desktop JVM.
         getByName("desktopTest").dependencies {

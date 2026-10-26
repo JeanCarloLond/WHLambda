@@ -89,6 +89,7 @@ class DashboardScreenTest {
                     onOpenProfiles = { opened += "profiles" },
                     onOpenSettings = { opened += "settings" },
                     onOpenAbout = { opened += "about" },
+                    onReviewConsent = { opened += "consent" },
                 )
             }
 
@@ -98,6 +99,27 @@ class DashboardScreenTest {
             onNodeWithText("Explore listening levels").performScrollTo().performClick()
 
             assertEquals(listOf("settings", "about", "profiles", "explorer"), opened)
+        }
+
+    @Test
+    fun `without consent explains that adaptive volume is off and leads to consent`() =
+        runComposeUiTest {
+            val opened = mutableListOf<String>()
+            setContent {
+                DashboardScreen(
+                    state = state.copy(consentStatus = com.waveheaven.lambda.core.domain.consent.ConsentStatus.MISSING),
+                    onOpenExplorer = {},
+                    onOpenProfiles = {},
+                    onOpenSettings = {},
+                    onOpenAbout = {},
+                    onReviewConsent = { opened += "consent" },
+                )
+            }
+
+            onNodeWithText("Adaptive volume is off").assertIsDisplayed()
+            onNodeWithText("Review and give consent").performClick()
+
+            assertEquals(listOf("consent"), opened)
         }
 
     @Test
@@ -113,5 +135,5 @@ class DashboardScreenTest {
 
     @androidx.compose.runtime.Composable
     private fun Dashboard(state: DashboardUiState) =
-        DashboardScreen(state = state, onOpenExplorer = {}, onOpenProfiles = {}, onOpenSettings = {}, onOpenAbout = {})
+        DashboardScreen(state, onOpenExplorer = {}, onOpenProfiles = {}, onOpenSettings = {}, onOpenAbout = {}, onReviewConsent = {})
 }

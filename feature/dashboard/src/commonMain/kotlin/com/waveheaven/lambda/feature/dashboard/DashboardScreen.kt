@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,9 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import com.waveheaven.lambda.feature.dashboard.resources.Res
 import com.waveheaven.lambda.feature.dashboard.resources.app_name
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_missing
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_outdated
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_review
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_title
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_explore
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_level
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_no_listening
@@ -58,6 +64,7 @@ fun DashboardRoute(
     onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
+    onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
@@ -68,6 +75,7 @@ fun DashboardRoute(
         onOpenProfiles = onOpenProfiles,
         onOpenSettings = onOpenSettings,
         onOpenAbout = onOpenAbout,
+        onReviewConsent = onReviewConsent,
         modifier = modifier,
     )
 }
@@ -84,6 +92,7 @@ fun DashboardScreen(
     onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
+    onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -111,6 +120,7 @@ fun DashboardScreen(
                     .widthIn(max = 560.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            if (state.consentStatus != ConsentStatus.GIVEN) ConsentCard(status = state.consentStatus, onReview = onReviewConsent)
             state.profile?.let { profile ->
                 OutlinedButton(onClick = onOpenProfiles) {
                     Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
@@ -124,6 +134,31 @@ fun DashboardScreen(
             if (state.history.isNotEmpty()) HistoryChart(days = state.history)
             OutlinedButton(onClick = onOpenExplorer) { Text(stringResource(Res.string.dashboard_explore)) }
             Text(stringResource(Res.string.medical_disclaimer), style = MaterialTheme.typography.bodySmall)
+        }
+    }
+}
+
+/** Adaptive volume needs consent for the current text; explains that and leads to it (WH-074). */
+@Composable
+private fun ConsentCard(
+    status: ConsentStatus,
+    onReview: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(Res.string.dashboard_consent_title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(
+                stringResource(
+                    if (status == ConsentStatus.OUTDATED) Res.string.dashboard_consent_outdated else Res.string.dashboard_consent_missing,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(onClick = onReview) { Text(stringResource(Res.string.dashboard_consent_review)) }
         }
     }
 }

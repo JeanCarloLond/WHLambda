@@ -6,6 +6,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import app.cash.sqldelight.db.SqlDriver
 import com.waveheaven.lambda.core.data.createDesktopDriver
+import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.shared.App
 import com.waveheaven.lambda.shared.initKoin
 import org.koin.dsl.module
@@ -23,7 +24,16 @@ fun main() {
             title = "WaveHeaven Lambda",
             state = rememberWindowState(width = 480.dp, height = 720.dp),
         ) {
-            App(appVersion = appVersion)
+            App(appVersion = appVersion, microphoneAccess = DesktopMicrophoneAccess)
         }
     }
+}
+
+/** Desktop systems do not prompt Java applications for the microphone; access is managed in the OS settings. */
+private object DesktopMicrophoneAccess : MicrophoneAccess {
+    override fun isGranted(): Boolean = true
+
+    override fun request(onResult: (granted: Boolean) -> Unit) = onResult(true)
+
+    override fun openSystemSettings() = Unit
 }

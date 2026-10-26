@@ -10,4 +10,22 @@
     <string name="settings_delete_confirm">Borrar</string>
     <string name="settings_cancel">Cancelar</string>
     <string name="settings_data_deleted">Datos de escucha borrados</string>
+    <string name="settings_standard_title">Límite semanal</string>
+    <string name="settings_standard_adult">Estándar OMS</string>
+    <string name="settings_standard_adult_description">40 horas a la semana a 80 dB(A). Recomendado para adultos.</string>
+    <string name="settings_standard_sensitive">OMS sensible</string>
+    <string name="settings_standard_sensitive_description">40 horas a la semana a 75 dB(A). Para niños, adolescentes o quien quiera un límite más estricto.</string>
+    <string name="settings_consent_title">Consentimiento</string>
+    <string name="settings_consent_given">Diste tu consentimiento el %1$s (versión %2$d). WaveHeaven puede medir mientras el volumen adaptativo está activo.</string>
+    <string name="settings_consent_missing">No has dado tu consentimiento, así que WaveHeaven no mide nada. Igual puedes ver tu dosis y explorar tiempos de escucha seguros.</string>
+    <string name="settings_consent_outdated">Actualizamos cómo WaveHeaven maneja tus datos. Revísalo y vuelve a dar tu consentimiento para que el volumen adaptativo pueda seguir.</string>
+    <string name="settings_consent_withdraw">Retirar consentimiento</string>
+    <string name="settings_consent_give">Revisar y dar consentimiento</string>
+    <string name="settings_consent_review">Revisar los cambios</string>
+    <string name="settings_withdraw_title">¿Retirar el consentimiento?</string>
+    <string name="settings_withdraw_text">WaveHeaven dejará de medir de inmediato. Tus datos de escucha se quedan en este dispositivo a menos que los borres.</string>
+    <string name="settings_withdraw_also_delete">Borrar también mis datos de escucha</string>
+    <string name="settings_withdraw_confirm">Retirar</string>
+    <string name="settings_consent_withdrawn">Consentimiento retirado</string>
+    <string name="settings_consent_withdrawn_deleted">Consentimiento retirado y datos de escucha borrados</string>
 </resources>

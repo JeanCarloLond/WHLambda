@@ -2,14 +2,17 @@ package com.waveheaven.lambda.shared
 
 import com.waveheaven.lambda.core.data.SqlExposureLog
 import com.waveheaven.lambda.core.data.SqlListeningProfileStore
+import com.waveheaven.lambda.core.data.SqlUserPreferences
 import com.waveheaven.lambda.core.data.SystemDayBoundaries
 import com.waveheaven.lambda.core.data.createDatabase
+import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
 import com.waveheaven.lambda.core.domain.exposure.ExposureLog
 import com.waveheaven.lambda.core.domain.profile.ListeningProfileStore
 import com.waveheaven.lambda.feature.dashboard.dashboardModule
 import com.waveheaven.lambda.feature.exposure.exposureModule
+import com.waveheaven.lambda.feature.onboarding.onboardingModule
 import com.waveheaven.lambda.feature.profiles.profilesModule
 import com.waveheaven.lambda.feature.settings.settingsModule
 import org.koin.core.KoinApplication
@@ -28,10 +31,11 @@ val dataModule =
         single<DayBoundaries> { SystemDayBoundaries() }
         single { DoseTracker(get(), get()) }
         single<ListeningProfileStore> { SqlListeningProfileStore(get()) }
+        single<UserPreferences> { SqlUserPreferences(get()) }
     }
 
 /** Bindings of every feature. Platform-specific bindings are added by each app through [initKoin]'s config. */
-val appModules = listOf(dataModule, dashboardModule, exposureModule, profilesModule, settingsModule)
+val appModules = listOf(dataModule, dashboardModule, exposureModule, onboardingModule, profilesModule, settingsModule)
 
 /**
  * Starts dependency injection once per process: from `Application.onCreate` on Android and from `main` on

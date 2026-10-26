@@ -1,6 +1,7 @@
 package com.waveheaven.lambda.feature.dashboard
 
 import androidx.navigation3.runtime.NavKey
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
@@ -22,6 +23,8 @@ data class DashboardUiState(
     val history: List<HistoryDayUi> = emptyList(),
     /** The listening profile in use. */
     val profile: ActiveProfileUi? = null,
+    /** Without consent for the current text the app does not measure; the dashboard explains why (WH-074). */
+    val consentStatus: ConsentStatus = ConsentStatus.GIVEN,
 )
 
 data class ActiveProfileUi(

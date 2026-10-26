@@ -22,6 +22,10 @@
     <string name="profile_gym">Gimnasio</string>
     <string name="profile_office">Oficina</string>
     <string name="profile_home">Casa</string>
+    <string name="dashboard_consent_title">El volumen adaptativo está apagado</string>
+    <string name="dashboard_consent_missing">WaveHeaven necesita tu consentimiento antes de medir el ruido a tu alrededor. Mientras tanto puedes ver tu dosis y explorar tiempos de escucha seguros.</string>
+    <string name="dashboard_consent_outdated">Actualizamos cómo WaveHeaven maneja tus datos. Revisa los cambios para volver a activar el volumen adaptativo.</string>
+    <string name="dashboard_consent_review">Revisar y dar consentimiento</string>
     <string name="day_1">lun</string>
     <string name="day_2">mar</string>
     <string name="day_3">mié</string>

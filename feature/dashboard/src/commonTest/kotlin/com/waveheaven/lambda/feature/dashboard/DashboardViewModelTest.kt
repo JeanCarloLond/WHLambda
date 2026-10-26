@@ -1,5 +1,8 @@
 package com.waveheaven.lambda.feature.dashboard
 
+import com.waveheaven.lambda.core.domain.consent.Consent
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
+import com.waveheaven.lambda.core.domain.consent.InMemoryUserPreferences
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
@@ -101,14 +104,13 @@ class DashboardViewModelTest {
     @Test
     fun `reloads when new listening is recorded and follows the chosen weekly standard`() =
         runTest {
-            val standard = MutableStateFlow(DoseStandard.WHO_ADULT)
-            val state = observe(viewModel(weeklyStandard = standard))
+            val state = observe(viewModel())
             assertEquals(0, state.value.daily!!.percent)
 
             listen(from = now - 2.hours, duration = 30.minutes, level = 94.dBA)
             assertEquals(50, state.value.daily!!.percent)
 
-            standard.value = DoseStandard.WHO_SENSITIVE
+            preferences.setWeeklyStandard(DoseStandard.WHO_SENSITIVE)
             assertEquals(DoseStandard.WHO_SENSITIVE, state.value.weekly!!.standard)
         }
 
@@ -125,6 +127,17 @@ class DashboardViewModelTest {
         }
 
     @Test
+    fun `reports whether consent allows metering`() =
+        runTest {
+            val state = observe(viewModel())
+            assertEquals(ConsentStatus.GIVEN, state.value.consentStatus)
+
+            preferences.withdrawConsent()
+
+            assertEquals(ConsentStatus.MISSING, state.value.consentStatus)
+        }
+
+    @Test
     fun `percentages are written out, capped for display`() {
         assertEquals("42 %", formatPercent(42))
         assertEquals("> 999 %", formatPercent(1500))
@@ -132,8 +145,18 @@ class DashboardViewModelTest {
 
     private val activeProfile = MutableStateFlow(ListeningProfile.DEFAULT)
 
-    private fun viewModel(weeklyStandard: MutableStateFlow<DoseStandard> = MutableStateFlow(DoseStandard.WHO_ADULT)) =
-        DashboardViewModel(tracker, log, weeklyStandard, activeProfile, DashboardClock(clock, { bogota }, ticks = flowOf(Unit)))
+    private val preferences = InMemoryUserPreferences(consent = Consent(Consent.CURRENT_VERSION, now))
+
+    private fun viewModel() =
+        DashboardViewModel(
+            tracker,
+            log,
+            preferences,
+            activeProfile,
+            DashboardClock(clock, {
+                bogota
+            }, ticks = flowOf(Unit)),
+        )
 
     private fun TestScope.observe(viewModel: DashboardViewModel) =
         viewModel.state.also { state -> backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { state.collect {} } }
