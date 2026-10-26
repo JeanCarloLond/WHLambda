@@ -124,6 +124,18 @@ class AdaptiveVolumeEngineTest {
         }
 
     @Test
+    fun `readings below what a microphone can measure count as very quiet`() =
+        runTest {
+            meter.level = SoundLevel(-8.0) // digital silence through the nominal calibration
+            val run = start()
+
+            advanceTimeBy(5.seconds)
+
+            assertEquals(30.0, statuses.last().ambient!!.decibels, 1e-9)
+            run.cancel()
+        }
+
+    @Test
     fun `without consent it does not even start`() =
         runTest {
             consent.value = null
@@ -211,6 +223,7 @@ class AdaptiveVolumeEngineTest {
         var opened = 0
         var isOpen = false
         var fails = false
+        var level = 85.dBA
 
         override fun levels(): Flow<SoundLevel> =
             flow {
@@ -220,7 +233,7 @@ class AdaptiveVolumeEngineTest {
                 try {
                     while (true) {
                         delay(1.seconds)
-                        emit(85.dBA)
+                        emit(level)
                     }
                 } finally {
                     isOpen = false

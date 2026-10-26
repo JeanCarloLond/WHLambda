@@ -128,7 +128,7 @@ class AdaptiveVolumeEngine(
             meter
                 .levels()
                 .takeWhile { volume.isMusicActive() && settings.value.consent.allowsMetering() }
-                .collect { ambient -> onStatus(tick(ambient)) }
+                .collect { ambient -> onStatus(tick(ambient.coerceAtLeast(QUIETEST_MEASURABLE))) }
         }
 
         private suspend fun tick(ambient: SoundLevel): AdaptiveVolumeStatus {
@@ -176,6 +176,12 @@ class AdaptiveVolumeEngine(
     private companion object {
         /** How often playback is checked while waiting for music; the microphone is closed meanwhile. */
         val IDLE_POLL_INTERVAL = 1.seconds
+
+        /**
+         * No phone or laptop microphone measures below its own noise floor, around 30 dB(A); quieter readings (digital
+         * silence, a muted input) mean "very quiet", not −10 dB(A).
+         */
+        val QUIETEST_MEASURABLE = SoundLevel(30.0)
 
         /** [AmbientMeter] delivers one level per second. */
         val READING_DURATION = 1.seconds
