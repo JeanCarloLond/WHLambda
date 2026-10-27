@@ -1,0 +1,11 @@
+insert:
+INSERT OR REPLACE INTO hearing_threshold(taken_at_ms, ear, frequency_hz, threshold_db) VALUES (?, ?, ?, ?);
+
+latestTakenAt:
+SELECT max(taken_at_ms) AS taken_at_ms FROM hearing_threshold;
+
+selectTakenAt:
+SELECT * FROM hearing_threshold WHERE taken_at_ms = ?;
+
+deleteAll:
+DELETE FROM hearing_threshold;

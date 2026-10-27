@@ -6,6 +6,7 @@ import com.waveheaven.lambda.core.domain.exposure.dBA
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.AT_DOSE_CEILING
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_FOR_QUIET
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_TO_DOSE_CEILING
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_TO_PROFILE_LIMIT
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.MANUAL_OVERRIDE
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.MUTED
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.NO_MUSIC
@@ -216,12 +217,74 @@ class VolumeControllerTest {
         assertFailsWith<IllegalArgumentException> { VolumeControllerConfig(raiseInterval = (-1).seconds) }
     }
 
+    @Test
+    fun `a profile maximum caps comfort raises below the dose ceiling`() {
+        val phone = Phone(index = 5, config = VolumeControllerConfig(maxIndex = 9)) // 88 dB(A)
+
+        repeat(40) { phone.tick(ambient = 85.dBA) } // target 95 dB(A), dose ceiling index 13
+
+        assertEquals(9, phone.index)
+    }
+
+    @Test
+    fun `above the profile maximum the volume drops to it, with its own reason`() {
+        val phone = Phone(index = 12, config = VolumeControllerConfig(maxIndex = 9))
+
+        val decision = phone.tick(ambient = 85.dBA)
+
+        assertEquals(LOWER_TO_PROFILE_LIMIT, decision.reason)
+        assertEquals(9, decision.newIndex)
+    }
+
+    @Test
+    fun `the dose ceiling still wins over a higher profile maximum`() {
+        val phone = Phone(index = 14, config = VolumeControllerConfig(maxIndex = 15))
+
+        val decision = phone.tick(ambient = 90.dBA, dose = Dose(0.9))
+
+        assertEquals(LOWER_TO_DOSE_CEILING, decision.reason)
+        assertEquals(8, decision.newIndex)
+    }
+
+    @Test
+    fun `reconfiguring takes effect on the next tick and keeps what it knew`() {
+        val phone = Phone(index = 8)
+        repeat(5) { phone.tick(ambient = 76.dBA) } // within the dead band at +10 dB
+
+        phone.controller.reconfigure(VolumeControllerConfig(targetSnrDb = 16.0))
+        val next = phone.tick(ambient = 76.dBA)
+
+        assertEquals(RAISE_FOR_NOISE, next.reason) // no warm-up again: the ambient window survived
+        assertEquals(92.0, next.targetLevel!!.decibels, 1e-9)
+    }
+
+    @Test
+    fun `rejects a profile maximum outside the model or below the minimum`() {
+        assertFailsWith<IllegalArgumentException> { VolumeController(MODEL, VolumeControllerConfig(maxIndex = 16)) }
+        assertFailsWith<IllegalArgumentException> { VolumeControllerConfig(minIndex = 5, maxIndex = 4) }
+        val reconfigured = Phone(index = 5).apply { controller.reconfigure(VolumeControllerConfig(minIndex = 20)) }
+        assertFailsWith<IllegalArgumentException> { reconfigured.tick(ambient = 70.dBA) }
+    }
+
+    @Test
+    fun `each route can have its own output model`() {
+        val quietHeadphones = LinearOutputLevelModel(maxIndex = 15, levelAtMax = 80.dBA, decibelsPerStep = 2.0)
+        val controller = VolumeController(OutputLevelModels { if (it == HEADPHONES) quietHeadphones else MODEL })
+
+        // At index 14, the speaker model plays 98 dB(A), above the 96 dB(A) ceiling; the headphones only 78 dB(A).
+        val speaker = controller.update(VolumeTick(1.seconds, SPEAKER, 70.dBA, 14, true, Dose.NONE))
+        val headphones = controller.update(VolumeTick(2.seconds, HEADPHONES, 70.dBA, 14, true, Dose.NONE))
+
+        assertEquals(LOWER_TO_DOSE_CEILING, speaker.reason)
+        assertEquals(WARMING_UP, headphones.reason)
+    }
+
     /** Simulated phone: feeds ticks to the controller and applies its decisions like the OS would. */
     private class Phone(
         var index: Int,
         config: VolumeControllerConfig = VolumeControllerConfig(),
     ) {
-        private val controller = VolumeController(MODEL, config)
+        val controller = VolumeController(MODEL, config)
         private var now = Duration.ZERO
         val changeTimes = mutableListOf<Duration>()
         val reasons = mutableListOf<VolumeDecisionReason>()

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_step">Paso %1$d de %2$d</string>
+    <string name="onboarding_back">Atrás</string>
+    <string name="onboarding_continue">Continuar</string>
+    <string name="onboarding_finish">Terminar</string>
+    <string name="welcome_title">Te damos la bienvenida a WaveHeaven</string>
+    <string name="welcome_body">WaveHeaven mantiene tu música audible sobre el ruido que te rodea y lleva la cuenta del sonido que reciben tus oídos para que te quedes dentro de una dosis segura.</string>
+    <string name="welcome_disclaimer">WaveHeaven no es un dispositivo médico. Si notas pitidos, audición apagada o dolor, consulta a un audiólogo.</string>
+    <string name="welcome_start">Empezar</string>
+    <string name="privacy_title">Qué mide WaveHeaven</string>
+    <string name="privacy_noise">Qué tan fuerte suena a tu alrededor, una vez por segundo, con el micrófono, solo mientras suena música y el volumen adaptativo está activo.</string>
+    <string name="privacy_never">Nunca tu voz ni ningún audio. El sonido se convierte en un número de nivel en este dispositivo y se descarta de inmediato. Nada se graba, se guarda ni se envía.</string>
+    <string name="privacy_stored">Un resumen por cada minuto de escucha: qué tan fuerte sonaban tu música y tu entorno. Se queda en este dispositivo 30 días y no se incluye en las copias de seguridad.</string>
+    <string name="privacy_control">Puedes detenerlo cuando quieras desde la notificación y borrar tus datos en Ajustes.</string>
+    <string name="consent_title">Tu consentimiento</string>
+    <string name="consent_text">Cuánto sonido reciben tus oídos dice algo sobre tu salud auditiva, por eso la ley colombiana (Ley 1581 de 2012) lo trata como un dato sensible de salud. Para medirlo, WaveHeaven necesita tu consentimiento expreso para procesar el nivel de tu entorno y de tu música, solo en este dispositivo y solo para estimar tu dosis de escucha. Darlo es opcional: sin él la app sigue funcionando como explorador de dosis. Puedes retirarlo cuando quieras en Ajustes.</string>
+    <string name="consent_checkbox">Acepto que WaveHeaven procese estos datos como se describe.</string>
+    <string name="consent_accept">Aceptar</string>
+    <string name="consent_decline">Ahora no</string>
+    <string name="standard_title">¿Qué tan estricto quieres tu límite semanal?</string>
+    <string name="standard_adult">Estándar OMS</string>
+    <string name="standard_adult_description">40 horas a la semana a 80 dB(A). Recomendado para adultos.</string>
+    <string name="standard_sensitive">OMS sensible</string>
+    <string name="standard_sensitive_description">40 horas a la semana a 75 dB(A). Para niños, adolescentes o quien quiera un límite más estricto.</string>
+    <string name="standard_later">Puedes cambiarlo después en Ajustes.</string>
+    <string name="microphone_title">Acceso al micrófono</string>
+    <string name="microphone_explanation">Ahora tu dispositivo te pedirá acceso al micrófono. WaveHeaven lo usa solo para medir qué tan fuerte suena a tu alrededor.</string>
+    <string name="microphone_allow">Permitir micrófono</string>
+    <string name="microphone_granted">El acceso al micrófono está permitido. Puedes iniciar el volumen adaptativo desde la pantalla de inicio.</string>
+    <string name="microphone_denied">Sin el micrófono WaveHeaven no puede adaptar el volumen, pero puedes ver tu dosis y explorar tiempos de escucha seguros. Puedes permitirlo después en los ajustes del sistema.</string>
+    <string name="microphone_open_settings">Abrir ajustes del sistema</string>
+</resources>

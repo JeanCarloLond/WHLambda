@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profiles_title">Listening profiles</string>
+    <string name="navigate_back">Back</string>
+    <string name="profiles_intro">A profile sets how far above the noise your music sits and how far the app may move the volume. Your safe-listening limit always applies, whatever the profile.</string>
+    <string name="profiles_summary">+%1$d dB over the noise · volume %2$d–%3$d&#160;%</string>
+    <string name="profiles_add">New profile</string>
+    <string name="profiles_edit">Edit %1$s</string>
+    <string name="profiles_delete">Delete %1$s</string>
+    <string name="profiles_editor_new">New profile</string>
+    <string name="profiles_editor_edit">Edit profile</string>
+    <string name="profiles_editor_name">Name</string>
+    <string name="profiles_editor_margin">Margin over the noise: +%1$d dB</string>
+    <string name="profiles_editor_range">Volume range: %1$d–%2$d&#160;%</string>
+    <string name="profiles_save">Save</string>
+    <string name="profiles_cancel">Cancel</string>
+    <string name="profile_commute">Commute</string>
+    <string name="profile_gym">Gym</string>
+    <string name="profile_office">Office</string>
+    <string name="profile_home">Home</string>
+</resources>

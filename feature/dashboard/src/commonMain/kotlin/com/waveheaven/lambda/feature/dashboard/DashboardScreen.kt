@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,12 +27,21 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
+import com.waveheaven.lambda.core.domain.consent.ConsentStatus
+import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
+import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.exposure.DoseStandard
+import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.feature.dashboard.resources.Res
 import com.waveheaven.lambda.feature.dashboard.resources.app_name
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_missing
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_outdated
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_review
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_consent_title
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_explore
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_level
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_no_listening
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_profile
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_close
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_on_track
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_reached
@@ -43,24 +53,49 @@ import com.waveheaven.lambda.feature.dashboard.resources.dashboard_week_who_sens
 import com.waveheaven.lambda.feature.dashboard.resources.medical_disclaimer
 import com.waveheaven.lambda.feature.dashboard.resources.open_about
 import com.waveheaven.lambda.feature.dashboard.resources.open_settings
+import com.waveheaven.lambda.feature.dashboard.resources.profile_commute
+import com.waveheaven.lambda.feature.dashboard.resources.profile_gym
+import com.waveheaven.lambda.feature.dashboard.resources.profile_home
+import com.waveheaven.lambda.feature.dashboard.resources.profile_office
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /** Stateful entry point: connects [DashboardViewModel] to the stateless [DashboardScreen]. */
 @Composable
 fun DashboardRoute(
+    microphoneAccess: MicrophoneAccess,
+    notificationAccess: NotificationAccess,
     onOpenExplorer: () -> Unit,
+    onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
+    onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // Starting needs the microphone (and, to show the notification, notifications): ask right before, never ahead.
+    val onAction: (DashboardAction) -> Unit = { action ->
+        if (action == DashboardAction.Start) {
+            val start = { notificationAccess.request { viewModel.onAction(DashboardAction.Start) } }
+            if (microphoneAccess.isGranted()) {
+                start()
+            } else {
+                microphoneAccess.request { granted -> if (granted) start() else viewModel.onAction(DashboardAction.MicrophoneDenied) }
+            }
+        } else {
+            viewModel.onAction(action)
+        }
+    }
     DashboardScreen(
         state = state,
+        onAction = onAction,
+        onOpenMicrophoneSettings = microphoneAccess::openSystemSettings,
         onOpenExplorer = onOpenExplorer,
+        onOpenProfiles = onOpenProfiles,
         onOpenSettings = onOpenSettings,
         onOpenAbout = onOpenAbout,
+        onReviewConsent = onReviewConsent,
         modifier = modifier,
     )
 }
@@ -73,9 +108,13 @@ fun DashboardRoute(
 @Composable
 fun DashboardScreen(
     state: DashboardUiState,
+    onAction: (DashboardAction) -> Unit,
+    onOpenMicrophoneSettings: () -> Unit,
     onOpenExplorer: () -> Unit,
+    onOpenProfiles: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenAbout: () -> Unit,
+    onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -103,6 +142,21 @@ fun DashboardScreen(
                     .widthIn(max = 560.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            if (state.consentStatus != ConsentStatus.GIVEN) ConsentCard(status = state.consentStatus, onReview = onReviewConsent)
+            if (state.adaptive.state != AdaptiveVolumeState.UNAVAILABLE) {
+                AdaptiveVolumeCard(
+                    adaptive = state.adaptive,
+                    canStart = state.consentStatus == ConsentStatus.GIVEN,
+                    onAction = onAction,
+                    onOpenMicrophoneSettings = onOpenMicrophoneSettings,
+                    onOpenSettings = onOpenSettings,
+                )
+            }
+            state.profile?.let { profile ->
+                OutlinedButton(onClick = onOpenProfiles) {
+                    Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
+                }
+            }
             state.daily?.let { BudgetCard(title = stringResource(Res.string.dashboard_today), budget = it, level = state.latestLevel) }
             state.weekly?.let { BudgetCard(title = weeklyTitle(it.standard), budget = it, level = state.latestLevel) }
             if (!state.isLoading && state.latestLevel == null) {
@@ -114,6 +168,42 @@ fun DashboardScreen(
         }
     }
 }
+
+/** Adaptive volume needs consent for the current text; explains that and leads to it (WH-074). */
+@Composable
+private fun ConsentCard(
+    status: ConsentStatus,
+    onReview: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                stringResource(Res.string.dashboard_consent_title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(
+                stringResource(
+                    if (status == ConsentStatus.OUTDATED) Res.string.dashboard_consent_outdated else Res.string.dashboard_consent_missing,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(onClick = onReview) { Text(stringResource(Res.string.dashboard_consent_review)) }
+        }
+    }
+}
+
+/** Built-in profiles are shown in the user's language; the user's own keep the name they typed. */
+@Composable
+private fun profileName(profile: ActiveProfileUi): String =
+    when (profile.id.takeIf { profile.isBuiltIn }) {
+        "commute" -> stringResource(Res.string.profile_commute)
+        "gym" -> stringResource(Res.string.profile_gym)
+        "office" -> stringResource(Res.string.profile_office)
+        "home" -> stringResource(Res.string.profile_home)
+        else -> profile.name
+    }
 
 @Composable
 private fun weeklyTitle(standard: DoseStandard): String =

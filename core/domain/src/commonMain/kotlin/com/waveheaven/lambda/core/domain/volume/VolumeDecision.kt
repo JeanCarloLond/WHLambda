@@ -38,6 +38,9 @@ public enum class VolumeDecisionReason {
     /** Safety: the volume exceeded what the remaining dose allows and was lowered at once. */
     LOWER_TO_DOSE_CEILING,
 
+    /** The volume exceeded the listening profile's maximum and was lowered to it. */
+    LOWER_TO_PROFILE_LIMIT,
+
     /** Comfort: noise rose, so the volume goes up one step. */
     RAISE_FOR_NOISE,
 

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Ambient metering (ADR-0007): asked only after onboarding explains it and the user consents. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- The adaptive-volume loop runs in a microphone foreground service started from a visible screen (#10). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <!-- Its persistent notification, and dose alerts. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".WaveHeavenApplication"
         android:allowBackup="false"
@@ -18,6 +26,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Not exported and no boot receiver: it only ever starts from the user's tap (WH-024). -->
+        <service
+            android:name=".adaptive.AdaptiveVolumeService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
     </application>
 
 </manifest>

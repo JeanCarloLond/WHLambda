@@ -1,0 +1,16 @@
+selectAll:
+SELECT * FROM listening_profile ORDER BY created_at_ms, id;
+
+selectById:
+SELECT * FROM listening_profile WHERE id = ?;
+
+-- Keeps the original creation time when a profile is edited, so the list order is stable.
+upsert:
+INSERT OR REPLACE INTO listening_profile(id, name, target_snr_db, min_volume, max_volume, eq_points, created_at_ms)
+VALUES (
+    :id, :name, :target_snr_db, :min_volume, :max_volume, :eq_points,
+    coalesce((SELECT created_at_ms FROM listening_profile WHERE id = :id), :now_ms)
+);
+
+deleteById:
+DELETE FROM listening_profile WHERE id = ?;

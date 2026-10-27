@@ -2,15 +2,49 @@ package com.waveheaven.lambda.core.designsystem.icon
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
+import com.waveheaven.lambda.core.designsystem.theme.BrandBlue
+import com.waveheaven.lambda.core.designsystem.theme.BrandPurple
 
 /**
  * Icons used across the app, drawn from Material Design icon paths (Apache-2.0) to avoid pulling in the
  * whole icon library. Tint them with `Icon(…, tint = …)`; the fill colour here is only a placeholder.
  */
 object WhIcons {
+    /** The app's mark: five equalizer bars in the brand blue and purple, for places that show it untinted (tray). */
+    val AppMark: ImageVector by lazy {
+        ImageVector
+            .Builder("AppMark", MATERIAL_ICON_SIZE.dp, MATERIAL_ICON_SIZE.dp, MATERIAL_ICON_SIZE, MATERIAL_ICON_SIZE)
+            .addPath(
+                addPathNodes("M4,10L4,14M8,7L8,17"),
+                stroke = SolidColor(BrandBlue),
+                strokeLineWidth = BAR_WIDTH,
+                strokeLineCap = StrokeCap.Round,
+            ).addPath(
+                addPathNodes("M12,4L12,20M16,7L16,17M20,10L20,14"),
+                stroke = SolidColor(BrandPurple),
+                strokeLineWidth = BAR_WIDTH,
+                strokeLineCap = StrokeCap.Round,
+            ).build()
+    }
+
+    val Add: ImageVector by lazy { materialIcon("Add", "M19,13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z") }
+
+    val Delete: ImageVector by lazy {
+        materialIcon("Delete", "M6,19c0,1.1 0.9,2 2,2h8c1.1,0 2,-0.9 2,-2V7H6v12zM19,4h-3.5l-1,-1h-5l-1,1H5v2h14V4z")
+    }
+
+    val Edit: ImageVector by lazy {
+        materialIcon(
+            "Edit",
+            "M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25zM20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41l-2.34,-2.34" +
+                "c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z",
+        )
+    }
+
     val ArrowBack: ImageVector by lazy {
         materialIcon("ArrowBack", "M20,11H7.83l5.59,-5.59L12,4l-8,8 8,8 1.41,-1.41L7.83,13H20v-2z")
     }
@@ -39,6 +73,7 @@ object WhIcons {
 }
 
 private const val MATERIAL_ICON_SIZE = 24f
+private const val BAR_WIDTH = 2.5f
 
 private fun materialIcon(
     name: String,

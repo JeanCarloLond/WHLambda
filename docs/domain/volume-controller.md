@@ -34,6 +34,7 @@ of dB per step, serves tests and evenly stepped platforms.
 | 3   | The index differs from what we last set          | `MANUAL_OVERRIDE` for `manualOverrideDuration`                | Someone else changed it; the reported source is unreliable (D3) |
 | 4   | Index below `minIndex`                           | `MUTED`, hold                                                 | Never unmute automatically                                      |
 | 5   | Index above the dose ceiling                     | `LOWER_TO_DOSE_CEILING`, drop at once                         | Safety beats comfort and rate limits                            |
+| 5b  | Index above the listening profile's maximum      | `LOWER_TO_PROFILE_LIMIT`, drop to it                          | The profile can only lower the ceiling (WH-063)                 |
 | 6   | Fewer than `ambientWindowTicks` readings         | `WARMING_UP`, hold                                            | Avoid reacting to a single noisy second                         |
 | 7   | Target outside the hysteresis band               | `RAISE_FOR_NOISE` / `LOWER_FOR_QUIET`, one step, rate-limited | Smooth, step-wise changes (D2)                                  |
 | 8   | Target above the ceiling, already at the ceiling | `AT_DOSE_CEILING`, hold, `isTargetCappedByDose`               | UI suggests noise-cancelling or a break                         |
@@ -52,21 +53,36 @@ State (last index set, when, override) is kept **per route** (D4); the ambient w
   `L = Lc + q·log2(Tc · remaining / horizon)` ([hearing-safety.md](hearing-safety.md)), never below
   `minimumCeiling`. The ceiling index is the highest index at or below it.
 
+## Listening profiles
+
+A [`ListeningProfile`](../../core/domain/src/commonMain/kotlin/com/waveheaven/lambda/core/domain/profile/ListeningProfile.kt)
+changes comfort only: `applyTo` sets `targetSnrDb` and turns the profile's volume range (shares of the range) into
+`minIndex` and `maxIndex`. The minimum never goes below index 1 and the maximum can only lower the dose ceiling. When
+the user picks another profile, `reconfigure` applies it from the next tick and keeps the ambient window and the
+per-route state (WH-062).
+
+| Profile | Margin over noise | Volume range |
+| ------- | ----------------- | ------------ |
+| Commute | +10 dB            | 10 – 100 %   |
+| Gym     | +12 dB            | 10 – 100 %   |
+| Office  | +6 dB             | 5 – 60 %     |
+| Home    | +8 dB             | 5 – 70 %     |
+
 ## Default parameters
 
-| Parameter                | Default   | Rationale                                                  |
-| ------------------------ | --------- | ---------------------------------------------------------- |
-| `standard`               | WHO adult | Leisure-listening reference (ADR-0006)                     |
-| `targetSnrDb`            | 10 dB     | Comfortable margin over noise; profiles will tune it (#14) |
-| `hysteresisDb`           | 3 dB      | ≈ 1.5 steps at 2 dB/step; avoids "pumping"                 |
-| `ambientWindowTicks`     | 3         | 3 s Leq smooths speech and passing cars                    |
-| `settleTime`             | 600 ms    | Bluetooth pushed back after 300 ms in spike #2             |
-| `raiseInterval`          | 3 s       | Raising is slow and cautious                               |
-| `lowerInterval`          | 1 s       | Lowering is quick                                          |
-| `manualOverrideDuration` | 10 min    | Respect the user's choice for a while                      |
-| `planningHorizon`        | 1 h       | The ceiling assumes the user keeps listening this long     |
-| `minimumCeiling`         | 70 dB(A)  | Music never becomes inaudible; dose impact is negligible   |
-| `minIndex`               | 1         | The controller never mutes                                 |
+| Parameter                | Default   | Rationale                                                |
+| ------------------------ | --------- | -------------------------------------------------------- |
+| `standard`               | WHO adult | Leisure-listening reference (ADR-0006)                   |
+| `targetSnrDb`            | 10 dB     | Comfortable margin over noise; profiles tune it          |
+| `hysteresisDb`           | 3 dB      | ≈ 1.5 steps at 2 dB/step; avoids "pumping"               |
+| `ambientWindowTicks`     | 3         | 3 s Leq smooths speech and passing cars                  |
+| `settleTime`             | 600 ms    | Bluetooth pushed back after 300 ms in spike #2           |
+| `raiseInterval`          | 3 s       | Raising is slow and cautious                             |
+| `lowerInterval`          | 1 s       | Lowering is quick                                        |
+| `manualOverrideDuration` | 10 min    | Respect the user's choice for a while                    |
+| `planningHorizon`        | 1 h       | The ceiling assumes the user keeps listening this long   |
+| `minimumCeiling`         | 70 dB(A)  | Music never becomes inaudible; dose impact is negligible |
+| `minIndex`               | 1         | The controller never mutes                               |
 
 ## Worked example
 

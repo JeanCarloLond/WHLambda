@@ -10,7 +10,7 @@ import kotlin.time.Duration.Companion.seconds
 
 /**
  * Tuning of [VolumeController]. Defaults follow ADR-0006 and the measurements of spike #2;
- * listening profiles (#14) will override the comfort parameters, never the safety ones.
+ * listening profiles (`ListeningProfile.applyTo`) override the comfort parameters, never the safety ones.
  */
 public data class VolumeControllerConfig(
     /** Exposure standard whose remaining budget caps the volume. */
@@ -38,6 +38,11 @@ public data class VolumeControllerConfig(
     val minimumCeiling: SoundLevel = SoundLevel(DEFAULT_MINIMUM_CEILING_DBA),
     /** Lowest index the controller will choose; it never mutes. */
     val minIndex: Int = 1,
+    /**
+     * Highest index the controller will choose, from the listening profile (#14); `null` for the top of the range.
+     * It can only lower the dose ceiling, never raise it.
+     */
+    val maxIndex: Int? = null,
 ) {
     init {
         require(targetSnrDb.isFinite()) { "targetSnrDb must be finite" }
@@ -48,6 +53,7 @@ public data class VolumeControllerConfig(
         require(!manualOverrideDuration.isNegative()) { "manualOverrideDuration must not be negative" }
         require(planningHorizon.isPositive() && planningHorizon.isFinite()) { "planningHorizon must be positive" }
         require(minIndex >= 0) { "minIndex must not be negative" }
+        require(maxIndex == null || maxIndex >= minIndex) { "maxIndex must not be below minIndex" }
     }
 
     private companion object {
