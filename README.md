@@ -62,7 +62,7 @@ that can.
 | Dose alerts at 50, 80 and 100 %                                                        | ✅ Done               |
 | Desktop: per-app volume and tray (Linux PipeWire/PulseAudio; Windows WASAPI to verify) | ✅ Linux · ⏳ Windows |
 | Account & sync of aggregated stats (Supabase)                                          | 🗓️ Phase 3            |
-| Hearing check (not a diagnosis) feeding a personal EQ curve                            | 🗓️ Phase 3            |
+| Hearing check (not a diagnosis) feeding a personal EQ curve                            | ✅ Done               |
 | Learns your preferred margin from manual adjustments                                   | 🗓️ Phase 4            |
 
 > [!IMPORTANT]
@@ -153,6 +153,7 @@ WHLambda/
 ├── feature/
 │   ├── dashboard/        Home: dose used today and this week, history
 │   ├── exposure/         Dose explorer (reference screen implementation)
+│   ├── hearingcheck/     Hearing check (not a diagnosis) and its EQ curve
 │   ├── onboarding/       What is measured, consent, weekly standard, microphone
 │   ├── profiles/         Listening profiles: built-in and your own
 │   ├── settings/         Settings: weekly standard, consent, your data

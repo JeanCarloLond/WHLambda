@@ -17,6 +17,7 @@ flowchart TB
     subgraph features
         dashboard[":feature:dashboard"]
         exposure[":feature:exposure"]
+        hearingcheck[":feature:hearingcheck"]
         onboarding[":feature:onboarding"]
         profiles[":feature:profiles"]
         settings[":feature:settings"]
@@ -30,6 +31,7 @@ flowchart TB
     desktop --> shared
     shared --> dashboard
     shared --> exposure
+    shared --> hearingcheck
     shared --> onboarding
     shared --> profiles
     shared --> settings
@@ -42,6 +44,7 @@ flowchart TB
     exposure --> domain
     dashboard --> domain
     onboarding --> domain
+    hearingcheck --> domain
     profiles --> domain
     settings --> domain
     about --> designsystem
@@ -62,10 +65,10 @@ flowchart TB
 
 Modules are created when they have code, never empty. Expected next:
 
-| Module       | Phase | Responsibility                             |
-| ------------ | ----- | ------------------------------------------ |
-| `:core:sync` | 3     | Supabase client (auth, sync of aggregates) |
-| `:feature:*` | 1+    | `hearing-check`…                           |
+| Module             | Phase | Responsibility                             |
+| ------------------ | ----- | ------------------------------------------ |
+| `:core:sync`       | 3     | Supabase client (auth, sync of aggregates) |
+| `:feature:account` | 3     | Sign-in and opt-in sync (#18)              |
 
 ## Dependency rules
 
