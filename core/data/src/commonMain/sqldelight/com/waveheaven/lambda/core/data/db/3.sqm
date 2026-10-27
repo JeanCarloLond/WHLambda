@@ -1,0 +1,9 @@
+-- Hearing-check results (WH-222): health data, kept on the device only and excluded from backups with the rest.
+CREATE TABLE hearing_threshold (
+    taken_at_ms INTEGER NOT NULL,
+    ear TEXT NOT NULL,
+    frequency_hz INTEGER NOT NULL,
+    -- NULL when the tone was not heard even at the reference level.
+    threshold_db REAL,
+    PRIMARY KEY (taken_at_ms, ear, frequency_hz)
+);

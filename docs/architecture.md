@@ -15,7 +15,11 @@ flowchart TB
     end
     shared[":shared<br/><sub>App(), navigation, DI</sub>"]
     subgraph features
+        dashboard[":feature:dashboard"]
         exposure[":feature:exposure"]
+        hearingcheck[":feature:hearingcheck"]
+        onboarding[":feature:onboarding"]
+        profiles[":feature:profiles"]
         settings[":feature:settings"]
         about[":feature:about"]
     end
@@ -25,7 +29,11 @@ flowchart TB
 
     android --> shared
     desktop --> shared
+    shared --> dashboard
     shared --> exposure
+    shared --> hearingcheck
+    shared --> onboarding
+    shared --> profiles
     shared --> settings
     shared --> about
     shared --> data
@@ -34,6 +42,10 @@ flowchart TB
     data --> domain
     exposure --> designsystem
     exposure --> domain
+    dashboard --> domain
+    onboarding --> domain
+    hearingcheck --> domain
+    profiles --> domain
     settings --> domain
     about --> designsystem
 ```
@@ -53,10 +65,10 @@ flowchart TB
 
 Modules are created when they have code, never empty. Expected next:
 
-| Module       | Phase | Responsibility                                          |
-| ------------ | ----- | ------------------------------------------------------- |
-| `:core:sync` | 3     | Supabase client (auth, sync of aggregates)              |
-| `:feature:*` | 1+    | `profiles`, `onboarding`, `dashboard`, `hearing-check`… |
+| Module             | Phase | Responsibility                             |
+| ------------------ | ----- | ------------------------------------------ |
+| `:core:sync`       | 3     | Supabase client (auth, sync of aggregates) |
+| `:feature:account` | 3     | Sign-in and opt-in sync (#18)              |
 
 ## Dependency rules
 
@@ -128,6 +140,41 @@ ViewModel store, released when the entry leaves the stack.
   storage, excluded from backups) or `createDesktopDriver()` (per-user data directory). Tests use an in-memory
   JDBC driver.
 
+## The adaptive-volume loop
+
+```mermaid
+flowchart LR
+    UI["Dashboard<br/><sub>Start · Pause · Stop</sub>"] -- AdaptiveVolume port --> Platform
+    subgraph Platform["platform binding"]
+        FGS["Android: AdaptiveVolumeService<br/><sub>microphone foreground service</sub>"]
+        Tray["Desktop: the session itself<br/><sub>tray icon while it runs</sub>"]
+    end
+    Platform --> Session["AdaptiveVolumeSession<br/><sub>core:audio</sub>"]
+    Session --> Engine["AdaptiveVolumeEngine<br/><sub>core:audio</sub>"]
+    Engine --> Meter["AmbientMeter"] & Volume["MediaVolume"] & Models["OutputLevelModels"]
+    Engine --> Controller["VolumeController<br/><sub>core:domain</sub>"]
+    Engine --> Tracker["DoseTracker → ExposureLog"]
+```
+
+- **`AdaptiveVolumeEngine`** (common code) runs one loop: once per second it reads the ambient level, asks the
+  `VolumeController` for a decision with the live profile, standard and dose, applies it to the system volume and
+  folds the estimated level at the ear into per-minute aggregates. The microphone is open **only while music
+  plays**: when playback stops the meter flow is cancelled, which releases it, and the engine polls the playback state
+  once per second (spike #2, D5). The run ends on its own when consent is withdrawn or the microphone fails.
+- **`AdaptiveVolumeSession`** starts, pauses, resumes and stops runs. It lives as long as the process (a Koin
+  singleton) so the dashboard and the Android service see the same status.
+- **On Android**, `AndroidAdaptiveVolume` starts `AdaptiveVolumeService`, a `microphone` foreground service, only from a
+  visible tap (Android 14 rule). The service shows a persistent notification with the ambient level, today's dose and
+  Pause/Stop, stops itself when the session stops, is not sticky and has no boot receiver (WH-024). It holds no wake
+  lock: while capturing, the audio server keeps the CPU awake, and while waiting for music the playback that will wake
+  the loop holds one.
+- Starting asks for the microphone, then notifications, right before starting, never ahead.
+- **On desktop** ([ADR-0009](adr/0009-desktop-per-app-volume.md)), `DesktopMediaVolume` adapts the one app the user
+  picks in Settings, in 2 dB steps of its own volume, through `pactl` (Linux) or WASAPI sessions (Windows);
+  `DesktopOutputLevelModels` adds the device volume; `DesktopAmbientMeter` captures from a non-Bluetooth, non-headset
+  input. The session runs inside the app; a tray icon shows its state and today's dose with pause, resume and stop,
+  and closing the window keeps it running in the tray. Without a system tray (some Linux desktops) closing quits.
+
 ## Source sets inside a KMP module
 
 ```
@@ -158,13 +205,13 @@ src/
 
 ## Cross-cutting decisions
 
-| Concern          | Decision                                                                                                                                  |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Hearing safety   | WHO/ITU-T H.870 and NIOSH dose model — see [hearing-safety.md](domain/hearing-safety.md)                                                  |
-| Volume behaviour | Target SNR capped by remaining dose — [ADR-0006](adr/0006-adaptive-volume-policy.md), [volume-controller.md](domain/volume-controller.md) |
-| Desktop audio    | Per-app volume via WASAPI (JNA) and `pactl` — [ADR-0009](adr/0009-desktop-per-app-volume.md)                                              |
-| Privacy          | On-device processing, only aggregates stored — [ADR-0007](adr/0007-privacy-on-device-audio.md)                                            |
-| UI architecture  | Navigation 3, Koin, unidirectional data flow — [ADR-0008](adr/0008-navigation-di-and-screen-pattern.md)                                   |
-| Backend          | Supabase — [ADR-0004](adr/0004-supabase-backend.md)                                                                                       |
-| i18n             | Compose resources, English default + Spanish, from day one                                                                                |
-| Accessibility    | WCAG 2.2 AA contrast, semantics on interactive elements, alerts never sound-only                                                          |
+| Concern          | Decision                                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Hearing safety   | WHO/ITU-T H.870 and NIOSH dose model — see [hearing-safety.md](domain/hearing-safety.md)                                                    |
+| Volume behaviour | Target SNR capped by remaining dose — [ADR-0006](adr/0006-adaptive-volume-policy.md), [volume-controller.md](domain/volume-controller.md)   |
+| Desktop audio    | Per-app volume via WASAPI (JNA) and `pactl` — [ADR-0009](adr/0009-desktop-per-app-volume.md)                                                |
+| Privacy          | On-device processing, only aggregates stored, versioned consent — [ADR-0007](adr/0007-privacy-on-device-audio.md), [privacy.md](privacy.md) |
+| UI architecture  | Navigation 3, Koin, unidirectional data flow — [ADR-0008](adr/0008-navigation-di-and-screen-pattern.md)                                     |
+| Backend          | Supabase — [ADR-0004](adr/0004-supabase-backend.md)                                                                                         |
+| i18n             | Compose resources, English default + Spanish, from day one                                                                                  |
+| Accessibility    | WCAG 2.2 AA contrast, semantics on interactive elements, alerts never sound-only                                                            |

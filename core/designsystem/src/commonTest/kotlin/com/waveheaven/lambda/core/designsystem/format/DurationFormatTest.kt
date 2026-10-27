@@ -1,4 +1,4 @@
-package com.waveheaven.lambda.feature.exposure
+package com.waveheaven.lambda.core.designsystem.format
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

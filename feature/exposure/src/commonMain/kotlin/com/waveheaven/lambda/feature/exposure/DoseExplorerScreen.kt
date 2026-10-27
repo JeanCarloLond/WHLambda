@@ -23,16 +23,16 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.feature.exposure.resources.Res
-import com.waveheaven.lambda.feature.exposure.resources.app_name
 import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_level
 import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_niosh
 import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_subtitle
+import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_title
 import com.waveheaven.lambda.feature.exposure.resources.dose_explorer_who
 import com.waveheaven.lambda.feature.exposure.resources.medical_disclaimer
-import com.waveheaven.lambda.feature.exposure.resources.open_about
-import com.waveheaven.lambda.feature.exposure.resources.open_settings
+import com.waveheaven.lambda.feature.exposure.resources.navigate_back
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.roundToInt
@@ -40,8 +40,7 @@ import kotlin.math.roundToInt
 /** Stateful entry point: connects [DoseExplorerViewModel] to the stateless [DoseExplorerScreen]. */
 @Composable
 fun DoseExplorerRoute(
-    onOpenAbout: () -> Unit,
-    onOpenSettings: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: DoseExplorerViewModel = koinViewModel(),
 ) {
@@ -49,8 +48,7 @@ fun DoseExplorerRoute(
     DoseExplorerScreen(
         state = state,
         onAction = viewModel::onAction,
-        onOpenAbout = onOpenAbout,
-        onOpenSettings = onOpenSettings,
+        onBack = onBack,
         modifier = modifier,
     )
 }
@@ -64,8 +62,7 @@ fun DoseExplorerRoute(
 fun DoseExplorerScreen(
     state: DoseExplorerUiState,
     onAction: (DoseExplorerAction) -> Unit,
-    onOpenAbout: () -> Unit,
-    onOpenSettings: () -> Unit,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val levelLabel = stringResource(Res.string.dose_explorer_level, state.level.decibels.roundToInt())
@@ -74,13 +71,10 @@ fun DoseExplorerScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(Res.string.app_name)) },
-                actions = {
-                    IconButton(onClick = onOpenSettings) {
-                        Icon(WhIcons.Settings, contentDescription = stringResource(Res.string.open_settings))
-                    }
-                    IconButton(onClick = onOpenAbout) {
-                        Icon(WhIcons.Info, contentDescription = stringResource(Res.string.open_about))
+                title = { Text(stringResource(Res.string.dose_explorer_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(WhIcons.ArrowBack, contentDescription = stringResource(Res.string.navigate_back))
                     }
                 },
             )

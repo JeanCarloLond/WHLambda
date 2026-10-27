@@ -19,6 +19,7 @@ android {
 dependencies {
     implementation(projects.shared)
     implementation(projects.core.data)
+    implementation(projects.core.audio)
     implementation(libs.androidx.activity.compose)
     implementation(libs.koin.android)
 }

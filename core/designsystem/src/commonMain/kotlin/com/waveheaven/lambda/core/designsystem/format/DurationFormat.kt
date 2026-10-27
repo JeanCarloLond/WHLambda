@@ -1,9 +1,9 @@
-package com.waveheaven.lambda.feature.exposure
+package com.waveheaven.lambda.core.designsystem.format
 
 import kotlin.time.Duration
 
 /** Compact, locale-neutral rendering such as `7 h 30 min`, `45 min` or `< 1 min`. */
-internal fun formatDuration(duration: Duration): String {
+fun formatDuration(duration: Duration): String {
     val totalMinutes = duration.inWholeMinutes
     val hours = totalMinutes / MINUTES_PER_HOUR
     val minutes = totalMinutes % MINUTES_PER_HOUR

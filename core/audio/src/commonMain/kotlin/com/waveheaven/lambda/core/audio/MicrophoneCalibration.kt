@@ -26,8 +26,17 @@ data class MicrophoneCalibration(
         val ANDROID_VOICE_RECOGNITION_NOMINAL: MicrophoneCalibration =
             MicrophoneCalibration(CDD_REFERENCE_SPL_DB - 20.0 * log10(CDD_REFERENCE_RMS / FULL_SCALE_16_BIT))
 
+        /**
+         * Nominal default for Android's `UNPROCESSED` source (spike #3, C3): the CDD asks that 94 dB SPL at 1 kHz
+         * yields an RMS of 520 on 16-bit samples, i.e. −36 dBFS, hence an offset of ≈ 130 dB.
+         */
+        val ANDROID_UNPROCESSED_NOMINAL: MicrophoneCalibration =
+            MicrophoneCalibration(CDD_UNPROCESSED_SPL_DB - 20.0 * log10(CDD_UNPROCESSED_RMS / FULL_SCALE_16_BIT))
+
         private const val CDD_REFERENCE_SPL_DB = 90.0
         private const val CDD_REFERENCE_RMS = 2500.0
+        private const val CDD_UNPROCESSED_SPL_DB = 94.0
+        private const val CDD_UNPROCESSED_RMS = 520.0
         private const val FULL_SCALE_16_BIT = 32768.0
     }
 }

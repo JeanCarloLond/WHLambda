@@ -7,6 +7,7 @@ import com.waveheaven.lambda.core.domain.exposure.equivalentLevel
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.AT_DOSE_CEILING
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_FOR_QUIET
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_TO_DOSE_CEILING
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_TO_PROFILE_LIMIT
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.MANUAL_OVERRIDE
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.MUTED
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.NO_MUSIC
@@ -28,30 +29,57 @@ import kotlin.time.Duration.Companion.seconds
  * 3. Someone else changed the volume → pause adjustments for [VolumeControllerConfig.manualOverrideDuration].
  * 4. Muted (below [VolumeControllerConfig.minIndex]) → hold; never unmute.
  * 5. **Safety:** above the dose ceiling → drop straight to the ceiling, ignoring rate limits.
- * 6. **Comfort:** move one step towards the target when it is outside the hysteresis band, rate-limited.
+ * 6. Above the listening profile's maximum → drop to it.
+ * 7. **Comfort:** move one step towards the target when it is outside the hysteresis band, rate-limited.
  *
- * The controller works in volume steps, keeps separate state per [OutputRoute], and has no platform
- * dependencies. It is not thread-safe: call [update] from a single thread.
+ * The controller works in volume steps, keeps separate state and an [OutputLevelModel] per [OutputRoute], and has
+ * no platform dependencies. It is not thread-safe: call [update] from a single thread.
  */
 public class VolumeController(
-    private val model: OutputLevelModel,
-    private val config: VolumeControllerConfig = VolumeControllerConfig(),
+    private val models: OutputLevelModels,
+    config: VolumeControllerConfig = VolumeControllerConfig(),
 ) {
-    private val autoRange: IntRange = config.minIndex..model.indices.last
+    /** A controller whose every route has the same [model]. */
+    public constructor(
+        model: OutputLevelModel,
+        config: VolumeControllerConfig = VolumeControllerConfig(),
+    ) : this(OutputLevelModels { model }, config) {
+        validate(this.config, model)
+    }
+
+    private var config: VolumeControllerConfig = config
     private val ambientReadings = ArrayDeque<SoundLevel>()
     private val routes = mutableMapOf<OutputRoute, RouteState>()
 
-    init {
-        require(config.minIndex in model.indices) { "minIndex ${config.minIndex} outside ${model.indices}" }
+    /**
+     * Switches to [config] from the next [update] (e.g. the user picked another listening profile, WH-062), keeping
+     * the ambient readings and what is known about each route.
+     */
+    public fun reconfigure(config: VolumeControllerConfig) {
+        this.config = config
     }
 
-    /** Processes one observation and returns what to do with the volume. */
+    private fun validate(
+        config: VolumeControllerConfig,
+        model: OutputLevelModel,
+    ) {
+        require(config.minIndex in model.indices) { "minIndex ${config.minIndex} outside ${model.indices}" }
+        require(config.maxIndex == null || config.maxIndex in model.indices) { "maxIndex ${config.maxIndex} outside ${model.indices}" }
+    }
+
+    /**
+     * Processes one observation and returns what to do with the volume.
+     *
+     * @throws IllegalArgumentException if the index or the configured range does not fit the route's model.
+     */
     public fun update(tick: VolumeTick): VolumeDecision {
+        val model = models.modelFor(tick.route)
+        validate(config, model)
         require(tick.currentIndex in model.indices) { "Index ${tick.currentIndex} outside ${model.indices}" }
         recordAmbient(tick.ambient)
         val route = routes.getOrPut(tick.route) { RouteState() }
         val settling = route.observe(tick.currentIndex, tick.now)
-        val situation = Situation(tick, ambientLeq(), ceilingLevel(tick.doseConsumed))
+        val situation = Situation(tick, model, ambientLeq(), ceilingLevel(tick.doseConsumed))
 
         val decision =
             when {
@@ -60,6 +88,7 @@ public class VolumeController(
                 route.isOverridden(tick.now) -> situation.hold(MANUAL_OVERRIDE)
                 tick.currentIndex < config.minIndex -> situation.hold(MUTED)
                 tick.currentIndex > situation.ceilingIndex -> situation.change(situation.ceilingIndex, LOWER_TO_DOSE_CEILING)
+                tick.currentIndex > situation.autoRange.last -> situation.change(situation.autoRange.last, LOWER_TO_PROFILE_LIMIT)
                 situation.ambientLeq == null -> situation.hold(WARMING_UP)
                 else -> comfort(situation, situation.ambientLeq, route)
             }
@@ -74,7 +103,8 @@ public class VolumeController(
     ): VolumeDecision {
         val current = situation.tick.currentIndex
         val target = SoundLevel(ambientLeq.decibels + config.targetSnrDb)
-        val targetIndex = autoRange.firstOrNull { model.levelAt(it) >= target } ?: autoRange.last
+        val model = situation.model
+        val targetIndex = situation.autoRange.firstOrNull { model.levelAt(it) >= target } ?: situation.autoRange.last
         val capped = targetIndex > situation.ceilingIndex
         val desired = minOf(targetIndex, situation.ceilingIndex)
         val gapDb = target.decibels - model.levelAt(current).decibels
@@ -122,10 +152,15 @@ public class VolumeController(
     /** Everything known about one tick, and helpers to build decisions from it. */
     private inner class Situation(
         val tick: VolumeTick,
+        val model: OutputLevelModel,
         val ambientLeq: SoundLevel?,
         val ceilingLevel: SoundLevel,
     ) {
-        val ceilingIndex: Int = autoRange.lastOrNull { model.levelAt(it) <= ceilingLevel } ?: config.minIndex
+        /** Indices comfort changes may use: the profile's range within the model. */
+        val autoRange: IntRange = config.minIndex..(config.maxIndex ?: model.indices.last)
+
+        /** Highest index the dose allows, regardless of the profile's maximum. */
+        val ceilingIndex: Int = (config.minIndex..model.indices.last).lastOrNull { model.levelAt(it) <= ceilingLevel } ?: config.minIndex
         private val isAboveCeiling = model.levelAt(tick.currentIndex) > ceilingLevel
 
         fun hold(

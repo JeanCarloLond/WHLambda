@@ -48,19 +48,22 @@ that can.
 
 ## What it does
 
-| Capability                                                               | Status     |
-| ------------------------------------------------------------------------ | ---------- |
-| Exposure-dose model (WHO adult/sensitive, NIOSH), Leq                    | ✅ Done    |
-| Shared UI, theming (WCAG AA), English/Spanish                            | ✅ Done    |
-| Ambient-noise metering on-device (no audio recorded)                     | 🔜 Phase 1 |
-| Per-minute listening history on the device, deletable, kept 30 days      | ✅ Done    |
-| Adaptive volume for any music app (target SNR, capped by remaining dose) | 🔜 Phase 1 |
-| Listening profiles per environment (commute, gym, office…)               | 🔜 Phase 1 |
-| Daily/weekly dose dashboard and notifications                            | 🔜 Phase 1 |
-| Desktop: per-app volume (Windows WASAPI, Linux PipeWire)                 | 🗓️ Phase 2 |
-| Account & sync of aggregated stats (Supabase)                            | 🗓️ Phase 3 |
-| Hearing check (not a diagnosis) feeding a personal EQ curve              | 🗓️ Phase 3 |
-| Learns your preferred margin from manual adjustments                     | 🗓️ Phase 4 |
+| Capability                                                                             | Status                |
+| -------------------------------------------------------------------------------------- | --------------------- |
+| Exposure-dose model (WHO adult/sensitive, NIOSH), Leq                                  | ✅ Done               |
+| Shared UI, theming (WCAG AA), English/Spanish                                          | ✅ Done               |
+| Ambient-noise metering on-device (no audio recorded)                                   | ✅ Done               |
+| Per-minute listening history on the device, deletable, kept 30 days                    | ✅ Done               |
+| Estimated level at the ear from the volume curve and headphones, ± margin              | ✅ Done               |
+| Adaptive volume for any music app (target SNR, capped by remaining dose)               | ✅ Done (Android)     |
+| Listening profiles per environment (commute, gym, office…)                             | ✅ Done               |
+| Dashboard: today (NIOSH), last 7 days (WHO), time left, 7-day history                  | ✅ Done               |
+| Onboarding with versioned, revocable consent (Ley 1581)                                | ✅ Done               |
+| Dose alerts at 50, 80 and 100 %                                                        | ✅ Done               |
+| Desktop: per-app volume and tray (Linux PipeWire/PulseAudio; Windows WASAPI to verify) | ✅ Linux · ⏳ Windows |
+| Account & sync of aggregated stats (Supabase)                                          | 🗓️ Phase 3            |
+| Hearing check (not a diagnosis) feeding a personal EQ curve                            | ✅ Done               |
+| Learns your preferred margin from manual adjustments                                   | 🗓️ Phase 4            |
 
 > [!IMPORTANT]
 > WaveHeaven Lambda is **not a medical device**. If you notice ringing, muffled hearing or pain, see an audiologist.
@@ -104,12 +107,13 @@ plugins) · Supabase (planned) · detekt · ktlint/Spotless · Kover · Android 
 
 ### Prerequisites
 
-| Tool        | Version                                                               | Notes                                                                                |
-| ----------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| JDK         | 21                                                                    | e.g. [Temurin](https://adoptium.net/). Gradle provisions other toolchains if needed. |
-| Android SDK | API 37                                                                | Via Android Studio, or command-line tools with `ANDROID_HOME` set.                   |
-| Node.js     | 22+                                                                   | Only for git hooks and commit linting — not needed to build the apps.                |
-| IDE         | Android Studio or IntelliJ IDEA with the Kotlin Multiplatform plugin. |
+| Tool         | Version                                                               | Notes                                                                                   |
+| ------------ | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| JDK          | 21                                                                    | e.g. [Temurin](https://adoptium.net/). Gradle provisions other toolchains if needed.    |
+| Android SDK  | API 37                                                                | Via Android Studio, or command-line tools with `ANDROID_HOME` set.                      |
+| Node.js      | 22+                                                                   | Only for git hooks and commit linting — not needed to build the apps.                   |
+| pactl, parec | PulseAudio 16+ or PipeWire                                            | Linux only, to run the desktop app's adaptive volume (`pulseaudio-utils` / `libpulse`). |
+| IDE          | Android Studio or IntelliJ IDEA with the Kotlin Multiplatform plugin. |
 
 ### Setup
 
@@ -147,8 +151,12 @@ WHLambda/
 │   └── desktop/          Compose Desktop application + installers
 ├── shared/               App shell: App(), navigation, dependency injection
 ├── feature/
+│   ├── dashboard/        Home: dose used today and this week, history
 │   ├── exposure/         Dose explorer (reference screen implementation)
-│   ├── settings/         Settings: your data
+│   ├── hearingcheck/     Hearing check (not a diagnosis) and its EQ curve
+│   ├── onboarding/       What is measured, consent, weekly standard, microphone
+│   ├── profiles/         Listening profiles: built-in and your own
+│   ├── settings/         Settings: weekly standard, consent, your data
 │   └── about/            About screen
 ├── core/
 │   ├── domain/           Pure Kotlin business rules — no platform dependencies
@@ -180,6 +188,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 | [docs/adr/](docs/adr/)                                         | Architecture Decision Records — the _why_ behind choices |
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
 | [docs/roadmap.md](docs/roadmap.md)                             | Phases and milestones                                    |
+| [docs/privacy.md](docs/privacy.md)                             | What is processed, consent and its versions, user rights |
 | [docs/release.md](docs/release.md)                             | Tagging a release, versions, signing keys and secrets    |
 | [docs/legacy.md](docs/legacy.md)                               | What we learned from the original WaveHeaven             |
 

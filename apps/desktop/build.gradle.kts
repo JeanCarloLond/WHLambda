@@ -7,8 +7,15 @@ plugins {
 dependencies {
     implementation(projects.shared)
     implementation(projects.core.data)
+    implementation(projects.core.audio)
+    implementation(projects.core.designsystem)
     implementation(compose.desktop.currentOs)
+    implementation(libs.compose.components.resources)
     implementation(libs.kotlinx.coroutines.swing)
+}
+
+compose.resources {
+    packageOfResClass = "com.waveheaven.lambda.desktop.resources"
 }
 
 compose.desktop {
