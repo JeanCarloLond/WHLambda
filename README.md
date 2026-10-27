@@ -189,6 +189,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
 | [docs/roadmap.md](docs/roadmap.md)                             | Phases and milestones                                    |
 | [docs/privacy.md](docs/privacy.md)                             | What is processed, consent and its versions, user rights |
+| [docs/release.md](docs/release.md)                             | Tagging a release, versions, signing keys and secrets    |
 | [docs/legacy.md](docs/legacy.md)                               | What we learned from the original WaveHeaven             |
 
 ## Contributing
