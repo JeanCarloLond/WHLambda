@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hearing_title">Prueba de audición</string>
+    <string name="navigate_back">Volver</string>
+    <string name="hearing_not_diagnosis">Esto no es un diagnóstico médico. Compara qué tan bien oyes distintos tonos en cada oído, para ajustar tu música y decirte cuándo conviene una prueba de audición con un audiólogo.</string>
+    <string name="hearing_instructions">Busca un lugar silencioso, ponte los audífonos del lado correcto y apaga la cancelación de ruido. Toma unos cinco minutos. Oirás pitidos cortos en un oído a la vez: toca “Lo oigo” apenas oigas uno, aunque sea muy suave.</string>
+    <string name="hearing_begin">Empezar</string>
+    <string name="hearing_volume_title">Ajusta un volumen cómodo</string>
+    <string name="hearing_volume_text">Reproduce el tono de referencia y ajusta tu volumen para que suene claro y cómodo, nunca fuerte. No cambies el volumen durante la prueba: los tonos sonarán así de fuerte o más suave.</string>
+    <string name="hearing_play_reference">Reproducir tono de referencia</string>
+    <string name="hearing_start">Comenzar la prueba</string>
+    <string name="hearing_ear_right">Oído derecho</string>
+    <string name="hearing_ear_left">Oído izquierdo</string>
+    <string name="hearing_heard">Lo oigo</string>
+    <string name="hearing_cancel">Cancelar</string>
+    <string name="hearing_result_title">Tu resultado (%1$s)</string>
+    <string name="hearing_table_frequency">Frecuencia</string>
+    <string name="hearing_table_right">Derecho</string>
+    <string name="hearing_table_left">Izquierdo</string>
+    <string name="hearing_threshold">%1$d dB</string>
+    <string name="hearing_not_heard">No lo oíste</string>
+    <string name="hearing_table_note">El tono más suave que oíste, en dB por debajo de tu volumen de referencia. Más bajo es mejor; solo importan las diferencias entre oídos y tonos.</string>
+    <string name="hearing_even">Tus oídos respondieron de forma pareja en los tonos probados. Si notas pitidos, audición apagada o dolor, consulta a un audiólogo de todas formas.</string>
+    <string name="hearing_asymmetric">Un oído oyó bastante peor que el otro en varios tonos. Por favor consulta a un audiólogo para una prueba de audición completa.</string>
+    <string name="hearing_uneven">Algunos tonos fueron mucho más difíciles de oír que otros. Por favor consulta a un audiólogo para una prueba de audición completa.</string>
+    <string name="hearing_eq_text">WaveHeaven puede guardar este resultado como una curva de ecualizador en un nuevo perfil de escucha, subiendo un poco los tonos que oyes peor.</string>
+    <string name="hearing_save_profile">Guardar como perfil de escucha</string>
+    <string name="hearing_profile_name">Mi audición</string>
+    <string name="hearing_profile_saved">Guardado como el perfil “Mi audición” y seleccionado.</string>
+    <string name="hearing_retake">Repetir la prueba</string>
+    <string name="hearing_delete">Borrar mis resultados</string>
+    <string name="hearing_frequency">%1$s Hz</string>
+</resources>

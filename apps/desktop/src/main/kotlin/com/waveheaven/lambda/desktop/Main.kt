@@ -15,12 +15,14 @@ import com.waveheaven.lambda.core.audio.AdaptiveVolumeSession
 import com.waveheaven.lambda.core.audio.DesktopAmbientMeter
 import com.waveheaven.lambda.core.audio.DesktopMediaVolume
 import com.waveheaven.lambda.core.audio.DesktopOutputLevelModels
+import com.waveheaven.lambda.core.audio.DesktopTonePlayer
 import com.waveheaven.lambda.core.data.createDesktopDriver
 import com.waveheaven.lambda.core.domain.alert.DoseAlertNotifier
 import com.waveheaven.lambda.core.domain.audio.AmbientMeter
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.hearing.TonePlayer
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.core.domain.volume.MediaVolume
@@ -61,6 +63,7 @@ private val desktopModule =
         single { TrayDoseAlertNotifier(appScope) }
         single<DoseAlertNotifier> { get<TrayDoseAlertNotifier>() }
         single<AdaptiveVolume> { get<AdaptiveVolumeSession>() }
+        single<TonePlayer> { DesktopTonePlayer() }
     }
 
 fun main() {

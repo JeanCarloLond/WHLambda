@@ -6,6 +6,7 @@ import com.waveheaven.lambda.core.audio.DoseAlertMonitor
 import com.waveheaven.lambda.core.audio.LoopInputs
 import com.waveheaven.lambda.core.data.SqlDoseAlertStore
 import com.waveheaven.lambda.core.data.SqlExposureLog
+import com.waveheaven.lambda.core.data.SqlHearingCheckStore
 import com.waveheaven.lambda.core.data.SqlListeningProfileStore
 import com.waveheaven.lambda.core.data.SqlUserPreferences
 import com.waveheaven.lambda.core.data.SystemDayBoundaries
@@ -15,9 +16,11 @@ import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
 import com.waveheaven.lambda.core.domain.exposure.ExposureLog
+import com.waveheaven.lambda.core.domain.hearing.HearingCheckStore
 import com.waveheaven.lambda.core.domain.profile.ListeningProfileStore
 import com.waveheaven.lambda.feature.dashboard.dashboardModule
 import com.waveheaven.lambda.feature.exposure.exposureModule
+import com.waveheaven.lambda.feature.hearingcheck.hearingCheckModule
 import com.waveheaven.lambda.feature.onboarding.onboardingModule
 import com.waveheaven.lambda.feature.profiles.profilesModule
 import com.waveheaven.lambda.feature.settings.settingsModule
@@ -42,6 +45,7 @@ val dataModule =
         single<ListeningProfileStore> { SqlListeningProfileStore(get()) }
         single<UserPreferences> { SqlUserPreferences(get()) }
         single<DoseAlertStore> { SqlDoseAlertStore(get()) }
+        single<HearingCheckStore> { SqlHearingCheckStore(get()) }
     }
 
 /**
@@ -58,7 +62,17 @@ val adaptiveVolumeModule =
     }
 
 /** Bindings of every feature. Platform-specific bindings are added by each app through [initKoin]'s config. */
-val appModules = listOf(dataModule, adaptiveVolumeModule, dashboardModule, exposureModule, onboardingModule, profilesModule, settingsModule)
+val appModules =
+    listOf(
+        dataModule,
+        adaptiveVolumeModule,
+        dashboardModule,
+        exposureModule,
+        hearingCheckModule,
+        onboardingModule,
+        profilesModule,
+        settingsModule,
+    )
 
 /**
  * Starts dependency injection once per process: from `Application.onCreate` on Android and from `main` on

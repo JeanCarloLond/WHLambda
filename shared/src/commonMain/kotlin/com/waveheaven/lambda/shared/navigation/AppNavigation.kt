@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -22,6 +24,8 @@ import com.waveheaven.lambda.feature.dashboard.DashboardKey
 import com.waveheaven.lambda.feature.dashboard.DashboardRoute
 import com.waveheaven.lambda.feature.exposure.DoseExplorerKey
 import com.waveheaven.lambda.feature.exposure.DoseExplorerRoute
+import com.waveheaven.lambda.feature.hearingcheck.HearingCheckKey
+import com.waveheaven.lambda.feature.hearingcheck.HearingCheckRoute
 import com.waveheaven.lambda.feature.onboarding.OnboardingKey
 import com.waveheaven.lambda.feature.onboarding.OnboardingRoute
 import com.waveheaven.lambda.feature.profiles.ProfilesKey
@@ -74,52 +78,64 @@ private fun AppNavDisplay(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
-        entryProvider =
-            entryProvider {
-                entry<OnboardingKey> { key ->
-                    OnboardingRoute(
-                        reviewConsentOnly = key.reviewConsentOnly,
-                        microphoneAccess = microphoneAccess,
-                        onFinished = {
-                            if (key.reviewConsentOnly) {
-                                backStack.removeLastOrNull()
-                            } else {
-                                // Onboarding is not part of the history: Back from the dashboard leaves the app.
-                                backStack.clear()
-                                backStack.add(DashboardKey)
-                            }
-                        },
-                    )
-                }
-                entry<DashboardKey> {
-                    DashboardRoute(
-                        microphoneAccess = microphoneAccess,
-                        notificationAccess = notificationAccess,
-                        onOpenExplorer = { backStack.add(DoseExplorerKey) },
-                        onOpenProfiles = { backStack.add(ProfilesKey) },
-                        onOpenSettings = { backStack.add(SettingsKey) },
-                        onOpenAbout = { backStack.add(AboutKey) },
-                        onReviewConsent = { backStack.add(OnboardingKey(reviewConsentOnly = true)) },
-                    )
-                }
-                entry<DoseExplorerKey> {
-                    DoseExplorerRoute(onBack = { backStack.removeLastOrNull() })
-                }
-                entry<ProfilesKey> {
-                    ProfilesRoute(onBack = { backStack.removeLastOrNull() })
-                }
-                entry<SettingsKey> {
-                    SettingsRoute(
-                        onBack = { backStack.removeLastOrNull() },
-                        onReviewConsent = { backStack.add(OnboardingKey(reviewConsentOnly = true)) },
-                    )
-                }
-                entry<AboutKey> {
-                    AboutScreen(appVersion = appVersion, onBack = { backStack.removeLastOrNull() })
-                }
-            },
+        entryProvider = appEntries(backStack, appVersion, microphoneAccess, notificationAccess),
     )
 }
+
+/** Every destination and how it leads to the others. */
+private fun appEntries(
+    backStack: NavBackStack<NavKey>,
+    appVersion: String,
+    microphoneAccess: MicrophoneAccess,
+    notificationAccess: NotificationAccess,
+): (NavKey) -> NavEntry<NavKey> =
+    entryProvider {
+        entry<OnboardingKey> { key ->
+            OnboardingRoute(
+                reviewConsentOnly = key.reviewConsentOnly,
+                microphoneAccess = microphoneAccess,
+                onFinished = {
+                    if (key.reviewConsentOnly) {
+                        backStack.removeLastOrNull()
+                    } else {
+                        // Onboarding is not part of the history: Back from the dashboard leaves the app.
+                        backStack.clear()
+                        backStack.add(DashboardKey)
+                    }
+                },
+            )
+        }
+        entry<DashboardKey> {
+            DashboardRoute(
+                microphoneAccess = microphoneAccess,
+                notificationAccess = notificationAccess,
+                onOpenExplorer = { backStack.add(DoseExplorerKey) },
+                onOpenProfiles = { backStack.add(ProfilesKey) },
+                onOpenSettings = { backStack.add(SettingsKey) },
+                onOpenAbout = { backStack.add(AboutKey) },
+                onReviewConsent = { backStack.add(OnboardingKey(reviewConsentOnly = true)) },
+            )
+        }
+        entry<DoseExplorerKey> {
+            DoseExplorerRoute(onBack = { backStack.removeLastOrNull() })
+        }
+        entry<ProfilesKey> {
+            ProfilesRoute(onBack = { backStack.removeLastOrNull() })
+        }
+        entry<SettingsKey> {
+            SettingsRoute(
+                onBack = { backStack.removeLastOrNull() },
+                onReviewConsent = { backStack.add(OnboardingKey(reviewConsentOnly = true)) },
+                onOpenHearingCheck = { backStack.add(HearingCheckKey) },
+            )
+        }
+        entry<HearingCheckKey> {
+            HearingCheckRoute(onBack = { backStack.removeLastOrNull() })
+        }
+        entry<AboutKey> {
+            AboutScreen(appVersion = appVersion, onBack = { backStack.removeLastOrNull() })
+        }
+    }
 
 /**
  * Outside Android, saving the back stack needs every destination registered explicitly.
@@ -135,6 +151,7 @@ private val NavigationConfig =
                     subclass(DoseExplorerKey::class, DoseExplorerKey.serializer())
                     subclass(AboutKey::class, AboutKey.serializer())
                     subclass(SettingsKey::class, SettingsKey.serializer())
+                    subclass(HearingCheckKey::class, HearingCheckKey.serializer())
                     subclass(ProfilesKey::class, ProfilesKey.serializer())
                 }
             }

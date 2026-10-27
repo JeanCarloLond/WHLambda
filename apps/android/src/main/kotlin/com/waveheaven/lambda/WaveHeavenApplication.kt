@@ -7,10 +7,12 @@ import com.waveheaven.lambda.adaptive.AndroidDoseAlertNotifier
 import com.waveheaven.lambda.core.audio.AndroidAmbientMeter
 import com.waveheaven.lambda.core.audio.AndroidMediaVolume
 import com.waveheaven.lambda.core.audio.AndroidOutputLevelModels
+import com.waveheaven.lambda.core.audio.AndroidTonePlayer
 import com.waveheaven.lambda.core.data.createAndroidDriver
 import com.waveheaven.lambda.core.domain.alert.DoseAlertNotifier
 import com.waveheaven.lambda.core.domain.audio.AmbientMeter
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.hearing.TonePlayer
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.core.domain.volume.MediaVolume
 import com.waveheaven.lambda.core.domain.volume.OutputLevelModels
@@ -35,6 +37,7 @@ class WaveHeavenApplication : Application() {
                     single<OutputLevelModels> { AndroidOutputLevelModels(androidContext()) }
                     single<AdaptiveVolume> { AndroidAdaptiveVolume(androidContext(), get()) }
                     single<DoseAlertNotifier> { AndroidDoseAlertNotifier(androidContext()) }
+                    single<TonePlayer> { AndroidTonePlayer() }
                 },
             )
         }

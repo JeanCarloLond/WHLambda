@@ -79,11 +79,19 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SettingsRoute(
     onBack: () -> Unit,
     onReviewConsent: () -> Unit,
+    onOpenHearingCheck: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    SettingsScreen(state = state, onAction = viewModel::onAction, onBack = onBack, onReviewConsent = onReviewConsent, modifier = modifier)
+    SettingsScreen(
+        state = state,
+        onAction = viewModel::onAction,
+        onBack = onBack,
+        onReviewConsent = onReviewConsent,
+        onOpenHearingCheck = onOpenHearingCheck,
+        modifier = modifier,
+    )
 }
 
 /** App settings. Stateless: renders [state] and reports user intents through [onAction]. */
@@ -94,6 +102,7 @@ fun SettingsScreen(
     onAction: (SettingsAction) -> Unit,
     onBack: () -> Unit,
     onReviewConsent: () -> Unit,
+    onOpenHearingCheck: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -132,6 +141,7 @@ fun SettingsScreen(
             state.runningApps?.let { apps -> MediaAppSection(selected = state.mediaApp, running = apps, onAction = onAction) }
             AlertsSection(enabled = state.alerts, onAction = onAction)
             CalibrationSection(adjustmentDb = state.microphoneAdjustmentDb, onAction = onAction)
+            HearingSection(onOpen = onOpenHearingCheck)
             ConsentSection(
                 state = state,
                 onWithdraw = { onAction(SettingsAction.WithdrawConsentClicked) },

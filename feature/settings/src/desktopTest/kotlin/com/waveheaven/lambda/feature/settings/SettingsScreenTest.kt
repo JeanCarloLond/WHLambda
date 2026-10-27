@@ -166,5 +166,5 @@ class SettingsScreenTest {
         onAction: (SettingsAction) -> Unit = {},
         onBack: () -> Unit = {},
         onReviewConsent: () -> Unit = {},
-    ) = SettingsScreen(state, onAction, onBack, onReviewConsent)
+    ) = SettingsScreen(state, onAction, onBack, onReviewConsent, onOpenHearingCheck = {})
 }

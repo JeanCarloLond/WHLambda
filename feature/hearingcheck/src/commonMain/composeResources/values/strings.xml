@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hearing_title">Hearing check</string>
+    <string name="navigate_back">Back</string>
+    <string name="hearing_not_diagnosis">This is not a medical diagnosis. It compares how well you hear different pitches in each ear, to tune your music and to tell you when a hearing test with an audiologist is a good idea.</string>
+    <string name="hearing_instructions">Find a quiet place, put your headphones on the right way round and turn off noise cancelling. It takes about five minutes. You will hear short beeps in one ear at a time: tap “I hear it” as soon as you hear one, even a faint one.</string>
+    <string name="hearing_begin">Begin</string>
+    <string name="hearing_volume_title">Set a comfortable volume</string>
+    <string name="hearing_volume_text">Play the reference tone and set your volume so it sounds clear and comfortable, never loud. Do not change the volume during the check: the tones will be this loud or quieter.</string>
+    <string name="hearing_play_reference">Play reference tone</string>
+    <string name="hearing_start">Start the check</string>
+    <string name="hearing_ear_right">Right ear</string>
+    <string name="hearing_ear_left">Left ear</string>
+    <string name="hearing_heard">I hear it</string>
+    <string name="hearing_cancel">Cancel</string>
+    <string name="hearing_result_title">Your result (%1$s)</string>
+    <string name="hearing_table_frequency">Frequency</string>
+    <string name="hearing_table_right">Right</string>
+    <string name="hearing_table_left">Left</string>
+    <string name="hearing_threshold">%1$d dB</string>
+    <string name="hearing_not_heard">Not heard</string>
+    <string name="hearing_table_note">Quietest tone you heard, in dB below your reference volume. Lower is better; only differences between ears and pitches mean something.</string>
+    <string name="hearing_even">Your ears responded evenly across the pitches tested. If you notice ringing, muffled hearing or pain, see an audiologist anyway.</string>
+    <string name="hearing_asymmetric">One ear heard noticeably less well than the other at several pitches. Please see an audiologist for a proper hearing test.</string>
+    <string name="hearing_uneven">Some pitches were much harder to hear than others. Please see an audiologist for a proper hearing test.</string>
+    <string name="hearing_eq_text">WaveHeaven can keep this result as an equaliser curve in a new listening profile, lifting the pitches you hear less well a little.</string>
+    <string name="hearing_save_profile">Save as listening profile</string>
+    <string name="hearing_profile_name">My hearing</string>
+    <string name="hearing_profile_saved">Saved as the “My hearing” profile and selected.</string>
+    <string name="hearing_retake">Take it again</string>
+    <string name="hearing_delete">Delete my results</string>
+    <string name="hearing_frequency">%1$s Hz</string>
+</resources>
