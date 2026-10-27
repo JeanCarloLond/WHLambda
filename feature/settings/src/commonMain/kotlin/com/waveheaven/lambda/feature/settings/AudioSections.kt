@@ -28,6 +28,9 @@ import com.waveheaven.lambda.feature.settings.resources.settings_calibration_des
 import com.waveheaven.lambda.feature.settings.resources.settings_calibration_reset
 import com.waveheaven.lambda.feature.settings.resources.settings_calibration_title
 import com.waveheaven.lambda.feature.settings.resources.settings_calibration_value
+import com.waveheaven.lambda.feature.settings.resources.settings_hearing_description
+import com.waveheaven.lambda.feature.settings.resources.settings_hearing_open
+import com.waveheaven.lambda.feature.settings.resources.settings_hearing_title
 import com.waveheaven.lambda.feature.settings.resources.settings_media_app_description
 import com.waveheaven.lambda.feature.settings.resources.settings_media_app_none
 import com.waveheaven.lambda.feature.settings.resources.settings_media_app_refresh
@@ -98,5 +101,22 @@ internal fun CalibrationSection(
         TextButton(onClick = { onAction(SettingsAction.MicrophoneAdjustmentReset) }, enabled = adjustmentDb != 0) {
             Text(stringResource(Res.string.settings_calibration_reset))
         }
+    }
+}
+
+/** Entry to the hearing check (#19), which lives in its own feature. */
+@Composable
+internal fun HearingSection(
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            stringResource(Res.string.settings_hearing_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
+        Text(stringResource(Res.string.settings_hearing_description), style = MaterialTheme.typography.bodyMedium)
+        OutlinedButton(onClick = onOpen) { Text(stringResource(Res.string.settings_hearing_open)) }
     }
 }

@@ -40,4 +40,7 @@
     <string name="settings_calibration_description">Los micrófonos varían. Si tienes un sonómetro (o una app de medición calibrada en otro teléfono), ponlo junto a este dispositivo en un ruido estable, compara su lectura con el nivel de ruido que muestra WaveHeaven mientras el volumen adaptativo está activo y corrige aquí la diferencia. Esto solo cambia qué tan fuerte cree WaveHeaven que suena a tu alrededor, nunca tu límite de escucha segura.</string>
     <string name="settings_calibration_value">Corrección: %1$s dB</string>
     <string name="settings_calibration_reset">Volver al valor por defecto</string>
+    <string name="settings_hearing_title">Prueba de audición</string>
+    <string name="settings_hearing_description">Una prueba de cinco minutos de qué tan bien oyes distintos tonos en cada oído. No es un diagnóstico; el resultado se queda en este dispositivo.</string>
+    <string name="settings_hearing_open">Hacer una prueba de audición</string>
 </resources>

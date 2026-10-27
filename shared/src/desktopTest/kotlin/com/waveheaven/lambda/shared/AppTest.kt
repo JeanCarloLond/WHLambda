@@ -15,6 +15,8 @@ import com.waveheaven.lambda.core.domain.consent.Consent
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.hearing.Ear
+import com.waveheaven.lambda.core.domain.hearing.TonePlayer
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeStatus
@@ -51,6 +53,7 @@ class AppTest {
                     module {
                         single<SqlDriver> { createInMemoryDriver() }
                         single<AdaptiveVolume> { adaptive }
+                        single<TonePlayer> { SilentTonePlayer }
                     },
                 )
             }.koin
@@ -177,6 +180,18 @@ class AppTest {
         }
 
     @Test
+    fun `opens the hearing check from settings`() =
+        runComposeUiTest {
+            onboard()
+            setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
+
+            onNodeWithContentDescription("Settings").performClick()
+            onNodeWithText("Take a hearing check").performScrollTo().performClick()
+
+            waitUntilExactlyOneExists(hasText("This is not a medical diagnosis", substring = true))
+        }
+
+    @Test
     fun `is translated to Spanish`() =
         runComposeUiTest {
             Locale.setDefault(Locale.forLanguageTag("es"))
@@ -192,6 +207,15 @@ class AppTest {
             preferences.completeOnboarding()
             if (withConsent) preferences.giveConsent(Consent.CURRENT_VERSION, Clock.System.now())
         }
+
+    private object SilentTonePlayer : TonePlayer {
+        override suspend fun play(
+            ear: Ear?,
+            frequencyHz: Int,
+            levelDb: Double,
+            durationMillis: Long,
+        ) = Unit
+    }
 
     private class FakeNotificationAccess : NotificationAccess {
         var requests = 0

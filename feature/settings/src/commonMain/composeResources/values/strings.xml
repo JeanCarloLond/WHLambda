@@ -40,4 +40,7 @@
     <string name="settings_calibration_description">Microphones differ. If you have a sound-level meter (or a calibrated meter app on another phone), put it next to this device in a steady noise, compare its reading with the noise level WaveHeaven shows while adaptive volume runs, and correct the difference here. This only changes how loud WaveHeaven thinks it is around you, never your safe-listening limit.</string>
     <string name="settings_calibration_value">Correction: %1$s dB</string>
     <string name="settings_calibration_reset">Reset to default</string>
+    <string name="settings_hearing_title">Hearing check</string>
+    <string name="settings_hearing_description">A five-minute check of how well you hear different pitches in each ear. Not a diagnosis; the result stays on this device.</string>
+    <string name="settings_hearing_open">Take a hearing check</string>
 </resources>

@@ -7,6 +7,7 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.core.designsystem)
             implementation(projects.feature.exposure)
+            implementation(projects.feature.hearingcheck)
             implementation(projects.feature.onboarding)
             implementation(projects.feature.profiles)
             implementation(projects.feature.dashboard)
