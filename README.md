@@ -180,6 +180,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 | [docs/adr/](docs/adr/)                                         | Architecture Decision Records — the _why_ behind choices |
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
 | [docs/roadmap.md](docs/roadmap.md)                             | Phases and milestones                                    |
+| [docs/release.md](docs/release.md)                             | Tagging a release, versions, signing keys and secrets    |
 | [docs/legacy.md](docs/legacy.md)                               | What we learned from the original WaveHeaven             |
 
 ## Contributing

@@ -18,7 +18,6 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Rpm)
             packageName = "WaveHeaven Lambda"
-            packageVersion = "0.1.0"
             description = "Safe-listening companion that adapts volume to ambient noise."
             vendor = "WaveHeaven"
             licenseFile.set(rootProject.file("LICENSE"))
