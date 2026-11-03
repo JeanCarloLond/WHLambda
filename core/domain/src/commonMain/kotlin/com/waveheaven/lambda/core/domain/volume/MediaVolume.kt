@@ -19,6 +19,12 @@ public interface MediaVolume {
     /** Whether any app is playing media right now. */
     public fun isMusicActive(): Boolean
 
+    /**
+     * Whether media plays through the device's built-in speaker, which the microphone hears (#42). Platforms that
+     * cannot tell (a computer cannot tell headphones from speakers) answer `false`.
+     */
+    public fun isSpeakerOutput(): Boolean = false
+
     /** Whether the user must set something up first, e.g. choose the music app on desktop (#17). */
     public fun needsSetup(): Boolean = false
 }

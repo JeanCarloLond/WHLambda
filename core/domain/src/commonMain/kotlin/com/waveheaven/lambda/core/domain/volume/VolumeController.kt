@@ -14,6 +14,7 @@ import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.NO_MUSIC
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.RAISE_FOR_NOISE
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.RATE_LIMITED
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.SETTLING
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.SPEAKER_OUTPUT
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.WARMING_UP
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.WITHIN_DEAD_BAND
 import kotlin.time.Duration
@@ -30,7 +31,8 @@ import kotlin.time.Duration.Companion.seconds
  * 4. Muted (below [VolumeControllerConfig.minIndex]) → hold; never unmute.
  * 5. **Safety:** above the dose ceiling → drop straight to the ceiling, ignoring rate limits.
  * 6. Above the listening profile's maximum → drop to it.
- * 7. **Comfort:** move one step towards the target when it is outside the hysteresis band, rate-limited.
+ * 7. Media on the built-in speaker → hold: the microphone hears the music itself, so comfort would feed back (#42).
+ * 8. **Comfort:** move one step towards the target when it is outside the hysteresis band, rate-limited.
  *
  * The controller works in volume steps, keeps separate state and an [OutputLevelModel] per [OutputRoute], and has
  * no platform dependencies. It is not thread-safe: call [update] from a single thread.
@@ -89,6 +91,7 @@ public class VolumeController(
                 tick.currentIndex < config.minIndex -> situation.hold(MUTED)
                 tick.currentIndex > situation.ceilingIndex -> situation.change(situation.ceilingIndex, LOWER_TO_DOSE_CEILING)
                 tick.currentIndex > situation.autoRange.last -> situation.change(situation.autoRange.last, LOWER_TO_PROFILE_LIMIT)
+                tick.isSpeakerOutput -> situation.hold(SPEAKER_OUTPUT)
                 situation.ambientLeq == null -> situation.hold(WARMING_UP)
                 else -> comfort(situation, situation.ambientLeq, route)
             }

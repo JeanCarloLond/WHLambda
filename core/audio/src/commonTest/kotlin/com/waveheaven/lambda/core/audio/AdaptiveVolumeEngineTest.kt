@@ -68,6 +68,19 @@ class AdaptiveVolumeEngineTest {
         }
 
     @Test
+    fun `on the phone speaker it holds the volume and says why`() =
+        runTest {
+            phone.speaker = true
+            val run = start()
+
+            advanceTimeBy(20.seconds)
+
+            assertEquals(5, phone.level)
+            assertEquals(VolumeDecisionReason.SPEAKER_OUTPUT, statuses.last().decision?.reason)
+            run.cancel()
+        }
+
+    @Test
     fun `the microphone is open only while music plays`() =
         runTest {
             phone.playing = false
@@ -218,6 +231,7 @@ class AdaptiveVolumeEngineTest {
     ) : MediaVolume {
         var playing = true
         var setupNeeded = false
+        var speaker = false
         override val indices = 0..15
 
         override fun currentRoute() = OutputRoute("speaker")
@@ -231,6 +245,8 @@ class AdaptiveVolumeEngineTest {
         override fun isMusicActive() = playing
 
         override fun needsSetup() = setupNeeded
+
+        override fun isSpeakerOutput() = speaker
     }
 
     private class FakeMeter : AmbientMeter {

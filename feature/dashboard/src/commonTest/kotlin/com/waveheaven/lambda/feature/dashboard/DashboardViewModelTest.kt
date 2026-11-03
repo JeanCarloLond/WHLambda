@@ -192,6 +192,17 @@ class DashboardViewModelTest {
         }
 
     @Test
+    fun `explains that the volume is held on the phone speaker`() =
+        runTest {
+            val state = observe(viewModel())
+
+            adaptive.status.value =
+                AdaptiveVolumeStatus(AdaptiveVolumeState.RUNNING, decision = decision(VolumeDecisionReason.SPEAKER_OUTPUT))
+
+            assertEquals(AdaptiveHint.SPEAKER_OUTPUT, state.value.adaptive.hint)
+        }
+
+    @Test
     fun `a refused microphone is shown until the next start`() =
         runTest {
             val viewModel = viewModel()

@@ -23,4 +23,6 @@ class AndroidMediaVolume(
     }
 
     override fun isMusicActive(): Boolean = audio.isMusicActive
+
+    override fun isSpeakerOutput(): Boolean = AndroidMediaOutputs.currentDevice(audio) == null
 }

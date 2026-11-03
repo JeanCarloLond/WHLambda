@@ -13,6 +13,7 @@ import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.NO_MUSIC
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.RAISE_FOR_NOISE
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.RATE_LIMITED
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.SETTLING
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.SPEAKER_OUTPUT
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.WARMING_UP
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.WITHIN_DEAD_BAND
 import kotlin.test.Test
@@ -179,6 +180,47 @@ class VolumeControllerTest {
     }
 
     @Test
+    fun `on the built-in speaker comfort changes are held and explained`() {
+        val phone = Phone(index = 5).apply { speaker = true }
+
+        val decisions = List(20) { phone.tick(ambient = 85.dBA) }
+
+        assertEquals(5, phone.index)
+        assertTrue(decisions.all { it.reason == SPEAKER_OUTPUT && it.newIndex == null })
+    }
+
+    @Test
+    fun `without the speaker guard, music heard as noise ratchets the volume up to the dose ceiling`() {
+        // Regression scenario of #42: the microphone hears the music itself, 2 dB below the output level.
+        val phone = Phone(index = 9)
+
+        repeat(60) { phone.tick(ambient = SoundLevel(MODEL.levelAt(phone.index).decibels - 2.0)) }
+
+        // Only the dose ceiling (index 13 here) stops the climb; on the reporting device it reached the maximum.
+        assertEquals(13, phone.index)
+        assertEquals(4, phone.reasons.count { it == VolumeDecisionReason.RAISE_FOR_NOISE })
+    }
+
+    @Test
+    fun `on the speaker, music heard as noise cannot raise the volume`() {
+        val phone = Phone(index = 9).apply { speaker = true }
+
+        repeat(60) { phone.tick(ambient = SoundLevel(MODEL.levelAt(phone.index).decibels - 2.0)) }
+
+        assertEquals(9, phone.index)
+    }
+
+    @Test
+    fun `on the speaker the dose ceiling still lowers the volume`() {
+        val phone = Phone(index = 14).apply { speaker = true }
+
+        val decision = phone.tick(ambient = 90.dBA, dose = Dose(0.9))
+
+        assertEquals(LOWER_TO_DOSE_CEILING, decision.reason)
+        assertEquals(8, decision.newIndex)
+    }
+
+    @Test
     fun `never unmutes`() {
         val phone = Phone(index = 0)
 
@@ -289,6 +331,9 @@ class VolumeControllerTest {
         val changeTimes = mutableListOf<Duration>()
         val reasons = mutableListOf<VolumeDecisionReason>()
 
+        /** Media plays through the built-in speaker. */
+        var speaker = false
+
         fun tick(
             ambient: SoundLevel,
             music: Boolean = true,
@@ -297,7 +342,7 @@ class VolumeControllerTest {
             after: Duration = 1.seconds,
         ): VolumeDecision {
             now += after
-            val decision = controller.update(VolumeTick(now, route, ambient, index, music, dose))
+            val decision = controller.update(VolumeTick(now, route, ambient, index, music, dose, isSpeakerOutput = speaker))
             reasons += decision.reason
             decision.newIndex?.let {
                 index = it

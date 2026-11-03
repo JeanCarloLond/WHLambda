@@ -146,7 +146,17 @@ class AdaptiveVolumeEngine(
             val index = volume.currentIndex()
             val pending = accumulator.peek()
             val weeklyDose = doses.weekly.dose + current.weeklyStandard.doseOfMinute(pending)
-            val decision = controller.update(VolumeTick(startedAt.elapsedNow(), route, ambient, index, isMusicActive = true, weeklyDose))
+            val tick =
+                VolumeTick(
+                    now = startedAt.elapsedNow(),
+                    route = route,
+                    ambient = ambient,
+                    currentIndex = index,
+                    isMusicActive = true,
+                    doseConsumed = weeklyDose,
+                    isSpeakerOutput = volume.isSpeakerOutput(),
+                )
+            val decision = controller.update(tick)
             decision.newIndex?.let(volume::setIndex)
             val output = model.levelAt(decision.newIndex ?: index)
             // A reading covers the second before it arrived, so it counts towards the minute that second belongs to.
