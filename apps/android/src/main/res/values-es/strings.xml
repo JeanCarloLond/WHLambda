@@ -17,4 +17,9 @@
     <string name="alert_advice_lower_volume">Bajar el volumen uno o dos pasos hace que el resto de tu presupuesto dure mucho más.</string>
     <string name="alert_advice_break">Dale un descanso a tus oídos: unas horas de silencio les ayudan a recuperarse.</string>
     <string name="alert_advice_noise_cancelling">Hay mucho ruido a tu alrededor. Unos audífonos con cancelación de ruido te dejan oír la música a menor volumen.</string>
+    <string name="effects_channel">Ecualizador y efectos</string>
+    <string name="effects_title">Ecualizador activado</string>
+    <string name="effects_whole_output">Todo el audio del teléfono</string>
+    <string name="effects_waiting">Esperando una app de música</string>
+    <string name="effects_turn_off">Desactivar</string>
 </resources>

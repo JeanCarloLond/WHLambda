@@ -18,4 +18,9 @@
     <string name="alert_advice_lower_volume">Lowering the volume a step or two makes the rest of your budget last much longer.</string>
     <string name="alert_advice_break">Give your ears a break: a few quiet hours help them recover.</string>
     <string name="alert_advice_noise_cancelling">It is noisy around you. Noise-cancelling headphones let you hear the music at a lower volume.</string>
+    <string name="effects_channel">Equaliser and effects</string>
+    <string name="effects_title">Equaliser on</string>
+    <string name="effects_whole_output">All the phone\'s audio</string>
+    <string name="effects_waiting">Waiting for a music app</string>
+    <string name="effects_turn_off">Turn off</string>
 </resources>
