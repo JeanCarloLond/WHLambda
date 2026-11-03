@@ -24,6 +24,7 @@ import com.waveheaven.lambda.feature.dashboard.resources.adaptive_choose_app
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_above_limit
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_limited
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_manual
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_speaker
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_microphone_denied
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_off
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_open_settings
@@ -147,5 +148,6 @@ private fun hintText(hint: AdaptiveHint): String =
             AdaptiveHint.LIMITED_BY_DOSE -> Res.string.adaptive_hint_limited
             AdaptiveHint.MANUAL_OVERRIDE -> Res.string.adaptive_hint_manual
             AdaptiveHint.ABOVE_LIMIT_BY_USER -> Res.string.adaptive_hint_above_limit
+            AdaptiveHint.SPEAKER_OUTPUT -> Res.string.adaptive_hint_speaker
         },
     )

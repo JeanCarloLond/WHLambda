@@ -52,6 +52,9 @@ enum class AdaptiveHint {
 
     /** The user set the volume above the safe limit; the app does not fight it but says so. */
     ABOVE_LIMIT_BY_USER,
+
+    /** Music plays on the phone's speaker, which the microphone hears, so the app holds the volume (#42). */
+    SPEAKER_OUTPUT,
 }
 
 /** User intents (and permission answers) the dashboard understands. */

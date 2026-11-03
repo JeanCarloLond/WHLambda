@@ -15,6 +15,7 @@ import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeStatus
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.LOWER_TO_DOSE_CEILING
 import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.MANUAL_OVERRIDE
+import com.waveheaven.lambda.core.domain.volume.VolumeDecisionReason.SPEAKER_OUTPUT
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,6 +101,7 @@ class DashboardViewModel(
                 decision == null -> null
                 decision.reason == MANUAL_OVERRIDE && decision.isAboveDoseCeiling -> AdaptiveHint.ABOVE_LIMIT_BY_USER
                 decision.reason == MANUAL_OVERRIDE -> AdaptiveHint.MANUAL_OVERRIDE
+                decision.reason == SPEAKER_OUTPUT -> AdaptiveHint.SPEAKER_OUTPUT
                 decision.isTargetCappedByDose || decision.reason == LOWER_TO_DOSE_CEILING -> AdaptiveHint.LIMITED_BY_DOSE
                 else -> null
             }

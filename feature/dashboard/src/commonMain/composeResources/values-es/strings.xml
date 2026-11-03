@@ -42,6 +42,7 @@
     <string name="adaptive_paused">En pausa. El micrófono está apagado.</string>
     <string name="adaptive_hint_limited">Tu límite de escucha segura está frenando el volumen. Unos audífonos con cancelación de ruido o un lugar más tranquilo te ayudarán.</string>
     <string name="adaptive_hint_manual">Cambiaste el volumen, así que WaveHeaven no lo toca durante 10 minutos.</string>
+    <string name="adaptive_hint_speaker">Tu música suena por el altavoz del teléfono y el micrófono la oiría como ruido, así que WaveHeaven no toca el volumen. Conecta tus audífonos para adaptarlo.</string>
     <string name="adaptive_hint_above_limit">Pusiste el volumen por encima de tu límite seguro. WaveHeaven no va a pelear contigo, pero tu dosis sube más rápido.</string>
     <string name="adaptive_microphone_denied">WaveHeaven necesita el micrófono para adaptar el volumen. Puedes permitirlo en los ajustes del sistema.</string>
     <string name="adaptive_problem_microphone">No se pudo usar el micrófono, así que el volumen adaptativo se detuvo. Revisa que WaveHeaven tenga permiso.</string>

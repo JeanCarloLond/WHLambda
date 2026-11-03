@@ -26,4 +26,6 @@ public data class VolumeTick(
     val isMusicActive: Boolean,
     /** Dose already consumed in the current window of the configured standard. */
     val doseConsumed: Dose,
+    /** Media plays through the built-in speaker, so the microphone hears the music itself (#42). */
+    val isSpeakerOutput: Boolean = false,
 )

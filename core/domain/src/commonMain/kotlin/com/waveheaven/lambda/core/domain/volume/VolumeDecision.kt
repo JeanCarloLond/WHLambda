@@ -41,6 +41,12 @@ public enum class VolumeDecisionReason {
     /** The volume exceeded the listening profile's maximum and was lowered to it. */
     LOWER_TO_PROFILE_LIMIT,
 
+    /**
+     * Media plays through the built-in speaker. The microphone would measure the music as ambient noise, and
+     * following it would raise the volume step after step (#42), so comfort changes are held. Safety still applies.
+     */
+    SPEAKER_OUTPUT,
+
     /** Comfort: noise rose, so the volume goes up one step. */
     RAISE_FOR_NOISE,
 
