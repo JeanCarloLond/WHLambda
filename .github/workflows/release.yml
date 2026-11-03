@@ -135,9 +135,22 @@ jobs:
           path: dist
           merge-multiple: true
 
+      # The desktop artifacts keep their deb/, rpm/ and msi/ folders, which `dist/*` does not reach (v0.1.0 shipped
+      # without them). Flatten everything and give the MSI the same lower-case name as the other files.
+      - name: Collect the release files
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p upload
+          find dist -type f \( -name '*.apk' -o -name '*.aab' -o -name '*.deb' -o -name '*.rpm' \) -exec cp {} upload/ \;
+          find dist -type f -name '*.msi' -exec cp {} "upload/waveheaven-lambda-$version.msi" \;
+          ls -la upload
+          for ext in apk aab deb rpm msi; do
+            ls upload/*."$ext" > /dev/null || { echo "::error::No .$ext file to publish"; exit 1; }
+          done
+
       - uses: softprops/action-gh-release@v3
         with:
           body_path: RELEASE_NOTES.md
-          files: dist/*
+          files: upload/*
           prerelease: ${{ contains(github.ref_name, '-') }}
           fail_on_unmatched_files: true
