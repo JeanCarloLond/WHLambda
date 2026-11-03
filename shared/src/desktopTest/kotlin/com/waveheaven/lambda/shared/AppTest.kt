@@ -75,17 +75,17 @@ class AppTest {
         runComposeUiTest {
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
-            waitUntilExactlyOneExists(hasText("Welcome to WaveHeaven"))
+            waitUntilExactlyOneExists(hasText("Welcome to WaveHeaven"), UI_TIMEOUT_MS)
             onNodeWithText("Get started").performClick()
             onNodeWithText("Continue").performScrollTo().performClick()
             onNodeWithText("I agree to WaveHeaven processing this data as described.").performScrollTo().performClick()
             onNodeWithText("Accept").performScrollTo().performClick()
-            waitUntilExactlyOneExists(hasText("How strict should your weekly limit be?"))
+            waitUntilExactlyOneExists(hasText("How strict should your weekly limit be?"), UI_TIMEOUT_MS)
             onNodeWithText("Continue").performScrollTo().performClick()
             onNodeWithText("Allow microphone").performClick()
             onNodeWithText("Finish").performClick()
 
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
             assertEquals(1, microphone.requests)
             runBlocking {
                 assertTrue(preferences.onboardingCompleted.first())
@@ -99,17 +99,17 @@ class AppTest {
             onboard(withConsent = false)
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
-            waitUntilExactlyOneExists(hasText("Adaptive volume is off"))
+            waitUntilExactlyOneExists(hasText("Adaptive volume is off"), UI_TIMEOUT_MS)
             onNodeWithText("Review and give consent").performClick()
             onNodeWithText("Continue").performScrollTo().performClick()
             onNodeWithText("I agree to WaveHeaven processing this data as described.").performScrollTo().performClick()
             onNodeWithText("Accept").performScrollTo().performClick()
-            waitUntilExactlyOneExists(hasText("Microphone access"))
+            waitUntilExactlyOneExists(hasText("Microphone access"), UI_TIMEOUT_MS)
             microphone.granted = true
             onNodeWithText("Allow microphone").performClick()
             onNodeWithText("Finish").performClick()
 
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
             onNodeWithText("Adaptive volume is off").assertDoesNotExist()
         }
 
@@ -119,9 +119,9 @@ class AppTest {
             onboard()
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
-            waitUntilExactlyOneExists(hasText("Start"))
+            waitUntilExactlyOneExists(hasText("Start"), UI_TIMEOUT_MS)
             onNodeWithText("Start").performClick()
-            waitUntilExactlyOneExists(hasText("Pause"))
+            waitUntilExactlyOneExists(hasText("Pause"), UI_TIMEOUT_MS)
 
             assertEquals(1, microphone.requests)
             assertEquals(1, notifications.requests)
@@ -133,14 +133,14 @@ class AppTest {
         runComposeUiTest {
             onboard()
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
 
             onNodeWithText("Explore listening levels").performScrollTo().performClick()
             onNodeWithText("Level: 85 dB(A)").assertIsDisplayed()
             onNodeWithText("8 h").assertIsDisplayed()
 
             onNodeWithContentDescription("Back").performClick()
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
         }
 
     @Test
@@ -149,12 +149,12 @@ class AppTest {
             onboard()
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
-            waitUntilExactlyOneExists(hasText("Profile: Commute"))
+            waitUntilExactlyOneExists(hasText("Profile: Commute"), UI_TIMEOUT_MS)
             onNodeWithText("Profile: Commute").performClick()
             onNodeWithText("Gym").performClick()
             onNodeWithContentDescription("Back").performClick()
 
-            waitUntilExactlyOneExists(hasText("Profile: Gym"))
+            waitUntilExactlyOneExists(hasText("Profile: Gym"), UI_TIMEOUT_MS)
         }
 
     @Test
@@ -164,14 +164,14 @@ class AppTest {
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
             // The cards above the button load first and move it; click once they are in place.
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
             onNodeWithText("Equaliser and effects").performScrollTo().performClick()
-            waitUntilExactlyOneExists(hasText("Apply to my music"))
+            waitUntilExactlyOneExists(hasText("Apply to my music"), UI_TIMEOUT_MS)
             onNodeWithText("Apply to my music").performClick()
             waitUntil { soundEffects.calls == listOf("start") }
 
             onNodeWithContentDescription("Back").performClick()
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
         }
 
     @Test
@@ -184,7 +184,7 @@ class AppTest {
             onNodeWithText("Version test").assertIsDisplayed()
 
             onNodeWithContentDescription("Back").performClick()
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
         }
 
     @Test
@@ -197,7 +197,7 @@ class AppTest {
             onNodeWithText("Delete my listening data").performScrollTo().assertIsDisplayed()
 
             onNodeWithContentDescription("Back").performClick()
-            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"), UI_TIMEOUT_MS)
         }
 
     @Test
@@ -219,8 +219,8 @@ class AppTest {
             onboard()
             setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
 
-            waitUntilExactlyOneExists(hasText("Hoy (NIOSH)"))
-            waitUntilExactlyOneExists(hasText("Últimos 7 días (OMS)"))
+            waitUntilExactlyOneExists(hasText("Hoy (NIOSH)"), UI_TIMEOUT_MS)
+            waitUntilExactlyOneExists(hasText("Últimos 7 días (OMS)"), UI_TIMEOUT_MS)
         }
 
     private fun onboard(withConsent: Boolean = true) =
@@ -282,3 +282,9 @@ class AppTest {
         override fun openSystemSettings() = Unit
     }
 }
+
+/**
+ * The app starts with a real database and Koin graph, so screens can take longer than the 1 s default to appear on a
+ * busy machine (seen while every module's tests ran in parallel).
+ */
+private const val UI_TIMEOUT_MS = 5_000L
