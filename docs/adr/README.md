@@ -14,3 +14,4 @@ accepted; a later ADR can supersede an earlier one. Start from the [template](00
 | [0007](0007-privacy-on-device-audio.md)          | Audio is processed on-device only                                     | Accepted |
 | [0008](0008-navigation-di-and-screen-pattern.md) | Navigation 3, Koin and a unidirectional screen pattern                | Accepted |
 | [0009](0009-desktop-per-app-volume.md)           | Per-application volume on desktop: WASAPI through JNA, pactl on Linux | Proposed |
+| [0010](0010-android-sound-effects.md)            | Sound effects on Android: DynamicsProcessing on other apps' sessions  | Proposed |

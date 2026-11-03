@@ -40,6 +40,7 @@ Goal: the original promise, working for real on Android.
 
 - Supabase auth and sync of aggregated stats across devices (opt-in)
 - Hearing check (per ear, 6–8 frequencies, not a diagnosis) feeding a personal EQ curve
+- Equaliser and sound effects on any music app (Android), which applies that curve
 - Data export and account deletion
 
 ## Phase 4 — Beyond

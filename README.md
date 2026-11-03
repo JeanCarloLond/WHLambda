@@ -63,6 +63,7 @@ that can.
 | Desktop: per-app volume and tray (Linux PipeWire/PulseAudio; Windows WASAPI to verify) | ✅ Linux · ⏳ Windows |
 | Account & sync of aggregated stats (Supabase)                                          | 🗓️ Phase 3            |
 | Hearing check (not a diagnosis) feeding a personal EQ curve                            | ✅ Done               |
+| Equaliser and effects (bass boost, reverb, surround) on any music app                  | ✅ Done (Android)     |
 | Learns your preferred margin from manual adjustments                                   | 🗓️ Phase 4            |
 
 > [!IMPORTANT]
@@ -187,6 +188,7 @@ The full guide — commit table, scopes, review rules — is in [CONTRIBUTING.md
 | [docs/architecture.md](docs/architecture.md)                   | Modules, dependency rules, where new code goes           |
 | [docs/adr/](docs/adr/)                                         | Architecture Decision Records — the _why_ behind choices |
 | [docs/domain/hearing-safety.md](docs/domain/hearing-safety.md) | Exposure standards and the maths behind the dose model   |
+| [docs/domain/sound-effects.md](docs/domain/sound-effects.md)   | Equaliser and effects on other apps, and their limits    |
 | [docs/roadmap.md](docs/roadmap.md)                             | Phases and milestones                                    |
 | [docs/privacy.md](docs/privacy.md)                             | What is processed, consent and its versions, user rights |
 | [docs/release.md](docs/release.md)                             | Tagging a release, versions, signing keys and secrets    |
