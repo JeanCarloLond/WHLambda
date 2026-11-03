@@ -14,8 +14,9 @@
 </div>
 
 > [!NOTE]
-> **Status: Phase 0 — foundations.** The architecture, tooling and the hearing-dose model are in place;
-> the adaptive-volume engine is next. See the [roadmap](docs/roadmap.md).
+> **Status: Phase 1 MVP on Android, desktop in progress.** Adaptive volume, dose tracking, profiles, hearing check
+> and sound effects work on Android; the desktop tray app is validated on Linux and partly on Windows.
+> **[Download the app](https://jeancarlolond.github.io/WHLambda/)** · [roadmap](docs/roadmap.md)
 
 ## Table of contents
 
