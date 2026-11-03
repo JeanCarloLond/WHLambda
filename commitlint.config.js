@@ -54,5 +54,10 @@ export default {
     "subject-case": [2, "never", ["sentence-case", "start-case", "pascal-case", "upper-case"]],
     "header-max-length": [2, "always", 100],
   },
-  ignores: [(message) => message.startsWith("Initial commit")],
+  // Dependabot writes the body itself (long dependency lists), so only its header is held to the convention:
+  // the PR title, which becomes the squash-merge commit, is linted separately in CI.
+  ignores: [
+    (message) => message.startsWith("Initial commit"),
+    (message) => message.includes("Signed-off-by: dependabot[bot] <support@github.com>"),
+  ],
 };
