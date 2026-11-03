@@ -35,6 +35,7 @@ of dB per step, serves tests and evenly stepped platforms.
 | 4   | Index below `minIndex`                           | `MUTED`, hold                                                 | Never unmute automatically                                      |
 | 5   | Index above the dose ceiling                     | `LOWER_TO_DOSE_CEILING`, drop at once                         | Safety beats comfort and rate limits                            |
 | 5b  | Index above the listening profile's maximum      | `LOWER_TO_PROFILE_LIMIT`, drop to it                          | The profile can only lower the ceiling (WH-063)                 |
+| 5c  | Media plays on the built-in speaker              | `SPEAKER_OUTPUT`, hold                                        | The mic hears the music itself; comfort would feed back (#42)   |
 | 6   | Fewer than `ambientWindowTicks` readings         | `WARMING_UP`, hold                                            | Avoid reacting to a single noisy second                         |
 | 7   | Target outside the hysteresis band               | `RAISE_FOR_NOISE` / `LOWER_FOR_QUIET`, one step, rate-limited | Smooth, step-wise changes (D2)                                  |
 | 8   | Target above the ceiling, already at the ceiling | `AT_DOSE_CEILING`, hold, `isTargetCappedByDose`               | UI suggests noise-cancelling or a break                         |
