@@ -8,11 +8,13 @@ import com.waveheaven.lambda.core.data.SqlDoseAlertStore
 import com.waveheaven.lambda.core.data.SqlExposureLog
 import com.waveheaven.lambda.core.data.SqlHearingCheckStore
 import com.waveheaven.lambda.core.data.SqlListeningProfileStore
+import com.waveheaven.lambda.core.data.SqlSoundEffectsStore
 import com.waveheaven.lambda.core.data.SqlUserPreferences
 import com.waveheaven.lambda.core.data.SystemDayBoundaries
 import com.waveheaven.lambda.core.data.createDatabase
 import com.waveheaven.lambda.core.domain.alert.DoseAlertStore
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.effects.SoundEffectsStore
 import com.waveheaven.lambda.core.domain.exposure.DayBoundaries
 import com.waveheaven.lambda.core.domain.exposure.DoseTracker
 import com.waveheaven.lambda.core.domain.exposure.ExposureLog
@@ -24,6 +26,7 @@ import com.waveheaven.lambda.feature.hearingcheck.hearingCheckModule
 import com.waveheaven.lambda.feature.onboarding.onboardingModule
 import com.waveheaven.lambda.feature.profiles.profilesModule
 import com.waveheaven.lambda.feature.settings.settingsModule
+import com.waveheaven.lambda.feature.soundeffects.soundEffectsModule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -46,6 +49,7 @@ val dataModule =
         single<UserPreferences> { SqlUserPreferences(get()) }
         single<DoseAlertStore> { SqlDoseAlertStore(get()) }
         single<HearingCheckStore> { SqlHearingCheckStore(get()) }
+        single<SoundEffectsStore> { SqlSoundEffectsStore(get()) }
     }
 
 /**
@@ -72,6 +76,7 @@ val appModules =
         onboardingModule,
         profilesModule,
         settingsModule,
+        soundEffectsModule,
     )
 
 /**
