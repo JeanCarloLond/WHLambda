@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>WaveHeaven Lambda · Descargas</title>
+        <meta
+            name="description"
+            content="Descarga WaveHeaven Lambda para Android, Windows y Linux: adapta el volumen de tu música al ruido y cuida tu dosis de escucha."
+        />
+        <meta property="og:title" content="WaveHeaven Lambda" />
+        <meta property="og:description" content="Tu música sobre el ruido, sin pasar tu límite de escucha segura." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&display=swap"
+        />
+        <style>
+            /* Layout: one dark column like the app itself; a level-meter band under the headline, then one card per
+         platform with its download button and steps. */
+            :root {
+                --bg: #121318;
+                --surface: #1b1d25;
+                --line: #2b2f3b;
+                --ink: #e3e2e9;
+                --muted: #a2a7b6;
+                --blue: #9dc2ff;
+                --purple: #c9b3ff;
+                --on-accent: #121318;
+                --font-ui: "IBM Plex Sans Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+                --font-read: "Atkinson Hyperlegible", "Segoe UI", Verdana, sans-serif;
+                --font-mono: "IBM Plex Mono", Consolas, monospace;
+                color-scheme: dark;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--ink);
+                font: 17px/1.6 var(--font-read);
+            }
+            .wrap {
+                max-width: 980px;
+                margin: 0 auto;
+                padding-left: max(18px, env(safe-area-inset-left, 0px));
+                padding-right: max(18px, env(safe-area-inset-right, 0px));
+            }
+            header {
+                padding-block: 56px 28px;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) auto;
+                gap: 28px;
+                align-items: end;
+            }
+            .eyebrow {
+                font: 600 0.8rem/1 var(--font-ui);
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--blue);
+                margin: 0 0 14px;
+            }
+            h1 {
+                font: 700 clamp(2.4rem, 7vw, 4.2rem) / 1 var(--font-ui);
+                margin: 0 0 16px;
+                letter-spacing: -0.01em;
+                text-wrap: balance;
+            }
+            .lede {
+                font-size: 1.2rem;
+                max-width: 38ch;
+                margin: 0;
+                color: var(--ink);
+            }
+            .qr-card {
+                background: #ffffff;
+                border-radius: 14px;
+                padding: 12px;
+                width: 168px;
+                text-align: center;
+            }
+            .qr-card svg {
+                display: block;
+                width: 144px;
+                height: 144px;
+            }
+            .qr-card span {
+                display: block;
+                font: 600 0.72rem/1.2 var(--font-ui);
+                color: #141922;
+                margin-top: 6px;
+                letter-spacing: 0.04em;
+            }
+            .meter {
+                display: grid;
+                grid-template-columns: repeat(24, 1fr);
+                gap: 4px;
+                height: 30px;
+                align-items: end;
+                margin-bottom: 36px;
+            }
+            .meter i {
+                display: block;
+                border-radius: 2px;
+                background: var(--blue);
+            }
+            .meter i.over {
+                background: var(--purple);
+            }
+            .facts {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+                gap: 18px;
+                margin-bottom: 44px;
+            }
+            .fact h2 {
+                font: 600 1.15rem/1.2 var(--font-ui);
+                margin: 0 0 6px;
+            }
+            .fact p {
+                margin: 0;
+                color: var(--muted);
+            }
+            .release {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                gap: 6px 16px;
+                margin-bottom: 16px;
+            }
+            .release h2 {
+                font: 700 1.6rem/1.1 var(--font-ui);
+                margin: 0;
+            }
+            .release span {
+                font: 500 0.85rem var(--font-mono);
+                color: var(--muted);
+            }
+            .platforms {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+                gap: 18px;
+                margin-bottom: 44px;
+            }
+            .platform {
+                background: var(--surface);
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 22px;
+                display: grid;
+                gap: 14px;
+                align-content: start;
+                min-width: 0;
+            }
+            .platform h3 {
+                font: 700 1.3rem/1 var(--font-ui);
+                margin: 0;
+            }
+            .platform .req {
+                margin: 0;
+                font: 500 0.82rem var(--font-mono);
+                color: var(--muted);
+            }
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                font: 700 1rem/1 var(--font-ui);
+                letter-spacing: 0.02em;
+                padding: 14px 18px;
+                border-radius: 999px;
+                text-decoration: none;
+                background: var(--blue);
+                color: var(--on-accent);
+            }
+            .btn.secondary {
+                background: transparent;
+                color: var(--blue);
+                border: 1px solid var(--line);
+            }
+            .btn:focus-visible {
+                outline: 2px solid var(--purple);
+                outline-offset: 3px;
+            }
+            .btn-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .size {
+                font: 500 0.8rem var(--font-mono);
+                color: var(--muted);
+            }
+            ol {
+                margin: 0;
+                padding-left: 1.2em;
+                display: grid;
+                gap: 6px;
+                color: var(--muted);
+            }
+            ol strong {
+                color: var(--ink);
+            }
+            .notice {
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 18px 20px;
+                margin-bottom: 18px;
+                color: var(--muted);
+            }
+            .notice strong {
+                color: var(--ink);
+            }
+            footer {
+                padding-block: 24px 48px;
+                border-top: 1px solid var(--line);
+                color: var(--muted);
+                font-size: 0.92rem;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px 24px;
+                justify-content: space-between;
+            }
+            footer a,
+            .notice a {
+                color: var(--blue);
+            }
+            @media (max-width: 640px) {
+                header {
+                    grid-template-columns: 1fr;
+                    padding-top: 36px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <header>
+                <div>
+                    <p class="eyebrow">Escucha segura · Android, Windows y Linux</p>
+                    <h1>WaveHeaven Lambda</h1>
+                    <p class="lede">
+                        Tu música por encima del ruido del bus, el gimnasio o la calle, sin pasar el límite de sonido
+                        que tus oídos pueden soportar.
+                    </p>
+                </div>
+                <div class="qr-card">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 33 33"
+                        role="img"
+                        aria-label="Código QR de la página de descargas"
+                        class="qr"
+                    >
+                        <path
+                            class="qrline"
+                            stroke="#141922"
+                            d="M2 2.5h7m1 0h1m2 0h2m1 0h1m2 0h2m3 0h7m-29 1h1m5 0h1m1 0h1m1 0h4m2 0h2m1 0h2m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h4m3 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h2m2 0h1m2 0h2m1 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h5m1 0h1m1 0h1m1 0h3m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m2 0h3m1 0h1m2 0h3m3 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-20 1h2m1 0h3m1 0h1m2 0h1m-20 1h1m2 0h7m1 0h2m1 0h1m1 0h2m1 0h1m1 0h1m2 0h1m1 0h3m-29 1h1m2 0h1m3 0h1m1 0h3m2 0h1m4 0h1m3 0h2m1 0h2m-28 1h1m2 0h1m2 0h1m2 0h2m1 0h1m2 0h1m1 0h1m2 0h2m1 0h1m2 0h1m-27 1h1m2 0h3m3 0h1m2 0h1m3 0h6m3 0h1m2 0h1m-27 1h3m1 0h1m2 0h1m1 0h2m3 0h1m3 0h1m1 0h2m4 0h1m-29 1h2m1 0h1m1 0h1m1 0h1m3 0h4m1 0h3m3 0h7m-29 1h2m1 0h2m1 0h1m1 0h1m2 0h3m1 0h1m2 0h7m1 0h1m1 0h1m-26 1h3m1 0h2m3 0h1m2 0h1m2 0h2m1 0h2m1 0h1m1 0h1m1 0h1m-25 1h1m1 0h2m2 0h1m2 0h4m2 0h2m2 0h1m1 0h1m-26 1h1m1 0h3m3 0h1m2 0h3m3 0h1m1 0h3m2 0h1m1 0h2m-28 1h8m1 0h4m2 0h1m1 0h1m1 0h4m1 0h2m2 0h1m-29 1h2m2 0h1m3 0h1m3 0h2m1 0h2m2 0h1m2 0h5m-27 1h2m1 0h1m1 0h4m1 0h2m1 0h1m2 0h2m2 0h8m-20 1h2m1 0h1m2 0h3m1 0h1m1 0h1m3 0h2m-26 1h7m1 0h1m2 0h2m1 0h3m1 0h3m1 0h1m1 0h2m-26 1h1m5 0h1m1 0h2m5 0h1m1 0h4m3 0h1m2 0h2m-29 1h1m1 0h3m1 0h1m1 0h7m1 0h1m1 0h8m1 0h1m-28 1h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h7m2 0h1m6 0h1m-29 1h1m1 0h3m1 0h1m3 0h4m1 0h1m1 0h1m2 0h2m1 0h2m1 0h3m-29 1h1m5 0h1m3 0h2m4 0h1m1 0h1m2 0h1m3 0h2m1 0h1m-29 1h7m1 0h3m2 0h2m4 0h3m1 0h1"
+                        />
+                    </svg>
+                    <span>Escanéalo con tu teléfono</span>
+                </div>
+            </header>
+
+            <div class="meter" aria-hidden="true" id="meter"></div>
+
+            <section class="facts" aria-label="Qué hace">
+                <div class="fact">
+                    <h2>Mide el ruido</h2>
+                    <p>
+                        Una vez por segundo, en dB(A), con el micrófono del teléfono. El audio nunca se graba ni sale
+                        del dispositivo.
+                    </p>
+                </div>
+                <div class="fact">
+                    <h2>Ajusta tu volumen</h2>
+                    <p>Mantiene tu música unos 10 dB sobre el ruido en Spotify, YouTube Music o la app que uses.</p>
+                </div>
+                <div class="fact">
+                    <h2>Cuida tu dosis</h2>
+                    <p>
+                        Lleva la cuenta de tu exposición según la OMS y NIOSH, y nunca sube el volumen por encima de lo
+                        seguro.
+                    </p>
+                </div>
+            </section>
+
+            <div class="release">
+                <h2>Descargas</h2>
+                <span id="releaseInfo">Buscando la última versión…</span>
+            </div>
+
+            <section class="platforms">
+                <article class="platform">
+                    <h3>Android</h3>
+                    <p class="req">Android 10 o superior · usa audífonos</p>
+                    <div class="btn-row">
+                        <a class="btn" id="dl-apk" href="https://github.com/JeanCarloLond/WHLambda/releases/latest"
+                            >Descargar APK</a
+                        >
+                    </div>
+                    <span class="size" id="size-apk"></span>
+                    <ol>
+                        <li>Abre esta página <strong>en tu teléfono</strong> y toca <strong>Descargar APK</strong>.</li>
+                        <li>
+                            Abre el archivo descargado. Si Android lo pide, permite
+                            <strong>instalar apps de esta fuente</strong>.
+                        </li>
+                        <li>Toca <strong>Instalar</strong> y luego <strong>Abrir</strong>.</li>
+                        <li>Sigue los 5 pasos de bienvenida, conecta tus audífonos y toca <strong>Iniciar</strong>.</li>
+                    </ol>
+                </article>
+
+                <article class="platform">
+                    <h3>Windows</h3>
+                    <p class="req">Windows 10 u 11 · 64 bits</p>
+                    <div class="btn-row">
+                        <a class="btn" id="dl-msi" href="https://github.com/JeanCarloLond/WHLambda/releases/latest"
+                            >Descargar MSI</a
+                        >
+                    </div>
+                    <span class="size" id="size-msi"></span>
+                    <ol>
+                        <li>Abre el archivo <strong>.msi</strong> descargado.</li>
+                        <li>
+                            Si aparece «Windows protegió su PC», toca <strong>Más información</strong> y luego
+                            <strong>Ejecutar de todas formas</strong>: el instalador aún no tiene firma de código.
+                        </li>
+                        <li>Abre WaveHeaven desde el menú Inicio: vive en la <strong>bandeja del sistema</strong>.</li>
+                        <li>En Ajustes, elige la app de música cuyo volumen quieres adaptar.</li>
+                    </ol>
+                </article>
+
+                <article class="platform">
+                    <h3>Linux</h3>
+                    <p class="req">PipeWire o PulseAudio · necesita pactl y parec</p>
+                    <div class="btn-row">
+                        <a class="btn" id="dl-deb" href="https://github.com/JeanCarloLond/WHLambda/releases/latest"
+                            >.deb</a
+                        >
+                        <a
+                            class="btn secondary"
+                            id="dl-rpm"
+                            href="https://github.com/JeanCarloLond/WHLambda/releases/latest"
+                            >.rpm</a
+                        >
+                    </div>
+                    <span class="size" id="size-linux"></span>
+                    <ol>
+                        <li>Debian o Ubuntu: <strong>sudo apt install ./waveheaven-lambda_*.deb</strong></li>
+                        <li>Fedora: <strong>sudo dnf install ./waveheaven-lambda-*.rpm</strong></li>
+                        <li>Si falta, instala <strong>pulseaudio-utils</strong>.</li>
+                    </ol>
+                </article>
+            </section>
+
+            <div class="notice">
+                <strong>No es un dispositivo médico.</strong> Si notas pitidos, audición apagada o dolor, consulta a un
+                audiólogo. La prueba de audición de la app sirve para ajustar tu música, no para diagnosticar.
+            </div>
+            <div class="notice">
+                <strong>Privacidad:</strong> el sonido se convierte en un número de nivel dentro de tu dispositivo y se
+                descarta al instante. Solo se guarda un resumen por minuto de escucha, 30 días, en tu dispositivo. Más
+                detalles en la
+                <a href="https://github.com/JeanCarloLond/WHLambda/blob/main/docs/privacy.md">política de privacidad</a
+                >.
+            </div>
+
+            <footer>
+                <span
+                    >Proyecto del curso de Diseño de Sonido · EAFIT · Hecho por Jean Carlo Londoño y Alejandro Garcés ·
+                    Software libre (Apache 2.0)</span
+                >
+                <span
+                    ><a href="https://github.com/JeanCarloLond/WHLambda">Código fuente</a> ·
+                    <a href="https://github.com/JeanCarloLond/WHLambda/releases">Todas las versiones</a></span
+                >
+            </footer>
+        </div>
+
+        <script>
+            (() => {
+                // A static level meter: bars rise like a VU, the last ones in purple mark "over the noise".
+                const meter = document.getElementById("meter");
+                const heights = [
+                    22, 30, 41, 35, 52, 47, 60, 55, 68, 63, 74, 70, 79, 76, 84, 81, 88, 86, 92, 90, 95, 93, 98, 100,
+                ];
+                meter.innerHTML = heights
+                    .map((h, i) => `<i class="${i >= 18 ? "over" : ""}" style="height:${h}%"></i>`)
+                    .join("");
+
+                const info = document.getElementById("releaseInfo");
+                const mb = (bytes) => `${(bytes / 1048576).toFixed(1)} MB`;
+                const setAsset = (id, asset, sizeId) => {
+                    if (!asset) return;
+                    document.getElementById(id).href = asset.browser_download_url;
+                    if (sizeId) document.getElementById(sizeId).textContent = `${asset.name} · ${mb(asset.size)}`;
+                };
+                fetch("https://api.github.com/repos/JeanCarloLond/WHLambda/releases/latest", {
+                    headers: { Accept: "application/vnd.github+json" },
+                })
+                    .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+                    .then((release) => {
+                        const find = (ext) => release.assets.find((a) => a.name.endsWith(ext));
+                        setAsset("dl-apk", find(".apk"), "size-apk");
+                        setAsset("dl-msi", find(".msi"), "size-msi");
+                        setAsset("dl-deb", find(".deb"), "size-linux");
+                        setAsset("dl-rpm", find(".rpm"));
+                        const date = new Date(release.published_at).toLocaleDateString("es-CO", {
+                            day: "numeric",
+                            month: "long",
+                            year: "numeric",
+                        });
+                        info.textContent = `Versión ${release.tag_name.replace(/^v/, "")} · ${date}`;
+                    })
+                    .catch(() => {
+                        info.textContent = "Los botones llevan a la página de versiones en GitHub.";
+                    });
+            })();
+        </script>
+    </body>
+</html>
