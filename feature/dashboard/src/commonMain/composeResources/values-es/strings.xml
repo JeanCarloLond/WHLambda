@@ -52,4 +52,5 @@
     <string name="adaptive_stop">Detener</string>
     <string name="adaptive_problem_media_app">Elige la app con la que escuchas música, para que WaveHeaven sepa a quién adaptarle el volumen.</string>
     <string name="adaptive_choose_app">Elegir app de música</string>
+    <string name="dashboard_sound_effects">Ecualizador y efectos</string>
 </resources>

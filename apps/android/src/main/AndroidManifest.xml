@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Ambient metering (ADR-0007): asked only after onboarding explains it and the user consents. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -8,6 +9,25 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <!-- Its persistent notification, and dose alerts. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Equaliser and effects on other apps' playback (#40, ADR-0010), kept by a special-use foreground service. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!--
+      Optional, never granted by installing: the user grants it once over ADB so the app can see every player's
+      session in the audio service's dump. Only player metadata is read, never audio.
+    -->
+    <uses-permission
+        android:name="android.permission.DUMP"
+        tools:ignore="ProtectedPermissions" />
+
+    <!-- Names of the music apps that have effects, shown on the effects screen. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
 
     <application
         android:name=".WaveHeavenApplication"
@@ -32,6 +52,25 @@
             android:name=".adaptive.AdaptiveVolumeService"
             android:exported="false"
             android:foregroundServiceType="microphone" />
+
+        <service
+            android:name=".effects.SoundEffectsService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Applies the user's equaliser and sound effects to other apps' music playback; effects only last while the process holds them." />
+        </service>
+
+        <!-- Restores the effects when they were on (WH-096); never starts the microphone service. -->
+        <receiver
+            android:name=".effects.SoundEffectsBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

@@ -42,6 +42,7 @@ import com.waveheaven.lambda.feature.dashboard.resources.dashboard_explore
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_level
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_no_listening
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_profile
+import com.waveheaven.lambda.feature.dashboard.resources.dashboard_sound_effects
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_close
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_on_track
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_status_reached
@@ -71,6 +72,7 @@ fun DashboardRoute(
     onOpenAbout: () -> Unit,
     onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenSoundEffects: (() -> Unit)? = null,
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -97,6 +99,7 @@ fun DashboardRoute(
         onOpenAbout = onOpenAbout,
         onReviewConsent = onReviewConsent,
         modifier = modifier,
+        onOpenSoundEffects = onOpenSoundEffects,
     )
 }
 
@@ -116,6 +119,8 @@ fun DashboardScreen(
     onOpenAbout: () -> Unit,
     onReviewConsent: () -> Unit,
     modifier: Modifier = Modifier,
+    /** `null` where the platform has no equaliser (desktop). */
+    onOpenSoundEffects: (() -> Unit)? = null,
 ) {
     Scaffold(
         modifier = modifier,
@@ -157,6 +162,7 @@ fun DashboardScreen(
                     Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
                 }
             }
+            onOpenSoundEffects?.let { OutlinedButton(onClick = it) { Text(stringResource(Res.string.dashboard_sound_effects)) } }
             state.daily?.let { BudgetCard(title = stringResource(Res.string.dashboard_today), budget = it, level = state.latestLevel) }
             state.weekly?.let { BudgetCard(title = weeklyTitle(it.standard), budget = it, level = state.latestLevel) }
             if (!state.isLoading && state.latestLevel == null) {

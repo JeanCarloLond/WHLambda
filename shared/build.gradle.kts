@@ -13,6 +13,7 @@ kotlin {
             implementation(projects.feature.dashboard)
             implementation(projects.feature.about)
             implementation(projects.feature.settings)
+            implementation(projects.feature.soundeffects)
             implementation(projects.core.data)
             implementation(projects.core.audio)
             implementation(libs.jetbrains.navigation3.ui)

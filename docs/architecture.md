@@ -21,6 +21,7 @@ flowchart TB
         onboarding[":feature:onboarding"]
         profiles[":feature:profiles"]
         settings[":feature:settings"]
+        soundeffects[":feature:soundeffects"]
         about[":feature:about"]
     end
     designsystem[":core:designsystem"]
@@ -35,6 +36,7 @@ flowchart TB
     shared --> onboarding
     shared --> profiles
     shared --> settings
+    shared --> soundeffects
     shared --> about
     shared --> data
     shared --> audio[":core:audio"]
@@ -47,6 +49,7 @@ flowchart TB
     hearingcheck --> domain
     profiles --> domain
     settings --> domain
+    soundeffects --> domain
     about --> designsystem
 ```
 

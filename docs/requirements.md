@@ -119,6 +119,21 @@ only promises what the platforms allow ([spike #2](spikes/android-background-aud
 | WH-082 | Each alert shall say what to do: lower the volume, take a break or use noise-cancelling.                                         | Must     | #16   | Unit test               |
 | WH-083 | The app shall let the user turn off each threshold, or all alerts, in settings.                                                  | Should   | #16   | Unit test, UI test      |
 
+### Equaliser and effects
+
+Added with #40 after the MVP scope was set; Android only. Decisions in [ADR-0010](adr/0010-android-sound-effects.md).
+
+| ID     | Requirement                                                                                                                                                                                                                       | Priority | Issue | Verified by               |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----- | ------------------------- |
+| WH-090 | The app shall offer a 10-band equaliser from 31 Hz to 16 kHz, ±12 dB per band, with presets (flat, bass, treble, vocal, rock, pop, electronic, hip hop, jazz, classical, acoustic) and the user's own curve.                      | Should   | #40   | Unit tests, UI test       |
+| WH-091 | The app shall offer bass boost (0 – 12 dB), extra volume (0 – 10 dB) followed by a limiter, reverb presets, and surround on headphones where the phone supports it.                                                               | Should   | #40   | Unit tests, emulator demo |
+| WH-092 | **While** the active listening profile has its own EQ curve, the app shall apply it instead of the global curve.                                                                                                                  | Should   | #40   | Unit tests                |
+| WH-093 | **While** effects are on, the app shall apply them to other apps' playback: the sessions players announce, every media player's session where the user has granted the diagnostic permission, or the whole output in global mode. | Should   | #40   | Unit tests, emulator demo |
+| WH-094 | **If** the effects add 3 dB or more anywhere in the spectrum, **then** the app shall warn that the level at the ear rises and that the dose does not include it.                                                                  | Must     | #40   | Unit tests, UI test       |
+| WH-095 | **If** another app takes control of the effects of a session, **then** the app shall tell the user which app lost its effects, and apply them again when control returns.                                                         | Should   | #40   | Unit tests, emulator demo |
+| WH-096 | **When** the phone restarts or the app is updated while effects are on, the app shall apply them again without being opened.                                                                                                      | Should   | #40   | Emulator demo             |
+| WH-097 | To find sessions, the app shall read only the list of players (app, session, state), never audio, and store none of it.                                                                                                           | Must     | #40   | Inspection                |
+
 ## Non-functional requirements
 
 | ID     | Quality         | Requirement                                                                                                                                                                                                        | Verified by                           |
@@ -166,3 +181,4 @@ Recorded now so the MVP does not close doors; refined when each phase starts.
 | #6    | WH-202                                                                           |
 | #18   | WH-210 – WH-212                                                                  |
 | #19   | WH-220 – WH-222                                                                  |
+| #40   | WH-090 – WH-097                                                                  |

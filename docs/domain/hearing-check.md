@@ -37,8 +37,8 @@ The result can become the EQ curve of a new listening profile (WH-222). Per freq
 between the average of both ears and the user's best threshold (the _half-gain_ rule of thumb from hearing-aid
 fitting), from 0 to at most +12 dB; a tone not heard counts as the reference level. The curve uses the single
 [`EqCurve`](../../core/domain/src/commonMain/kotlin/com/waveheaven/lambda/core/domain/profile/ListeningProfile.kt)
-model of listening profiles. Applying EQ to other apps' audio is not possible on Android without system effects, so
-for now the curve is stored with the profile (WH-064).
+model of listening profiles. While that profile is active, the equaliser applies the curve to other apps' music in
+place of the global one (WH-092, [sound-effects.md](sound-effects.md)).
 
 ## Privacy
 

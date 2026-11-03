@@ -6,14 +6,18 @@ that Ley 1581 de 2012 requires before a public release.
 
 ## What is processed
 
-| Data                                                                                    | When                                                      | Where it goes                                                                       | Kept                     |
-| --------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------ |
-| Microphone samples                                                                      | Adaptive volume on, consent given, music playing (WH-003) | Reduced to one level per second in memory, then discarded (≤ 100 ms buffer, WH-104) | Never stored             |
-| Ambient level per second                                                                | Same                                                      | Volume controller, in memory                                                        | Never stored             |
-| Per-minute aggregate: start, listening time, estimated output Leq ± margin, ambient Leq | Same                                                      | App database on the device                                                          | 30 days (WH-044)         |
-| Listening profiles, weekly standard, consent version and date                           | When the user sets them                                   | App database on the device                                                          | Until deleted or changed |
+| Data                                                                                    | When                                                      | Where it goes                                                                        | Kept                                      |
+| --------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------ | ----------------------------------------- |
+| Microphone samples                                                                      | Adaptive volume on, consent given, music playing (WH-003) | Reduced to one level per second in memory, then discarded (≤ 100 ms buffer, WH-104)  | Never stored                              |
+| Ambient level per second                                                                | Same                                                      | Volume controller, in memory                                                         | Never stored                              |
+| Per-minute aggregate: start, listening time, estimated output Leq ± margin, ambient Leq | Same                                                      | App database on the device                                                           | 30 days (WH-044)                          |
+| Listening profiles, weekly standard, consent version and date                           | When the user sets them                                   | App database on the device                                                           | Until deleted or changed                  |
+| Hearing-check thresholds per ear and frequency (health data)                            | When the user takes the hearing check                     | App database on the device, never synced                                             | Until deleted on the hearing-check screen |
+| Equaliser and effect settings                                                           | When the user sets them                                   | App database on the device                                                           | Until changed                             |
+| Which apps are playing and their audio session ids                                      | Effects on (#40)                                          | In memory, to attach effects; app names shown on the effects screen and notification | Never stored                              |
 
-Never collected: audio recordings, speech, the titles or apps being played, location, contacts or identifiers.
+Never collected: audio recordings, speech, the titles being played, location, contacts or identifiers. Which apps
+are playing is only seen in memory while effects are on, and never stored.
 Nothing leaves the device: the MVP does not even declare the `INTERNET` permission (WH-102).
 
 The Android database lives in app-private storage, excluded from cloud backup and device-to-device transfer
@@ -74,6 +78,8 @@ consent. Since all data stays on the device, the app itself is how users exercis
 
 ## Permissions
 
-| Platform | Permission     | Why                         | Asked                                                                                     |
-| -------- | -------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
-| Android  | `RECORD_AUDIO` | Ambient metering (ADR-0007) | In onboarding, after the explanation and consent, or when the user starts adaptive volume |
+| Platform | Permission                                                                          | Why                                                                                                                        | Asked                                                                                     |
+| -------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Android  | `RECORD_AUDIO`                                                                      | Ambient metering (ADR-0007)                                                                                                | In onboarding, after the explanation and consent, or when the user starts adaptive volume |
+| Android  | `MODIFY_AUDIO_SETTINGS`, `FOREGROUND_SERVICE_SPECIAL_USE`, `RECEIVE_BOOT_COMPLETED` | Equaliser and effects on other apps' music, kept by a foreground service, back after a reboot (ADR-0010)                   | Granted on install; effects only run after the user turns them on                         |
+| Android  | `DUMP` (optional)                                                                   | Find every player's audio session in the audio service's dump; only that dump is read, and only player metadata (ADR-0010) | Never by the app: the user runs one ADB command, shown on the effects screen              |

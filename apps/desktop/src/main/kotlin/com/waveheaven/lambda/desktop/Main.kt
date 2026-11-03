@@ -22,6 +22,8 @@ import com.waveheaven.lambda.core.domain.audio.AmbientMeter
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.effects.SoundEffects
+import com.waveheaven.lambda.core.domain.effects.UnsupportedSoundEffects
 import com.waveheaven.lambda.core.domain.hearing.TonePlayer
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
@@ -64,6 +66,8 @@ private val desktopModule =
         single<DoseAlertNotifier> { get<TrayDoseAlertNotifier>() }
         single<AdaptiveVolume> { get<AdaptiveVolumeSession>() }
         single<TonePlayer> { DesktopTonePlayer() }
+        // Effects on other apps need a native audio component on desktop; not built yet (#40 is Android only).
+        single<SoundEffects> { UnsupportedSoundEffects() }
     }
 
 fun main() {

@@ -18,6 +18,7 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.effects.SoundEffects
 import com.waveheaven.lambda.feature.about.AboutKey
 import com.waveheaven.lambda.feature.about.AboutScreen
 import com.waveheaven.lambda.feature.dashboard.DashboardKey
@@ -32,6 +33,8 @@ import com.waveheaven.lambda.feature.profiles.ProfilesKey
 import com.waveheaven.lambda.feature.profiles.ProfilesRoute
 import com.waveheaven.lambda.feature.settings.SettingsKey
 import com.waveheaven.lambda.feature.settings.SettingsRoute
+import com.waveheaven.lambda.feature.soundeffects.SoundEffectsKey
+import com.waveheaven.lambda.feature.soundeffects.SoundEffectsRoute
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
@@ -68,6 +71,7 @@ private fun AppNavDisplay(
     modifier: Modifier = Modifier,
 ) {
     val backStack = rememberNavBackStack(NavigationConfig, if (startAtOnboarding) OnboardingKey() else DashboardKey)
+    val soundEffectsSupported = koinInject<SoundEffects>().isSupported
 
     NavDisplay(
         backStack = backStack,
@@ -78,7 +82,7 @@ private fun AppNavDisplay(
                 rememberSaveableStateHolderNavEntryDecorator(),
                 rememberViewModelStoreNavEntryDecorator(),
             ),
-        entryProvider = appEntries(backStack, appVersion, microphoneAccess, notificationAccess),
+        entryProvider = appEntries(backStack, appVersion, microphoneAccess, notificationAccess, soundEffectsSupported),
     )
 }
 
@@ -88,6 +92,7 @@ private fun appEntries(
     appVersion: String,
     microphoneAccess: MicrophoneAccess,
     notificationAccess: NotificationAccess,
+    soundEffectsSupported: Boolean,
 ): (NavKey) -> NavEntry<NavKey> =
     entryProvider {
         entry<OnboardingKey> { key ->
@@ -114,7 +119,11 @@ private fun appEntries(
                 onOpenSettings = { backStack.add(SettingsKey) },
                 onOpenAbout = { backStack.add(AboutKey) },
                 onReviewConsent = { backStack.add(OnboardingKey(reviewConsentOnly = true)) },
+                onOpenSoundEffects = if (soundEffectsSupported) ({ backStack.add(SoundEffectsKey) }) else null,
             )
+        }
+        entry<SoundEffectsKey> {
+            SoundEffectsRoute(onBack = { backStack.removeLastOrNull() })
         }
         entry<DoseExplorerKey> {
             DoseExplorerRoute(onBack = { backStack.removeLastOrNull() })
@@ -153,6 +162,7 @@ private val NavigationConfig =
                     subclass(SettingsKey::class, SettingsKey.serializer())
                     subclass(HearingCheckKey::class, HearingCheckKey.serializer())
                     subclass(ProfilesKey::class, ProfilesKey.serializer())
+                    subclass(SoundEffectsKey::class, SoundEffectsKey.serializer())
                 }
             }
     }

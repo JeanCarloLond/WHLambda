@@ -15,6 +15,8 @@ import com.waveheaven.lambda.core.domain.consent.Consent
 import com.waveheaven.lambda.core.domain.consent.MicrophoneAccess
 import com.waveheaven.lambda.core.domain.consent.NotificationAccess
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
+import com.waveheaven.lambda.core.domain.effects.FakeSoundEffects
+import com.waveheaven.lambda.core.domain.effects.SoundEffects
 import com.waveheaven.lambda.core.domain.hearing.Ear
 import com.waveheaven.lambda.core.domain.hearing.TonePlayer
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolume
@@ -42,6 +44,7 @@ class AppTest {
     private val microphone = FakeMicrophoneAccess()
     private val notifications = FakeNotificationAccess()
     private val adaptive = FakeAdaptiveVolume()
+    private val soundEffects = FakeSoundEffects()
 
     @BeforeTest
     fun setUp() {
@@ -54,6 +57,7 @@ class AppTest {
                         single<SqlDriver> { createInMemoryDriver() }
                         single<AdaptiveVolume> { adaptive }
                         single<TonePlayer> { SilentTonePlayer }
+                        single<SoundEffects> { soundEffects }
                     },
                 )
             }.koin
@@ -151,6 +155,23 @@ class AppTest {
             onNodeWithContentDescription("Back").performClick()
 
             waitUntilExactlyOneExists(hasText("Profile: Gym"))
+        }
+
+    @Test
+    fun `turns the equaliser on from the dashboard`() =
+        runComposeUiTest {
+            onboard()
+            setContent { App(appVersion = "test", microphoneAccess = microphone, notificationAccess = notifications) }
+
+            // The cards above the button load first and move it; click once they are in place.
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
+            onNodeWithText("Equaliser and effects").performScrollTo().performClick()
+            waitUntilExactlyOneExists(hasText("Apply to my music"))
+            onNodeWithText("Apply to my music").performClick()
+            waitUntil { soundEffects.calls == listOf("start") }
+
+            onNodeWithContentDescription("Back").performClick()
+            waitUntilExactlyOneExists(hasText("Today (NIOSH)"))
         }
 
     @Test
