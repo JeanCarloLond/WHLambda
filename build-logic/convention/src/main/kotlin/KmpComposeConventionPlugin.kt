@@ -1,11 +1,15 @@
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.waveheaven.lambda.buildlogic.library
 import com.waveheaven.lambda.buildlogic.libs
+import com.waveheaven.lambda.buildlogic.namespaceFromPath
 import com.waveheaven.lambda.buildlogic.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.compose.ComposeExtension
+import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /** [KmpLibraryConventionPlugin] plus Compose Multiplatform for shared UI modules. */
@@ -29,7 +33,13 @@ class KmpComposeConventionPlugin : Plugin<Project> {
                     implementation(libs.library("compose-ui"))
                     implementation(libs.library("compose-material3"))
                     implementation(libs.library("compose-ui-tooling-preview"))
+                    implementation(libs.library("compose-components-resources"))
                 }
+            }
+
+            // Strings, fonts and images in `composeResources`, with the generated `Res` in `<module package>.resources`.
+            extensions.getByType<ComposeExtension>().extensions.configure<ResourcesExtension> {
+                packageOfResClass = "$namespaceFromPath.resources"
             }
         }
 }
