@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.waveheaven.lambda.core.designsystem.component.WhSlider
 import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.feature.exposure.resources.Res
@@ -96,6 +97,7 @@ fun DoseExplorerScreen(
                 value = state.sliderValue,
                 onValueChange = { onAction(DoseExplorerAction.LevelChanged(it)) },
                 valueRange = DoseExplorerUiState.LEVEL_RANGE,
+                colors = WhSlider.colors(),
                 modifier = Modifier.fillMaxWidth().semantics { contentDescription = levelLabel },
             )
 

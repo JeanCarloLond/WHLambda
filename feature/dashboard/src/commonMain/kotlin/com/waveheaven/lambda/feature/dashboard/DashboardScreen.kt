@@ -2,6 +2,8 @@ package com.waveheaven.lambda.feature.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -10,9 +12,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -20,11 +22,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.waveheaven.lambda.core.designsystem.component.DoseGauge
+import com.waveheaven.lambda.core.designsystem.component.GaugeTone
 import com.waveheaven.lambda.core.designsystem.format.formatDuration
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.core.domain.consent.ConsentStatus
@@ -157,12 +162,15 @@ fun DashboardScreen(
                     onOpenSettings = onOpenSettings,
                 )
             }
-            state.profile?.let { profile ->
-                OutlinedButton(onClick = onOpenProfiles) {
-                    Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
+            // Quick ways to change how the music is handled, side by side when they fit.
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                state.profile?.let { profile ->
+                    FilledTonalButton(onClick = onOpenProfiles) {
+                        Text(stringResource(Res.string.dashboard_profile, profileName(profile)))
+                    }
                 }
+                onOpenSoundEffects?.let { FilledTonalButton(onClick = it) { Text(stringResource(Res.string.dashboard_sound_effects)) } }
             }
-            onOpenSoundEffects?.let { OutlinedButton(onClick = it) { Text(stringResource(Res.string.dashboard_sound_effects)) } }
             state.daily?.let { BudgetCard(title = stringResource(Res.string.dashboard_today), budget = it, level = state.latestLevel) }
             state.weekly?.let { BudgetCard(title = weeklyTitle(it.standard), budget = it, level = state.latestLevel) }
             if (!state.isLoading && state.latestLevel == null) {
@@ -225,25 +233,39 @@ private fun BudgetCard(
     modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
-            Text(formatPercent(budget.percent), style = MaterialTheme.typography.headlineMedium)
-            Text(stringResource(Res.string.dashboard_used), style = MaterialTheme.typography.bodyMedium)
-            LinearProgressIndicator(
-                progress = { (budget.percent / PERCENT).coerceIn(0f, 1f) },
-                modifier = Modifier.fillMaxWidth(),
-                color = if (budget.status == BudgetStatus.ON_TRACK) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+        Row(
+            modifier = Modifier.padding(20.dp),
+            horizontalArrangement = Arrangement.spacedBy(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            DoseGauge(
+                fraction = budget.percent / PERCENT,
+                label = formatPercent(budget.percent),
+                tone =
+                    when (budget.status) {
+                        BudgetStatus.ON_TRACK -> GaugeTone.CALM
+                        BudgetStatus.CLOSE_TO_LIMIT -> GaugeTone.CAUTION
+                        BudgetStatus.LIMIT_REACHED -> GaugeTone.ALERT
+                    },
             )
-            Text(statusText(budget.status), style = MaterialTheme.typography.bodyMedium)
-            if (budget.timeLeft != null && level != null && budget.status != BudgetStatus.LIMIT_REACHED) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.semantics { heading() })
                 Text(
-                    stringResource(
-                        Res.string.dashboard_time_left,
-                        formatDuration(budget.timeLeft),
-                        stringResource(Res.string.dashboard_level, level.decibels, level.marginDb),
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
+                    stringResource(Res.string.dashboard_used),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                Text(statusText(budget.status), style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 6.dp))
+                if (budget.timeLeft != null && level != null && budget.status != BudgetStatus.LIMIT_REACHED) {
+                    Text(
+                        stringResource(
+                            Res.string.dashboard_time_left,
+                            formatDuration(budget.timeLeft),
+                            stringResource(Res.string.dashboard_level, level.decibels, level.marginDb),
+                        ),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }

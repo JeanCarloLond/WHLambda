@@ -169,7 +169,7 @@ class DashboardScreenTest {
                 AdaptiveUi(AdaptiveVolumeState.RUNNING, ambientDb = 78, output = LevelUi(86, 8), hint = AdaptiveHint.LIMITED_BY_DOSE)
             setContent { Dashboard(state.copy(adaptive = running), actions::add) }
 
-            onNodeWithText("Noise 78 dB(A) · music 86 ± 8 dB(A)").assertIsDisplayed()
+            onNodeWithContentDescription("Noise 78 dB(A) · music 86 ± 8 dB(A)").assertIsDisplayed()
             onNodeWithText("Your safe-listening limit is holding the volume down", substring = true).assertIsDisplayed()
             onNodeWithText("Pause").performClick()
             onNodeWithText("Stop").performClick()

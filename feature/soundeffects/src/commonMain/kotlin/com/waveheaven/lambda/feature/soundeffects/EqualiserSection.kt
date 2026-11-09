@@ -1,8 +1,13 @@
 package com.waveheaven.lambda.feature.soundeffects
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -12,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.waveheaven.lambda.core.designsystem.component.EqCurve
+import com.waveheaven.lambda.core.designsystem.component.WhSlider
 import com.waveheaven.lambda.core.domain.effects.EqBands
 import com.waveheaven.lambda.core.domain.effects.EqPreset
 import com.waveheaven.lambda.feature.soundeffects.resources.Res
@@ -58,7 +65,36 @@ internal fun EqualiserSection(
                 )
             }
         }
+        CurveBox(state.bandGainsDb)
         state.bandGainsDb.forEachIndexed { band, gain -> BandSlider(band = band, gainDb = gain, onAction = onAction) }
+    }
+}
+
+/** The response of the current curve, with the lowest, middle and highest band written under it. */
+@Composable
+private fun CurveBox(gainsDb: List<Int>) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.medium)
+                .padding(16.dp),
+    ) {
+        EqCurve(
+            gainsDb = gainsDb.map { it.toFloat() },
+            rangeDb = CURVE_RANGE_DB,
+            modifier = Modifier.fillMaxWidth().height(CURVE_HEIGHT),
+        )
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+            listOf(0, EqBands.COUNT / 2, EqBands.COUNT - 1).forEach { band ->
+                Text(
+                    bandName(EqBands.CENTERS_HZ[band]),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }
 
@@ -77,6 +113,7 @@ private fun BandSlider(
             onValueChange = { onAction(SoundEffectsAction.BandChanged(band, it)) },
             valueRange = EqBands.GAIN_RANGE_DB.start.toFloat()..EqBands.GAIN_RANGE_DB.endInclusive.toFloat(),
             steps = BAND_STEPS,
+            colors = WhSlider.colors(),
             modifier = Modifier.semantics { contentDescription = label },
         )
     }
@@ -94,6 +131,10 @@ private fun bandName(frequencyHz: Double): String =
 internal fun signed(value: Int): String = if (value > 0) "+$value" else "$value"
 
 private const val KILO = 1_000.0
+private val CURVE_HEIGHT = 110.dp
+
+/** Most presets stay within ±6 dB; drawing ±9 dB keeps their shape visible without clipping custom curves often. */
+private const val CURVE_RANGE_DB = 9f
 
 /** 1 dB steps from -12 to +12 dB. */
 private const val BAND_STEPS = 23

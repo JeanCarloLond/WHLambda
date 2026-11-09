@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import com.waveheaven.lambda.core.designsystem.component.WhSlider
 import com.waveheaven.lambda.core.domain.effects.EffectsMode
 import com.waveheaven.lambda.core.domain.effects.ReverbPreset
 import com.waveheaven.lambda.core.domain.effects.SoundEffectsSettings
@@ -193,6 +194,7 @@ private fun LabelledSlider(
             valueRange = range,
             // Whole decibels (or tens of percent for surround).
             steps = ((range.endInclusive - range.start) / stepOf(range)).toInt() - 1,
+            colors = WhSlider.colors(),
             modifier = Modifier.semantics { contentDescription = label },
         )
     }

@@ -1,14 +1,10 @@
 import com.waveheaven.lambda.buildlogic.composeDesktopCurrentOs
 import com.waveheaven.lambda.buildlogic.library
 import com.waveheaven.lambda.buildlogic.libs
-import com.waveheaven.lambda.buildlogic.namespaceFromPath
 import com.waveheaven.lambda.buildlogic.pluginId
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.getByType
-import org.jetbrains.compose.ComposeExtension
-import org.jetbrains.compose.resources.ResourcesExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
@@ -27,7 +23,6 @@ class KmpFeatureConventionPlugin : Plugin<Project> {
                 sourceSets.getByName("commonMain").dependencies {
                     implementation(project(":core:designsystem"))
                     implementation(project(":core:domain"))
-                    implementation(libs.library("compose-components-resources"))
                     implementation(libs.library("jetbrains-lifecycle-viewmodel-compose"))
                     implementation(libs.library("jetbrains-lifecycle-runtime-compose"))
                     implementation(libs.library("androidx-navigation3-runtime"))
@@ -44,10 +39,6 @@ class KmpFeatureConventionPlugin : Plugin<Project> {
                     // Provides Dispatchers.Main, which ViewModels and lifecycle-aware collection need.
                     implementation(libs.library("kotlinx-coroutines-swing"))
                 }
-            }
-
-            extensions.getByType<ComposeExtension>().extensions.configure<ResourcesExtension> {
-                packageOfResClass = "$namespaceFromPath.resources"
             }
         }
 }

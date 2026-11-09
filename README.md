@@ -212,3 +212,7 @@ Licensed under the [Apache License 2.0](LICENSE).
 
 WaveHeaven was created by **Jean Carlo Londoño** and **Alejandro Garcés** (with Emanuel González Quintero)
 as a university project at EAFIT. Lambda carries its idea forward.
+
+The app uses [Atkinson Hyperlegible](https://www.brailleinstitute.org/freefont/) (Braille Institute) and
+[IBM Plex Sans Condensed](https://github.com/IBM/plex) (IBM), both under the SIL Open Font License; the licences are
+in [core/designsystem/fonts](core/designsystem/fonts/).
