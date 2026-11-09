@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.waveheaven.lambda.core.designsystem.component.WhSlider
 import com.waveheaven.lambda.core.domain.consent.UserPreferences
 import com.waveheaven.lambda.feature.settings.resources.Res
 import com.waveheaven.lambda.feature.settings.resources.settings_calibration_description
@@ -96,6 +97,7 @@ internal fun CalibrationSection(
             onValueChange = { onAction(SettingsAction.MicrophoneAdjustmentChanged(it)) },
             valueRange = range.start.toFloat()..range.endInclusive.toFloat(),
             steps = (range.endInclusive - range.start).toInt() - 1,
+            colors = WhSlider.colors(),
             modifier = Modifier.semantics { contentDescription = value },
         )
         TextButton(onClick = { onAction(SettingsAction.MicrophoneAdjustmentReset) }, enabled = adjustmentDb != 0) {

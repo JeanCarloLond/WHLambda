@@ -7,16 +7,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.waveheaven.lambda.core.designsystem.component.Readout
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeProblem
 import com.waveheaven.lambda.core.domain.volume.AdaptiveVolumeState
 import com.waveheaven.lambda.feature.dashboard.resources.Res
@@ -25,6 +29,8 @@ import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_above_lim
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_limited
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_manual
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_hint_speaker
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_label_music
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_label_noise
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_microphone_denied
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_off
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_open_settings
@@ -38,6 +44,7 @@ import com.waveheaven.lambda.feature.dashboard.resources.adaptive_running_no_out
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_start
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_stop
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_title
+import com.waveheaven.lambda.feature.dashboard.resources.adaptive_unit
 import com.waveheaven.lambda.feature.dashboard.resources.adaptive_waiting
 import com.waveheaven.lambda.feature.dashboard.resources.dashboard_level
 import org.jetbrains.compose.resources.stringResource
@@ -55,16 +62,32 @@ internal fun AdaptiveVolumeCard(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    val live = adaptive.state == AdaptiveVolumeState.RUNNING
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        // While it adapts, the card takes the brand blue so the running state is visible at a glance.
+        colors =
+            if (live) {
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                )
+            } else {
+                CardDefaults.cardColors()
+            },
+    ) {
+        Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(
                 stringResource(Res.string.adaptive_title),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.semantics { heading() },
             )
+            val showReadouts = live && adaptive.output != null
+            if (showReadouts) Readouts(adaptive, description = statusText(adaptive))
             // Read out when it changes, so screen-reader users hear the loop react without looking.
             Column(modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(statusText(adaptive), style = MaterialTheme.typography.bodyMedium)
+                // With the readouts on screen the sentence would repeat them; screen readers get it from the readouts.
+                if (!showReadouts) Text(statusText(adaptive), style = MaterialTheme.typography.bodyMedium)
                 adaptive.hint?.let { Text(hintText(it), style = MaterialTheme.typography.bodyMedium) }
             }
             if (adaptive.microphoneDenied || adaptive.problem == AdaptiveVolumeProblem.MICROPHONE_UNAVAILABLE) {
@@ -84,6 +107,36 @@ internal fun AdaptiveVolumeCard(
         }
     }
 }
+
+/** Noise and music in large type, so the loop can be read from arm's length. */
+@Composable
+private fun Readouts(
+    adaptive: AdaptiveUi,
+    description: String,
+) {
+    val unit = stringResource(Res.string.adaptive_unit)
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(28.dp),
+        modifier = Modifier.clearAndSetSemantics { contentDescription = description },
+    ) {
+        Readout(
+            label = stringResource(Res.string.adaptive_label_noise),
+            value = adaptive.ambientDb?.toString() ?: NO_VALUE,
+            unit = unit,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        adaptive.output?.let { output ->
+            Readout(
+                label = stringResource(Res.string.adaptive_label_music),
+                value = output.decibels.toString(),
+                unit = unit,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+    }
+}
+
+private const val NO_VALUE = "–"
 
 @Composable
 private fun Controls(

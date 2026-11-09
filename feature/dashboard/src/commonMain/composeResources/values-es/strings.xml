@@ -54,4 +54,7 @@
     <string name="adaptive_problem_media_app">Elige la app con la que escuchas música, para que WaveHeaven sepa a quién adaptarle el volumen.</string>
     <string name="adaptive_choose_app">Elegir app de música</string>
     <string name="dashboard_sound_effects">Ecualizador y efectos</string>
+    <string name="adaptive_label_noise">Ruido</string>
+    <string name="adaptive_label_music">Música</string>
+    <string name="adaptive_unit">dB(A)</string>
 </resources>

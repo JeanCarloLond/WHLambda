@@ -54,8 +54,8 @@ class SoundEffectsScreenTest {
             setContent { SoundEffectsScreen(state = state.copy(bassBoostDb = 6, extraVolumeDb = 3), onAction = {}, onBack = {}) }
 
             onNodeWithText("Rock").assertIsSelected()
-            onNodeWithText("31 Hz: +5 dB").assertIsDisplayed()
-            onNodeWithText("1 kHz: -1 dB").assertIsDisplayed()
+            onNodeWithText("31 Hz: +5 dB").performScrollTo().assertIsDisplayed()
+            onNodeWithText("1 kHz: -1 dB").performScrollTo().assertIsDisplayed()
             onNodeWithText("16 kHz: +5 dB").performScrollTo().assertIsDisplayed()
             onNodeWithText("Bass boost: 6 dB").performScrollTo().assertIsDisplayed()
             onNodeWithText("Extra volume: 3 dB").performScrollTo().assertIsDisplayed()

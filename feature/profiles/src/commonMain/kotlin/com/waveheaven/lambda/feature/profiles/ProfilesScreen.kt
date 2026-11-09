@@ -34,6 +34,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.waveheaven.lambda.core.designsystem.component.WhSlider
 import com.waveheaven.lambda.core.designsystem.icon.WhIcons
 import com.waveheaven.lambda.feature.profiles.resources.Res
 import com.waveheaven.lambda.feature.profiles.resources.navigate_back
@@ -174,6 +175,7 @@ private fun ProfileEditorDialog(
                     onValueChange = { onAction(ProfilesAction.MarginChanged(it)) },
                     valueRange = 0f..MAX_MARGIN_DB,
                     steps = MAX_MARGIN_DB.toInt() - 1,
+                    colors = WhSlider.colors(),
                     modifier = Modifier.semantics { contentDescription = marginLabel },
                 )
                 val rangeLabel =
@@ -184,6 +186,7 @@ private fun ProfileEditorDialog(
                     onValueChange = { onAction(ProfilesAction.VolumeRangeChanged(it)) },
                     valueRange = 0f..MAX_PERCENT,
                     steps = VOLUME_STEPS,
+                    colors = WhSlider.colors(),
                     modifier = Modifier.semantics { contentDescription = rangeLabel },
                 )
             }
