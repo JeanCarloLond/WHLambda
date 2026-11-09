@@ -30,7 +30,7 @@ detekt-kotlin = "2.0.21"
 compose-rules = "0.6.8"
 ktlint = "1.8.0"
 kover = "0.9.11"
-spotless = "8.10.4"
+spotless = "8.11.0"
 
 [libraries]
 # Compose Multiplatform
